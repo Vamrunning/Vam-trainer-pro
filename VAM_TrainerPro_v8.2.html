@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<!-- saved from url=(0061)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v8_8_1.html -->
+<!-- saved from url=(0061)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v8_8_2.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1602,23 +1602,8 @@ function notaTerreno(pendMedia){
   return '⛰️ Terreno '+etiquetaTerreno(pendMedia)+': ritmos ajustados +'+ajuste+'seg/km respecto a llano. El esfuerzo fisiológico es equivalente. Usa la percepción del esfuerzo (RPE) como referencia principal (Minetti et al., 2002).';
 }
 
-// Muestra info del terreno en Step 1 al seleccionar
-document.querySelectorAll('[data-g=terreno]').forEach(function(el){
-  el.addEventListener('click',function(){
-    var pend=parseFloat(this.getAttribute('data-v'))||0;
-    var info=document.getElementById('terreno-info');
-    if(!info)return;
-    if(pend<=0){info.style.display='none';return;}
-    var ajuste=Math.round(pend*8.5);
-    var ejemplo14=fmt(rKm(14,1.0)+pend*8.5);
-    info.style.display='block';
-    info.innerHTML='<div style="background:rgba(255,140,66,.06);border:1px solid rgba(255,140,66,.2);border-radius:8px;padding:.75rem 1rem;font-size:.76rem;color:var(--orange);line-height:1.7;">'
-      +'<strong>Ajuste aplicado: +'+ajuste+' seg/km</strong> sobre los ritmos de llano.<br>'
-      +'Ejemplo con VAM 14 km/h: ritmo a VAM en llano '+fmt(rKm(14,1.0))+'/km → en tu terreno <strong>'+ejemplo14+'/km</strong> para el mismo esfuerzo.<br>'
-      +'Las series en pista se mostrarán como tiempo de esfuerzo equivalente en lugar de distancia exacta.'
-      +'</div>';
-  });
-});
+// Info terreno trail — se actualiza al hacer click en el selector de pendiente
+// (integrado en selModalidad y pick — no necesita listener propio)
 function readStep2(){
   S.prueba=parseInt(getVal('prueba'))||1500;
   S.tActS=secsFromInputs('t-act-h','t-act-m','t-act-s');
