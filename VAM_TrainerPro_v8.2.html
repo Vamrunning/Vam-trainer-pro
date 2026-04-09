@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<!-- saved from url=(0059)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v8_8.html -->
+<!-- saved from url=(0061)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v8_8_1.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -314,7 +315,7 @@ svg.carga-svg{display:block;}
 
     <div id="acceso-clave-bloque">
       <input class="acceso-input" id="acceso-input" type="text" placeholder="INTRODUCE TU CLAVE" maxlength="20" oninput="this.value=this.value.toUpperCase()">
-      <div class="acceso-error" id="acceso-error" style="display: block;">No se pudo verificar la clave. Comprueba tu conexión a internet e inténtalo de nuevo.</div>
+      <div class="acceso-error" id="acceso-error">Clave no válida o caducada. Comprueba el email de confirmación.</div>
       <button class="btn btn-primary btn-full" onclick="validarAcceso()">Acceder →</button>
     </div>
 
@@ -3279,9 +3280,20 @@ function validarAcceso(){
       }
     })
     .catch(function(e){
-      // Si no hay internet o falla la consulta, mostrar error claro
-      err.textContent='No se pudo verificar la clave. Comprueba tu conexión a internet e inténtalo de nuevo.';
-      err.style.display='block';
+      // Sin conexión — si la clave tiene el formato correcto (Vam...), dejar entrar en modo offline
+      // Esto permite usar la app abriendo el archivo local sin internet
+      var formatoValido=/^VAM[A-Z0-9_\-]{3,}$/i.test(clave);
+      if(formatoValido){
+        SESION_ACTIVA={tipo:'atleta',meses:3,clave:clave,offline:true};
+        document.getElementById('acceso-screen').style.display='none';
+        // Mostrar aviso no bloqueante de modo offline
+        setTimeout(function(){
+          mostrarToast('⚠️ Modo offline: clave no verificada con el servidor. Funcionalidad completa disponible.');
+        },800);
+      } else {
+        err.textContent='Sin conexión a internet. Si tienes una clave válida (formato VamNombre_001) puedes acceder igualmente. Comprueba también que la clave sea correcta.';
+        err.style.display='block';
+      }
     })
     .finally(function(){
       if(btn){btn.textContent='Acceder →';btn.disabled=false;}
