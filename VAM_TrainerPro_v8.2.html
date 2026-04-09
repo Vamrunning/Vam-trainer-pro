@@ -340,8 +340,13 @@ svg.carga-svg{display:block;}
     </div>
 
     <div style="text-align:center;margin-bottom:1.25rem;">
-      <span class="precio-badge">4,99€</span>
-      <div style="font-size:.72rem;color:var(--muted2);margin-top:.4rem;">Pago único · Descarga inmediata en PDF</div>
+      <span class="precio-badge" id="informe-precio-badge">4,99€</span>
+      <div style="font-size:.72rem;color:var(--muted2);margin-top:.4rem;" id="informe-precio-sub">Pago único · Descarga inmediata</div>
+    </div>
+
+    <!-- Bloque para testers: descarga libre -->
+    <div id="informe-tester-bloque" style="display:none;background:rgba(212,245,60,.06);border:1px solid rgba(212,245,60,.2);border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.78rem;color:var(--accent);line-height:1.6;text-align:center;">
+      ✅ Fase de prueba activa — Descarga gratuita habilitada
     </div>
 
     <div id="informe-acceso-bloque">
@@ -352,17 +357,18 @@ svg.carga-svg{display:block;}
 
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="cerrarInforme()">Cancelar</button>
-      <button class="btn btn-primary" style="flex:1" onclick="descargarInforme()">Descargar informe →</button>
+      <button class="btn btn-primary" style="flex:1" id="informe-btn-descargar" onclick="descargarInforme()">⬇ Descargar informe →</button>
     </div>
     <div style="text-align:center;margin-top:.75rem;"><a href="#" onclick="abrirInformeDemo();return false;" style="font-size:.72rem;color:var(--muted2);">Ver ejemplo del informe</a></div>
   </div>
 </div>
 
-<!-- PANEL EVALUACIÓN SEMANAL -->
+<!-- PANEL REVISIÓN DE SEMANA -->
 <div class="eval-panel" id="eval-panel">
   <div class="eval-inner">
     <div class="eval-semaforo" id="eval-semaforo">🟡</div>
-    <div style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-align:center;margin-bottom:.25rem;" id="eval-titulo">Evaluación de la semana</div>
+    <div style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;text-align:center;margin-bottom:.25rem;" id="eval-titulo">Revisar semana</div>
+    <div style="font-size:.75rem;color:var(--blue);text-align:center;margin-bottom:.5rem;background:rgba(92,168,255,.07);border:1px solid rgba(92,168,255,.15);border-radius:6px;padding:.5rem .75rem;line-height:1.5;">📊 Cuéntame cómo fue la semana y ajusto el plan para la próxima. Solo tarda 20 segundos.</div>
     <div style="font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:1.25rem;" id="eval-subtitulo"></div>
 
     <!-- Resumen de lo que hizo -->
@@ -431,7 +437,7 @@ svg.carga-svg{display:block;}
     <button class="btn-hoy" id="btn-informe-global" onclick="abrirInforme()" style="background:rgba(212,245,60,.1);color:var(--accent);border-color:rgba(212,245,60,.3);display:none;">★ INFORME</button>
     <button class="btn-hoy" id="btn-registro-global" onclick="abrirRegistro()" style="background:rgba(92,168,255,.08);color:var(--blue);border-color:rgba(92,168,255,.2);display:none;">≡ REGISTRO</button>
     <button class="btn-hoy" onclick="abrirExport()" style="background:rgba(74,255,158,.08);color:var(--green);border-color:rgba(74,255,158,.2);">⇅ PLAN</button>
-    <span class="hdr-badge">v8.2</span>
+    <span class="hdr-badge">v8.4</span>
   </div>
 </div>
 
@@ -506,13 +512,21 @@ svg.carga-svg{display:block;}
     <div class="rbtn" data-g="equip" data-v="natacion" onclick="toggleEquip(this)">Natación</div>
     <div class="rbtn" data-g="equip" data-v="nada" onclick="toggleEquip(this)">Solo exterior</div>
   </div>
-  <div class="sdiv">Terreno habitual de entrenamiento</div>
-  <div class="info-box" style="font-size:.76rem;">El terreno afecta directamente a los ritmos de entrenamiento. La app ajustará automáticamente todos los ritmos del plan según la pendiente media de tus rutas habituales, aplicando la corrección de Minetti et al. (2002).</div>
-  <div class="radio-grid g4">
-    <div class="rbtn on" data-g="terreno" data-v="0" onclick="pick(this)">Llano<small>0-2% pendiente media</small></div>
-    <div class="rbtn" data-g="terreno" data-v="3.5" onclick="pick(this)">Ondulado<small>2-5% pendiente media</small></div>
-    <div class="rbtn" data-g="terreno" data-v="7" onclick="pick(this)">Montañoso<small>5-10% pendiente media</small></div>
-    <div class="rbtn" data-g="terreno" data-v="12" onclick="pick(this)">Muy montañoso<small>> 10% pendiente media</small></div>
+  <div class="sdiv">Modalidad de entrenamiento</div>
+  <div class="info-box" style="font-size:.76rem;">Elige tu modalidad principal. En Road los ritmos son planos. En Trail el plan alterna días de desnivel con días llanos. En Mixto tú decides sesión a sesión con el toggle ⛰/🏃 en el plan generado.</div>
+  <div class="radio-grid g3" style="margin-bottom:.75rem;">
+    <div class="rbtn on" data-g="modalidad" data-v="road" onclick="selModalidad(this)">🏃 Road<small>Asfalto / pista</small></div>
+    <div class="rbtn" data-g="modalidad" data-v="trail" onclick="selModalidad(this)">⛰️ Trail<small>Montaña / dirt</small></div>
+    <div class="rbtn" data-g="modalidad" data-v="mixto" onclick="selModalidad(this)">🔀 Mixto<small>Tú decides cada día</small></div>
+  </div>
+  <div id="terreno-desnivel-bloque" style="display:none;">
+    <div style="font-size:.7rem;color:var(--muted2);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Pendiente media de tus rutas con desnivel</div>
+    <div class="radio-grid g4">
+      <div class="rbtn on" data-g="terreno" data-v="0" onclick="pick(this)">Llano<small>0-2%</small></div>
+      <div class="rbtn" data-g="terreno" data-v="3.5" onclick="pick(this)">Ondulado<small>2-5%</small></div>
+      <div class="rbtn" data-g="terreno" data-v="7" onclick="pick(this)">Montañoso<small>5-10%</small></div>
+      <div class="rbtn" data-g="terreno" data-v="12" onclick="pick(this)">Muy montañoso<small>&gt; 10%</small></div>
+    </div>
   </div>
   <div id="terreno-info" style="display:none;margin-top:.6rem;"></div>
 
@@ -913,7 +927,8 @@ svg.carga-svg{display:block;}
 var S={
   nombre:'',edad:30,sexo:'M',nivel:'med',trabajo:'sed',clima:'temp',
   equipamiento:[],cicloDia:null,cicloDur:28,kmHab:35,
-  terreno:0,  // pendiente media % de las rutas habituales
+  terreno:0,  // pendiente media % para días de desnivel
+  modalidad:'road', // 'road' | 'trail' | 'mixto'
   prueba:1500,tActS:330,tObjS:290,vamAuto:0,vamManual:0,
   fecha:null,semanas:12,dias:4,diasSemana:[1,3,5,0],tiempoSesion:60,
   salud:'ok',estres:3,sueno:'med',notas:'',lesion:'',
@@ -1296,7 +1311,10 @@ function readStep1(){
   S.edad=parseInt(document.getElementById('f-edad').value)||30;
   S.sexo=getVal('sexo');S.nivel=getVal('nivel');S.kmHab=parseInt(getVal('kmhab'))||35;
   S.trabajo=getVal('trabajo');S.clima=getVal('clima');
+  S.modalidad=getVal('modalidad')||'road';
   S.terreno=parseFloat(getVal('terreno'))||0;
+  // Si es road puro, terreno = 0 siempre
+  if(S.modalidad==='road') S.terreno=0;
   S.cicloDia=document.getElementById('f-ciclo').value||null;
   S.cicloDur=parseInt(document.getElementById('f-ciclo-dur').value)||28;
   // Leer historial de lesiones
@@ -1305,6 +1323,15 @@ function readStep1(){
     var v=el.getAttribute('data-v');
     if(v&&v!=='ninguna') S.lesionesHist.push(v);
   });
+}
+
+// Muestra/oculta el selector de pendiente según modalidad
+function selModalidad(el){
+  document.querySelectorAll('[data-g=modalidad]').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  var val=el.getAttribute('data-v');
+  var bloque=document.getElementById('terreno-desnivel-bloque');
+  if(bloque) bloque.style.display=(val==='trail'||val==='mixto')?'block':'none';
 }
 
 // ══════════════════════════════════════════════════════
@@ -1966,10 +1993,21 @@ function generarPlan(){
       // Filtrar SOLO sesiones de entrenamiento real (excluir descansos de la plantilla)
       // y tomar exactamente diasSem sesiones
       var sesEntren=plantilla.filter(function(s){return s.tipo!=='descanso';});
-      sesiones=sesEntren.slice(0,diasSem).map(function(ses){
+      // Índice del día dentro del plan global para alternar trail/road
+      var diaIdxGlobal = (semGlobal-1)*dias;
+      sesiones=sesEntren.slice(0,diasSem).map(function(ses,idx){
         var s1=aplicarPerfilASesion(ses,vamSem);
         var s2=aplicarRestriccionesLesiones(s1,vamSem);
-        return aplicarCorreccionTerreno(s2,vamSem,S.terreno||0);
+        // Terreno: road=siempre llano; trail=alterna (impares con desnivel); mixto=llano por defecto, el atleta cambia
+        var pendAplicada=0;
+        if(S.modalidad==='trail'&&(idx%2===1)&&S.terreno>0){
+          pendAplicada=S.terreno;
+          s2._esDesnivel=true;
+        } else if(S.modalidad==='mixto'){
+          s2._esDesnivel=false; // el toggle lo controla el atleta
+          s2._pendTerreno=S.terreno||0;
+        }
+        return aplicarCorreccionTerreno(s2,vamSem,pendAplicada);
       });
       // Controlar máximo Z3 por semana según perfil
       var z3Count=0;
@@ -1978,7 +2016,7 @@ function generarPlan(){
           z3Count++;
           if(z3Count>maxZ3Semana){
             var sust=BANCO_ROD[3](vamSem);
-            return aplicarCorreccionTerreno(sust,vamSem,S.terreno||0);
+            return aplicarCorreccionTerreno(sust,vamSem,0);
           }
         }
         return ses;
@@ -2159,7 +2197,7 @@ function generarPlan(){
       // Indicador de estrés registrado para esta semana
       html+='<span class="estres-week no-print" id="estres-ind-'+sg+'"></span>';
       // Botón evaluar semana (visible solo si hay feedback registrado o es la semana actual)
-      html+='<span class="semana-eval-btn no-print" onclick="abrirEval('+sg+')" id="eval-btn-'+sg+'">⟳ Evaluar</span>';
+      html+='<span class="semana-eval-btn no-print" onclick="abrirEval('+sg+')" id="eval-btn-'+sg+'" title="Cuéntame cómo fue la semana y ajusto el plan">📊 Revisar semana</span>';
       html+='<span style="font-size:.7rem;color:var(--muted2);margin-left:.35rem;">▼</span></div>';
 
       html+='<div class="days-grid" id="w'+sg+'" style="display:block">';
@@ -2178,12 +2216,33 @@ function generarPlan(){
           html+='<div style="font-size:.82rem;font-weight:600;color:var(--muted2);">Descanso</div>';
           html+='<div style="font-size:.72rem;color:var(--muted2);margin-top:.2rem;">Recuperación pasiva o caminata suave.</div>';
         } else if(ses){
-          html+='<div style="font-size:.84rem;font-weight:600;margin-bottom:.25rem;">'+ses.nombre+'</div>';
-          html+='<div style="font-size:.74rem;color:var(--muted);line-height:1.55;white-space:pre-line;">'+ses.desc+'</div>';
+          // Toggle terreno (solo si modalidad es mixto o trail)
+          var terrenoKey='t'+sg+'_d'+d;
+          var esDesnivel=ses._esDesnivel||false;
+          if(S.modalidad==='mixto'||S.modalidad==='trail'){
+            var toggleColor=esDesnivel?'var(--orange)':'var(--muted2)';
+            var toggleBg=esDesnivel?'rgba(255,140,66,.1)':'var(--surface2)';
+            var toggleBorder=esDesnivel?'rgba(255,140,66,.3)':'var(--border2)';
+            var toggleLabel=esDesnivel?'⛰ Desnivel':'🏃 Llano';
+            html+='<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;">';
+            html+='<div style="font-size:.84rem;font-weight:600;">'+ses.nombre+'</div>';
+            if(S.modalidad==='mixto'){
+              html+='<button id="toggle-terreno-'+terrenoKey+'" onclick="toggleTerrenoSesion(\''+terrenoKey+'\','+sg+','+d+')" '
+                +'style="font-family:\'DM Mono\',monospace;font-size:.58rem;padding:.18rem .5rem;border-radius:5px;border:1px solid '+toggleBorder+';color:'+toggleColor+';background:'+toggleBg+';cursor:pointer;">'+toggleLabel+'</button>';
+            } else {
+              // trail: icono informativo sin toggle
+              html+='<span style="font-family:\'DM Mono\',monospace;font-size:.58rem;padding:.18rem .5rem;border-radius:5px;border:1px solid '+toggleBorder+';color:'+toggleColor+';background:'+toggleBg+';">'+toggleLabel+'</span>';
+            }
+            html+='</div>';
+          } else {
+            html+='<div style="font-size:.84rem;font-weight:600;margin-bottom:.25rem;">'+ses.nombre+'</div>';
+          }
+          html+='<div class="ses-desc-'+terrenoKey+'" style="font-size:.74rem;color:var(--muted);line-height:1.55;white-space:pre-line;">'+ses.desc+'</div>';
           if(ses.alt)html+='<div style="font-size:.68rem;color:var(--blue);margin-top:.3rem;line-height:1.4;">🔄 '+ses.alt+'</div>';
           if(ses._notaEdad)html+='<div style="font-size:.68rem;color:var(--orange);margin-top:.3rem;line-height:1.4;background:rgba(255,140,66,.06);padding:.3rem .5rem;border-radius:4px;">'+ses._notaEdad+'</div>';
           if(ses._notaLesion)html+='<div style="font-size:.68rem;color:var(--red);margin-top:.3rem;line-height:1.4;background:rgba(255,92,92,.06);padding:.3rem .5rem;border-radius:4px;">'+ses._notaLesion+'</div>';
-          if(ses._notaTerreno)html+='<div style="font-size:.68rem;color:var(--orange);margin-top:.3rem;line-height:1.4;background:rgba(255,140,66,.06);padding:.3rem .5rem;border-radius:4px;white-space:pre-line;">'+ses._notaTerreno+'</div>';
+          if(ses._notaTerreno)html+='<div id="nota-terreno-'+terrenoKey+'" style="font-size:.68rem;color:var(--orange);margin-top:.3rem;line-height:1.4;background:rgba(255,140,66,.06);padding:.3rem .5rem;border-radius:4px;white-space:pre-line;">'+ses._notaTerreno+'</div>';
+          else html+='<div id="nota-terreno-'+terrenoKey+'" style="display:none;font-size:.68rem;color:var(--orange);margin-top:.3rem;line-height:1.4;background:rgba(255,140,66,.06);padding:.3rem .5rem;border-radius:4px;white-space:pre-line;"></div>';
           // FEEDBACK DE SESIÓN COMPLETADA
           var fbKey='s'+sg+'_d'+d;
           var fbVal=FEEDBACK_DATA[fbKey]||'';
@@ -2290,10 +2349,11 @@ function generarPlan(){
   html+='<button class="btn" onclick="abrirInforme()" style="background:rgba(212,245,60,.1);color:var(--accent);border:1.5px solid rgba(212,245,60,.3);font-weight:600;">★ Informe 4,99€</button>';
   html+='<button class="btn btn-primary" style="flex:1" onclick="imprimirPlan()">🖨️ PDF</button>';
   html+='</div>';
-  html+='<div class="no-print" style="margin-top:.75rem;">';
-  html+='<button class="btn btn-secondary" style="width:100%;color:var(--green);border-color:rgba(74,255,158,.3);background:rgba(74,255,158,.05);" onclick="exportarICS()">📅 Exportar plan al calendario (.ics)</button>';
-  html+='<div style="font-family:\'DM Mono\',monospace;font-size:.62rem;color:var(--muted2);text-align:center;margin-top:.35rem;">Compatible con Google Calendar, Apple Calendar y Outlook</div>';
+  html+='<div class="no-print" style="margin-top:.75rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">';
+  html+='<button class="btn btn-secondary" style="color:var(--accent);border-color:rgba(212,245,60,.3);background:rgba(212,245,60,.05);" onclick="descargarPlanHTML()">⬇ Guardar plan</button>';
+  html+='<button class="btn btn-secondary" style="color:var(--green);border-color:rgba(74,255,158,.3);background:rgba(74,255,158,.05);" onclick="exportarICS()">📅 Exportar al calendario</button>';
   html+='</div>';
+  html+='<div style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--muted2);text-align:center;margin-top:.3rem;">Guardar plan → abre en navegador sin necesidad de meter datos · Calendario → importa el .ics en Google Calendar, Apple o Outlook</div>';
 
   document.getElementById('plan-container').innerHTML=html;
   document.getElementById('btn-hoy-global').style.display='block';
@@ -2844,6 +2904,10 @@ function restaurarFormulario(){
   setRadio('trabajo',S.trabajo||'sed');
   setRadio('clima',S.clima||'temp');
   setRadio('terreno',String(S.terreno||0));
+  setRadio('modalidad',S.modalidad||'road');
+  // Mostrar/ocultar bloque desnivel según modalidad
+  var bloqueDesnivel=document.getElementById('terreno-desnivel-bloque');
+  if(bloqueDesnivel) bloqueDesnivel.style.display=(S.modalidad==='trail'||S.modalidad==='mixto')?'block':'none';
   setRadio('prueba',String(S.prueba||1500));
   setRadio('dias',String(S.dias||4));
   setRadio('tiempo',String(S.tiempoSesion||60));
@@ -3019,12 +3083,30 @@ function setVista(v){
 }
 
 // ── INFORME FISIOLÓGICO PREMIUM ───────────────────────
+// ES_TESTER: actívalo a true para la fase de prueba (descarga gratuita)
+var ES_TESTER = true;
+
 function abrirInforme(){
   document.getElementById('informe-panel').classList.add('open');
   document.getElementById('informe-error').style.display='none';
-  // Owner tiene acceso libre
-  if(ES_OWNER){
-    document.getElementById('informe-acceso-bloque').style.display='none';
+  var bloqueAcceso=document.getElementById('informe-acceso-bloque');
+  var bloqueTester=document.getElementById('informe-tester-bloque');
+  var precioBadge=document.getElementById('informe-precio-badge');
+  var precioSub=document.getElementById('informe-precio-sub');
+  if(ES_OWNER||ES_TESTER){
+    // Owner o tester: ocultar formulario de clave, mostrar aviso
+    bloqueAcceso.style.display='none';
+    if(ES_TESTER&&!ES_OWNER){
+      bloqueTester.style.display='block';
+      precioBadge.textContent='GRATIS';
+      precioBadge.style.background='var(--accent)';
+      precioSub.textContent='Fase de prueba · Descarga habilitada';
+    } else {
+      bloqueTester.style.display='none';
+    }
+  } else {
+    bloqueAcceso.style.display='block';
+    bloqueTester.style.display='none';
   }
 }
 function cerrarInforme(){
@@ -3032,13 +3114,34 @@ function cerrarInforme(){
 }
 
 function descargarInforme(){
+  if(ES_OWNER||ES_TESTER){
+    cerrarInforme();
+    generarDescargaInforme();
+    return;
+  }
   var clave=(document.getElementById('informe-clave-input').value||'').trim().toUpperCase();
-  if(!ES_OWNER&&!CLAVES_INFORME[clave]){
+  if(!CLAVES_INFORME[clave]){
     document.getElementById('informe-error').style.display='block';
     return;
   }
   cerrarInforme();
-  generarPDFInforme();
+  generarDescargaInforme();
+}
+
+function generarDescargaInforme(){
+  var htmlContent = construirHTMLInforme(false);
+  var blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  var nombre = (S.nombre||'atleta').replace(/\s+/g,'_').toLowerCase();
+  var prueba = (PRUEBA_NOMBRE[S.prueba]||'plan').replace(/\s/g,'');
+  a.download = 'Informe_VAMTrainerPro_'+nombre+'_'+prueba+'_'+new Date().toISOString().slice(0,10)+'.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  mostrarToast('📄 Informe descargado. Ábrelo en el navegador para imprimirlo en PDF.');
 }
 
 function abrirInformeDemo(){
@@ -3047,6 +3150,14 @@ function abrirInformeDemo(){
 }
 
 function generarPDFInforme(esDemo){
+  var w=window.open('','_blank');
+  if(!w){alert('Activa las ventanas emergentes para ver el ejemplo.');return;}
+  w.document.write(construirHTMLInforme(esDemo));
+  w.document.close();
+  setTimeout(function(){w.print();},500);
+}
+
+function construirHTMLInforme(esDemo){
   var v=S.VAM||14, vObj=S.vamObj||15;
   var prueba=S.prueba||1500, pruebaEs=PRUEBA_NOMBRE[prueba]||'';
   var perf=PERFIL_DIST[prueba]||PERFIL_DIST[5000];
@@ -3055,9 +3166,6 @@ function generarPDFInforme(esDemo){
   var distZ=getDistribucionZonas(prueba,'des');
   var hoy=new Date();
   var fechaStr=hoy.getDate()+'/'+(hoy.getMonth()+1)+'/'+hoy.getFullYear();
-
-  var w=window.open('','_blank');
-  if(!w){alert('Activa las ventanas emergentes para ver el informe.');return;}
 
   var html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">'
     +'<title>Informe Fisiológico — '+(S.nombre||'Atleta')+'</title>'
@@ -3167,9 +3275,7 @@ function generarPDFInforme(esDemo){
     +'</div>';
 
   html+='</body></html>';
-  w.document.write(html);
-  w.document.close();
-  setTimeout(function(){w.print();},500);
+  return html;
 }
 
 // ── REGISTRO INTERNO DE ATLETAS ───────────────────────
@@ -3450,6 +3556,100 @@ function mostrarToast(msg){
 }
 
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// TOGGLE TERRENO POR SESIÓN (modalidad mixto)
+// ══════════════════════════════════════════════════════
+var TERRENO_OVERRIDES={}; // {terrenoKey: true/false}
+
+function toggleTerrenoSesion(key, sg, d){
+  var esDesnivel=!TERRENO_OVERRIDES[key]; // toggle
+  TERRENO_OVERRIDES[key]=esDesnivel;
+
+  var btn=document.getElementById('toggle-terreno-'+key);
+  if(btn){
+    var toggleColor=esDesnivel?'var(--orange)':'var(--muted2)';
+    var toggleBg=esDesnivel?'rgba(255,140,66,.1)':'var(--surface2)';
+    var toggleBorder=esDesnivel?'rgba(255,140,66,.3)':'var(--border2)';
+    btn.style.color=toggleColor;
+    btn.style.background=toggleBg;
+    btn.style.borderColor=toggleBorder;
+    btn.textContent=esDesnivel?'⛰ Desnivel':'🏃 Llano';
+  }
+
+  // Actualizar descripción de la sesión con/sin corrección de terreno
+  var semData=PLAN_DATA.find(function(p){return p.semNum===sg;});
+  if(!semData||!semData.asig[d]) return;
+  var ses=semData.asig[d];
+  var pend=esDesnivel?(S.terreno||0):0;
+  var sesCor=aplicarCorreccionTerreno(JSON.parse(JSON.stringify(ses)),S.VAM||14,pend);
+
+  var descEl=document.querySelector('.ses-desc-'+key);
+  if(descEl) descEl.textContent=sesCor.desc;
+
+  // Actualizar nota de terreno
+  var notaId='nota-terreno-'+key;
+  var notaEl=document.getElementById(notaId);
+  if(notaEl){
+    if(pend>0&&sesCor._notaTerreno){
+      notaEl.style.display='block';
+      notaEl.textContent=sesCor._notaTerreno;
+    } else {
+      notaEl.style.display='none';
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// DESCARGA DEL PLAN COMPLETO COMO HTML
+// ══════════════════════════════════════════════════════
+function descargarPlanHTML(){
+  if(!PLAN_DATA||!PLAN_DATA.length){
+    mostrarToast('⚠️ Genera el plan primero.');
+    return;
+  }
+  // Serializar el estado actual del plan-container como HTML descargable
+  var container=document.getElementById('plan-container');
+  if(!container){mostrarToast('⚠️ No hay plan generado.');return;}
+
+  var nombre=(S.nombre||'atleta').replace(/\s+/g,'_').toLowerCase();
+  var prueba=(PRUEBA_NOMBRE[S.prueba]||'plan').replace(/\s/g,'');
+  var fecha=new Date().toISOString().slice(0,10);
+
+  // Obtener los estilos críticos del documento
+  var estilos='';
+  Array.from(document.styleSheets).forEach(function(ss){
+    try{
+      Array.from(ss.cssRules||[]).forEach(function(r){estilos+=r.cssText+'\n';});
+    }catch(e){}
+  });
+
+  var planHtml='<!DOCTYPE html><html lang="es"><head>'
+    +'<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+    +'<title>VAM Trainer Pro — '+( S.nombre||'Plan')+' — '+prueba+'</title>'
+    +'<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">'
+    +'<style>'+estilos+'body{background:#0a0a10;color:#f0f0f8;padding:1.5rem;max-width:920px;margin:0 auto;}'
+    +'.no-print,.feedback-bar,.semana-eval-btn,.vista-toggle,.btn-row{display:none!important;}'
+    +'.meso-body{display:block!important;}.days-grid{display:block!important;}'
+    +'@media print{body{background:#fff;color:#111;}:root{--bg:#fff;--surface:#fff;--surface2:#f7f7f7;--border:#ddd;--border2:#ccc;--text:#111;--muted:#444;--muted2:#777;--accent:#4a7c00;--green:#2d6a00;--blue:#1a4a8a;--orange:#8a4a00;--red:#8a1a1a;}}'
+    +'</style></head><body>'
+    +'<div style="font-family:\'Syne\',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:.25rem;">VAM<span style="color:#d4f53c;">·</span>trainer Pro</div>'
+    +'<div style="font-family:\'DM Mono\',monospace;font-size:.65rem;color:#55556a;letter-spacing:.1em;margin-bottom:1.5rem;">PLAN GUARDADO · '+(S.nombre||'—').toUpperCase()+' · '+prueba.toUpperCase()+' · '+fecha+'</div>'
+    +container.innerHTML
+    +'<script>function toggleMeso(i){var b=document.getElementById("meso-body-"+i);if(b)b.classList.toggle("open");}function toggleWeek(id){var w=document.getElementById(id);if(w)w.style.display=w.style.display==="none"?"block":"none";}<\/script>'
+    +'</body></html>';
+
+  var blob=new Blob([planHtml],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='VAMTrainerPro_'+nombre+'_'+prueba+'_'+fecha+'.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  mostrarToast('⬇ Plan guardado. Ábrelo en el navegador para consultarlo sin conexión.');
+}
+
 // EXPORTAR AL CALENDARIO (.ics)
 // ══════════════════════════════════════════════════════
 function exportarICS(){
@@ -3459,24 +3659,23 @@ function exportarICS(){
   }
 
   // Fecha de inicio del plan: lunes de la semana 1
-  // Calculamos a partir de S.fecha (fecha de competición) restando las semanas del plan
-  var fechaComp=S.fecha?new Date(S.fecha):new Date();
+  // Usamos UTC para evitar problemas de zona horaria
+  var fechaComp=S.fecha?new Date(S.fecha+'T12:00:00Z'):new Date();
   var fechaInicio=new Date(fechaComp);
-  fechaInicio.setDate(fechaInicio.getDate()-S.semanas*7);
-  // Ajustar al lunes anterior
-  var dow=fechaInicio.getDay(); // 0=dom
+  fechaInicio.setUTCDate(fechaInicio.getUTCDate()-S.semanas*7);
+  // Ajustar al lunes anterior (UTC)
+  var dow=fechaInicio.getUTCDay(); // 0=dom
   var diffLun=dow===0?-6:(1-dow);
-  fechaInicio.setDate(fechaInicio.getDate()+diffLun);
+  fechaInicio.setUTCDate(fechaInicio.getUTCDate()+diffLun);
 
   var DIAS_OFFSET={1:0,2:1,3:2,4:3,5:4,6:5,0:6}; // Lun=0...Dom=6
-  var HORA_DEFECTO='070000'; // 07:00 por defecto
 
-  function icsDate(base,offsetDias){
+  function icsDateUTC(base,offsetDias){
     var d=new Date(base);
-    d.setDate(d.getDate()+offsetDias);
-    var y=d.getFullYear();
-    var m=pad(d.getMonth()+1);
-    var dd=pad(d.getDate());
+    d.setUTCDate(d.getUTCDate()+offsetDias);
+    var y=d.getUTCFullYear();
+    var m=pad(d.getUTCMonth()+1);
+    var dd=pad(d.getUTCDate());
     return y+''+m+''+dd;
   }
 
@@ -3493,27 +3692,26 @@ function exportarICS(){
   lines.push('VERSION:2.0');
   lines.push('PRODID:-//VAM Trainer Pro//ES');
   lines.push('CALSCALE:GREGORIAN');
-  lines.push('X-WR-CALNAME:VAM Trainer Pro — '+(S.nombre||'Plan'));
+  lines.push('METHOD:PUBLISH');
+  lines.push('X-WR-CALNAME:VAM Trainer Pro \u2014 '+(S.nombre||'Plan'));
   lines.push('X-WR-TIMEZONE:Europe/Madrid');
 
   // Evento de competición
   if(S.fecha){
     var fComp=S.fecha.replace(/-/g,'');
-    var PRUEBA_NOMBRE2={800:'800m',1000:'1000m',1500:'1500m',3000:'3000m',5000:'5K',10000:'10K',21097:'Media Maratón',42195:'Maratón'};
-    var nombrePrueba=PRUEBA_NOMBRE2[S.prueba]||'Competición';
+    var PRUEBA_NOMBRE2={800:'800m',1000:'1000m',1500:'1500m',3000:'3000m',5000:'5K',10000:'10K',21097:'Media Maraton',42195:'Maraton'};
+    var nombrePrueba=PRUEBA_NOMBRE2[S.prueba]||'Competicion';
     lines.push('BEGIN:VEVENT');
     lines.push('UID:COMP-'+Date.now()+'@vamtrainerpro');
     lines.push('DTSTART;VALUE=DATE:'+fComp);
     lines.push('DTEND;VALUE=DATE:'+fComp);
-    lines.push('SUMMARY:🏆 COMPETICIÓN — '+nombrePrueba);
-    lines.push('DESCRIPTION:Objetivo: '+nombrePrueba+' · VAM objetivo '+S.vamObj+' km/h · Plan VAM Trainer Pro');
-    lines.push('CATEGORIES:Competición');
+    lines.push('SUMMARY:COMPETICION \u2014 '+nombrePrueba);
+    lines.push('DESCRIPTION:Objetivo: '+nombrePrueba+' VAM objetivo '+S.vamObj+' km/h Plan VAM Trainer Pro');
     lines.push('END:VEVENT');
   }
 
   PLAN_DATA.forEach(function(semData){
     var sg=semData.semNum;
-    // Offset en días desde el inicio del plan (semana sg empieza en lunes)
     var offsetSemLunes=(sg-1)*7;
 
     ORDEN_SEMANA.forEach(function(d){
@@ -3523,7 +3721,7 @@ function exportarICS(){
       if(!ses||ses.tipo==='descanso') return;
 
       var offsetDia=offsetSemLunes+DIAS_OFFSET[d];
-      var fechaDia=icsDate(fechaInicio,offsetDia);
+      var fechaDia=icsDateUTC(fechaInicio,offsetDia);
 
       // Duración estimada en minutos
       var durMin=60;
@@ -3531,43 +3729,41 @@ function exportarICS(){
         var tStr=ses.tiempo+'';
         var mMatch=tStr.match(/(\d+)\s*min/);
         var hMatch=tStr.match(/(\d+)\s*h/);
+        if(hMatch) durMin=parseInt(hMatch[1])*60;
         if(mMatch) durMin=parseInt(mMatch[1]);
-        if(hMatch) durMin=parseInt(hMatch[1])*60+(mMatch?parseInt(mMatch[1]):0);
       }
 
-      // Calcular hora de fin
-      var hIni=7,minIni=0;
-      var minFin=minIni+durMin;
-      var hFin=hIni+Math.floor(minFin/60);
-      var mFin=minFin%60;
+      // Hora inicio/fin en UTC (07:00 local Europa/Madrid = 06:00 UTC en invierno, 05:00 en verano)
+      // Usamos formato con TZID para que el cliente gestione la hora local correctamente
+      var dtStart='TZID=Europe/Madrid:'+fechaDia+'T070000';
+      var hFin=7+Math.floor(durMin/60);
+      var mFin=durMin%60;
+      var dtEnd='TZID=Europe/Madrid:'+fechaDia+'T'+pad(hFin)+pad(mFin)+'00';
 
-      var dtStart=fechaDia+'T'+pad(hIni)+pad(minIni)+'00';
-      var dtEnd=fechaDia+'T'+pad(hFin)+pad(mFin)+'00';
-
-      // Zona del evento
-      var zonaEmoji=ses.zona===1?'🟢':ses.zona===2?'🔵':'🔴';
+      var zonaEmoji=ses.zona===1?'Z1':ses.zona===2?'Z2':'Z3';
       var mesoLabel=sg<=Math.ceil(S.semanas*0.25)?'BASE':sg<=Math.ceil(S.semanas*0.55)?'DESARROLLO':sg<=Math.ceil(S.semanas*0.8)?'ESPECIFICIDAD':'PUESTA A PUNTO';
 
-      var titulo=zonaEmoji+' S'+sg+' — '+(ses.nombre||'Entrenamiento');
-      var desc='📅 Semana '+sg+' · '+mesoLabel+'\n';
-      desc+='⏱ Duración: '+(ses.tiempo||durMin+' min')+'\n';
-      if(ses.kmNum) desc+='📏 Distancia: ~'+Math.round(ses.kmNum*10)/10+' km\n';
-      desc+='\n'+escaparICS(ses.desc||'');
-      if(ses.alt) desc+='\n\n💡 Alternativa: '+escaparICS(ses.alt);
-      if(ses._notaLesion) desc+='\n\n🦵 '+escaparICS(ses._notaLesion);
-      if(ses._notaEdad) desc+='\n\n⚡ '+escaparICS(ses._notaEdad);
+      var titulo='['+zonaEmoji+'] S'+sg+' \u2014 '+(ses.nombre||'Entrenamiento');
+      var desc='Semana '+sg+' '+mesoLabel+'\\n';
+      desc+='Duracion: '+(ses.tiempo||durMin+' min')+'\\n';
+      if(ses.kmNum) desc+='Distancia: ~'+Math.round(ses.kmNum*10)/10+' km\\n';
+      if(ses.desc) desc+='\\n'+escaparICS(ses.desc);
+      if(ses.alt) desc+='\\n\\nAlternativa: '+escaparICS(ses.alt);
+      if(ses._notaLesion) desc+='\\n\\n'+escaparICS(ses._notaLesion);
+      if(ses._notaEdad) desc+='\\n\\n'+escaparICS(ses._notaEdad);
+      if(ses._notaTerreno) desc+='\\n\\n'+escaparICS(ses._notaTerreno);
 
       lines.push('BEGIN:VEVENT');
       lines.push('UID:'+uid(sg,d));
-      lines.push('DTSTART:'+dtStart);
-      lines.push('DTEND:'+dtEnd);
+      lines.push('DTSTART;'+dtStart);
+      lines.push('DTEND;'+dtEnd);
       lines.push('SUMMARY:'+escaparICS(titulo));
-      lines.push('DESCRIPTION:'+escaparICS(desc));
+      lines.push('DESCRIPTION:'+desc);
       lines.push('CATEGORIES:Entrenamiento Running');
       lines.push('BEGIN:VALARM');
       lines.push('TRIGGER:-PT30M');
       lines.push('ACTION:DISPLAY');
-      lines.push('DESCRIPTION:Entrenamiento en 30 min');
+      lines.push('DESCRIPTION:Entrenamiento VAM en 30 min');
       lines.push('END:VALARM');
       lines.push('END:VEVENT');
     });
@@ -3585,7 +3781,7 @@ function exportarICS(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  mostrarToast('📅 Calendario exportado. Importa el archivo .ics en Google Calendar, Apple o Outlook.');
+  mostrarToast('📅 Archivo .ics descargado. Importa en Google Calendar (Configuración → Importar), Apple Calendar o Outlook.');
 }
 
 // INIT
