@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0061)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v8_7_2.html -->
+<!-- saved from url=(0059)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v8_8.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -314,7 +314,7 @@ svg.carga-svg{display:block;}
 
     <div id="acceso-clave-bloque">
       <input class="acceso-input" id="acceso-input" type="text" placeholder="INTRODUCE TU CLAVE" maxlength="20" oninput="this.value=this.value.toUpperCase()">
-      <div class="acceso-error" id="acceso-error">Clave no válida o caducada. Comprueba el email de confirmación.</div>
+      <div class="acceso-error" id="acceso-error" style="display: block;">No se pudo verificar la clave. Comprueba tu conexión a internet e inténtalo de nuevo.</div>
       <button class="btn btn-primary btn-full" onclick="validarAcceso()">Acceder →</button>
     </div>
 
@@ -437,7 +437,7 @@ svg.carga-svg{display:block;}
     <button class="btn-hoy" id="btn-informe-global" onclick="abrirInforme()" style="background:rgba(212,245,60,.1);color:var(--accent);border-color:rgba(212,245,60,.3);display:none;">★ INFORME</button>
     <button class="btn-hoy" id="btn-registro-global" onclick="abrirRegistro()" style="background:rgba(92,168,255,.08);color:var(--blue);border-color:rgba(92,168,255,.2);display:none;">≡ REGISTRO</button>
     <button class="btn-hoy" onclick="abrirExport()" style="background:rgba(74,255,158,.08);color:var(--green);border-color:rgba(74,255,158,.2);">⇅ PLAN</button>
-    <span class="hdr-badge">v8.7</span>
+    <span class="hdr-badge">v8.8</span>
   </div>
 </div>
 
@@ -513,22 +513,47 @@ svg.carga-svg{display:block;}
     <div class="rbtn" data-g="equip" data-v="nada" onclick="toggleEquip(this)">Solo exterior</div>
   </div>
   <div class="sdiv">Modalidad de entrenamiento</div>
-  <div class="info-box" style="font-size:.76rem;">Elige tu modalidad principal. En Road los ritmos son planos. En Trail el plan alterna días de desnivel con días llanos. En Mixto tú decides sesión a sesión con el toggle ⛰/🏃 en el plan generado.</div>
   <div class="radio-grid g3" style="margin-bottom:.75rem;">
-    <div class="rbtn on" data-g="modalidad" data-v="road" onclick="selModalidad(this)">🏃 Road<small>Asfalto / pista</small></div>
-    <div class="rbtn" data-g="modalidad" data-v="trail" onclick="selModalidad(this)">⛰️ Trail<small>Montaña / dirt</small></div>
-    <div class="rbtn" data-g="modalidad" data-v="mixto" onclick="selModalidad(this)">🔀 Mixto<small>Tú decides cada día</small></div>
+    <div class="rbtn on" data-g="modalidad" data-v="road" onclick="selModalidad(this)">🏃 Plano<small>Asfalto / pista / llano</small></div>
+    <div class="rbtn" data-g="modalidad" data-v="trail" onclick="selModalidad(this)">🔀 Plano + Trail<small>Alterna llano y pendiente</small></div>
+    <div class="rbtn" data-g="modalidad" data-v="pendiente" onclick="selModalidad(this)">⛰️ Pendiente pura<small>Sin zonas llanas disponibles</small></div>
   </div>
-  <div id="terreno-desnivel-bloque" style="display:none;">
+
+  <!-- Bloque trail: días disponibles con desnivel -->
+  <div id="terreno-trail-bloque" style="display:none;">
+    <div class="info-box" style="font-size:.76rem;margin-bottom:.75rem;">El plan alterna científicamente sesiones en llano con sesiones en pendiente. Marca los días en que tienes acceso a terreno con desnivel (trail/cuestas). El resto se asignarán en llano.</div>
+    <div style="font-size:.7rem;color:var(--muted2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Días con acceso a terreno con desnivel</div>
+    <div class="radio-grid" style="grid-template-columns:repeat(7,1fr);gap:.4rem;margin-bottom:.75rem;">
+      <div class="rbtn" data-g="diasTrail" data-v="1" onclick="this.classList.toggle(&#39;on&#39;)">L</div>
+      <div class="rbtn" data-g="diasTrail" data-v="2" onclick="this.classList.toggle(&#39;on&#39;)">M</div>
+      <div class="rbtn on" data-g="diasTrail" data-v="3" onclick="this.classList.toggle(&#39;on&#39;)">X</div>
+      <div class="rbtn" data-g="diasTrail" data-v="4" onclick="this.classList.toggle(&#39;on&#39;)">J</div>
+      <div class="rbtn" data-g="diasTrail" data-v="5" onclick="this.classList.toggle(&#39;on&#39;)">V</div>
+      <div class="rbtn on" data-g="diasTrail" data-v="6" onclick="this.classList.toggle(&#39;on&#39;)">S</div>
+      <div class="rbtn on" data-g="diasTrail" data-v="0" onclick="this.classList.toggle(&#39;on&#39;)">D</div>
+    </div>
     <div style="font-size:.7rem;color:var(--muted2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Pendiente media de tus rutas con desnivel</div>
     <div class="radio-grid g4">
-      <div class="rbtn on" data-g="terreno" data-v="0" onclick="pick(this)">Llano<small>0-2%</small></div>
-      <div class="rbtn" data-g="terreno" data-v="3.5" onclick="pick(this)">Ondulado<small>2-5%</small></div>
-      <div class="rbtn" data-g="terreno" data-v="7" onclick="pick(this)">Montañoso<small>5-10%</small></div>
-      <div class="rbtn" data-g="terreno" data-v="12" onclick="pick(this)">Muy montañoso<small>&gt; 10%</small></div>
+      <div class="rbtn on" data-g="terreno" data-v="3.5" onclick="pick(this)">Suave<small>2-5%</small></div>
+      <div class="rbtn" data-g="terreno" data-v="7" onclick="pick(this)">Moderado<small>5-10%</small></div>
+      <div class="rbtn" data-g="terreno" data-v="12" onclick="pick(this)">Intenso<small>&gt; 10%</small></div>
     </div>
   </div>
-  <div id="terreno-info" style="display:none;margin-top:.6rem;"></div>
+
+  <!-- Bloque pendiente pura: subselector 3-5% / 5-7% -->
+  <div id="terreno-pendiente-bloque" style="display:none;">
+    <div class="warn-box" style="font-size:.76rem;margin-bottom:.75rem;">⛰️ Todas las sesiones se realizarán en pendiente. Los ritmos se ajustan automáticamente usando la fórmula de Minetti et al. (2002). La VAM en llano se convierte a VAM equivalente en pendiente.</div>
+    <div style="font-size:.7rem;color:var(--muted2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Selecciona tu rango de pendiente disponible</div>
+    <div class="radio-grid g2" style="margin-bottom:.75rem;">
+      <div class="rbtn on" data-g="pendientePura" data-v="4" onclick="selPendientePura(this)">🟡 3% – 5%<small>Cuestas moderadas · Series adaptadas · Pendiente media 4%</small></div>
+      <div class="rbtn" data-g="pendientePura" data-v="6" onclick="selPendientePura(this)">🔴 5% – 7%<small>Cuestas exigentes · Alta activación glúteo/gemelo · Pendiente media 6%</small></div>
+    </div>
+    <div id="pendiente-vam-info" style="display:none;margin-top:.5rem;"></div>
+    <div id="terreno-info" style="margin-top:.6rem;"></div>
+  </div>
+
+  <!-- Para road: terreno-info invisible -->
+  <div id="terreno-info-road" style="display:none;"></div>
 
   <button class="btn btn-primary btn-full" onclick="goStep(2)">Continuar →</button>
 </div>
@@ -928,7 +953,9 @@ var S={
   nombre:'',edad:30,sexo:'M',nivel:'med',trabajo:'sed',clima:'temp',
   equipamiento:[],cicloDia:null,cicloDur:28,kmHab:35,
   terreno:0,  // pendiente media % para días de desnivel
-  modalidad:'road', // 'road' | 'trail' | 'mixto'
+  pendientePura:4,  // % media pendiente pura (4=3-5% o 6=5-7%)
+  diasTrail:[3,6,0], // dias con trail disponible (modo plano+trail)
+  modalidad:'road', // 'road' | 'trail' | 'pendiente'
   prueba:1500,tActS:330,tObjS:290,vamAuto:0,vamManual:0,
   fecha:null,semanas:12,dias:4,diasSemana:[1,3,5,0],tiempoSesion:60,
   salud:'ok',estres:3,sueno:'med',notas:'',lesion:'',
@@ -1147,6 +1174,134 @@ var BANCO_CUESTAS=[
     alt:'Cinta 3%: alternar 20″ sprint / 60″ sostenido.',tiempo:'~50min',kmNum:2.24+mts(v,0.60,2700)/1000};}
 ];
 
+// ══════════════════════════════════════════════════════
+// BANCO · SESIONES PENDIENTE PURA
+// ══════════════════════════════════════════════════════
+// Referencia científica base:
+//   Minetti et al. (2002) J Appl Physiol — coste energético en pendiente
+//   Ferley et al. (2014) J Strength Cond — cuestas y economía
+//   Billat (2001) Sports Med — series en terreno variado
+//   Noakes (2003) — resistencia específica en montaña
+//   Schache et al. (2014) — biomecánica en pendiente
+// ══════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════
+// MINETTI et al. (2002) — COSTE ENERGÉTICO EN PENDIENTE
+// Fórmula: E(i) = 155.4i^5 - 30.4i^4 - 43.3i^3 + 46.3i^2 + 19.5i + 3.6
+// Llano = 3.6 J/kg/m
+// Bajada: i negativo → coste menor (hasta cierto punto), luego aumenta por freno
+// ══════════════════════════════════════════════════════
+function minettiJkgm(pctPend){
+  var i=pctPend/100; // positivo=subida, negativo=bajada
+  return 155.4*Math.pow(i,5)-30.4*Math.pow(i,4)-43.3*Math.pow(i,3)+46.3*Math.pow(i,2)+19.5*i+3.6;
+}
+function minettiFactorSubida(pctPend){ return minettiJkgm(Math.abs(pctPend))/3.6; }
+// Ritmo en SUBIDA: ajustado por Minetti. Bajada siempre por RPE (sin ritmo objetivo)
+function rSub(v,p,pctPend){ return fmt(rKm(v,p)*minettiFactorSubida(pctPend)); }
+// Tiempo de trabajo en subida para distM metros
+function tSub(v,p,distM,pctPend){ return fmt((distM/1000)*rKm(v,p)*minettiFactorSubida(pctPend)); }
+// Etiqueta de nivel
+function labelPend(pct){ return pct<=4?'pendiente moderada (3-5%)':'pendiente exigente (5-7%)'; }
+// Texto bloque informativo de referencia Minetti
+function notaPend(pctPend){
+  var fS=minettiFactorSubida(pctPend);
+  var ajS=Math.round((fS-1)*100);
+  return '📐 Minetti (2002): subida +'+ajS+'% coste energético vs llano. Ritmo de subida ajustado. Bajada siempre por sensaciones (RPE 3-4/10).';
+}
+
+// ── BANCO HILL SPRINTS ──────────────────────────────
+var BANCO_PEND_SPRINTS=function(v,pctPend){
+  var lp=labelPend(pctPend);
+  var np=notaPend(pctPend);
+  return [
+    {tipo:'cuestas_pend',nombre:'Hill Sprints · 10×10″ potencia máxima',zona:3,intens:9,
+      desc:'Cal 15min Z1. 10 sprints de 10″ en subida ('+lp+') al MÁXIMO posible — sin ritmo objetivo. '+rtxt(v,1.10,pctPend)+' referencial. Bajada andando, recuperación completa (2-3min) antes de cada sprint. Activa fibras rápidas, fuerza glúteo/isquio/gemelo. Schache et al. (2014). '+np,
+      alt:'6 sprints si primera sesión · Terreno seco sin irregularidades.',tiempo:'~35min',kmNum:1.2},
+    {tipo:'cuestas_pend',nombre:'Hill Sprints largos · 8×20″ máxima potencia',zona:3,intens:9,
+      desc:'Cal 15min Z1. 8×20″ en subida al máximo sostenible. '+rtxt(v,1.08,pctPend)+'. Pausa 3min andando/bajando. Mayor acumulación láctica que los 10″ — estimula el metabolismo anaeróbico en terreno real. González Badillo (2002). '+np,
+      alt:'6 reps si fatiga · Misma cuesta, misma pendiente siempre.',tiempo:'~40min',kmNum:1.5},
+    {tipo:'cuestas_pend',nombre:'Hill Sprints reactivos · 12×8″ frecuencia máxima',zona:3,intens:10,
+      desc:'Cal 15min. 12×8″ en subida con MÁXIMA frecuencia de zancada. Pausa 2.5min bajando. '+rtxt(v,1.12,pctPend)+' (referencia). Desarrolla potencia neuromuscular máxima en pendiente real. Protocolo IIMC adaptado a terreno. '+np,
+      alt:'8 reps si inicio bloque · Camino duro o céspeded compacto.',tiempo:'~38min',kmNum:1.0}
+  ];
+};
+
+// ── BANCO RODAJES CONTINUOS EN PENDIENTE ───────────
+var BANCO_PEND_RODAJE=function(v,pctPend){
+  var lp=labelPend(pctPend);
+  var np=notaPend(pctPend);
+  var rZ1s=rSub(v,0.65,pctPend);
+  var rZ2s=rSub(v,0.80,pctPend);
+  return [
+    {tipo:'rodaje_pend',nombre:'Rodaje Z1 en pendiente · 40min',zona:1,intens:2,
+      desc:'40min Z1 alternando subidas y bajadas naturales. ↑ Subida: '+rZ1s+' /km (equiv. a '+fmt(rKm(v,0.65))+' en llano, RPE 4-5/10). ↓ Bajada: por sensaciones, RPE 3-4/10. Adapta el sistema neuromuscular al terreno sin aumentar el impacto articular. Minetti et al. (2002). '+np,
+      alt:'Reducir a 30min si primera vez en pendiente sostenida.',tiempo:'40min',kmNum:mts(v,0.65,2400)/1000},
+    {tipo:'rodaje_pend',nombre:'Rodaje Z1→Z2 en pendiente · 60min',zona:1,intens:3,
+      desc:'60min en '+lp+'. Primeros 30min Z1 (↑ subida: '+rZ1s+' /km, RPE 4-5/10), últimos 20min Z2 (↑ subida: '+rZ2s+' /km, RPE 6-7/10). Bajadas siempre por sensaciones. 10min vuelta calma. Maximiza la adaptación mitocondrial específica a pendiente. Noakes (2003). '+np,
+      alt:'45min si fatiga acumulada · 40+10+10 si cuesta corta.',tiempo:'60min',kmNum:mts(v,0.70,3600)/1000},
+    {tipo:'rodaje_pend',nombre:'Rodaje técnico subida-bajada · 50min',zona:1,intens:2,
+      desc:'50min: 25min subida continua (↑ '+rZ1s+' /km, RPE 5/10) + 25min bajada técnica por sensaciones (RPE 4/10 · foco técnico: lean forward, zancada corta, pie bajo el centro de gravedad). La bajada activa trabajo excéntrico de cuádriceps. Schache et al. (2014). '+np,
+      alt:'Reducir a 20+20 si pendiente muy exigente.',tiempo:'50min',kmNum:mts(v,0.67,3000)/1000},
+    {tipo:'rodaje_pend',nombre:'Tirada larga en pendiente · 75-90min',zona:1,intens:3,
+      desc:'75-90min Z1 alternando subidas y bajadas de tu ruta. ↑ Subida: '+rZ1s+' /km (RPE 4-5/10). ↓ Bajada: por sensaciones (RPE 3-4/10). Máxima adaptación aeróbica específica al terreno. Solo mesociclos de base y desarrollo. Geles si >60min. '+np,
+      alt:'60min si primeras semanas · Terreno conocido, avisa a alguien.',tiempo:'~80min',kmNum:mts(v,0.64,4800)/1000}
+  ];
+};
+
+// ── BANCO GACON ADAPTADO A PENDIENTE ───────────────
+var BANCO_PEND_GACON=function(v,pctPend){
+  var lp=labelPend(pctPend);
+  var np=notaPend(pctPend);
+  var rGS=rSub(v,1.05,pctPend);
+  return [
+    {tipo:'series_pend',nombre:'Gacon 30″/30″ en pendiente · 105% VAM-equiv.',zona:3,intens:8,
+      desc:'Cal 15min Z1. 3 series × 5 reps: 30″ SUBIDA al máximo (↑ ~'+rGS+' /km referencial) + 30″ bajada trotando por sensaciones (RPE 3/10, recuperación activa). Pausa 3min entre series. Protocolo Gacon (1994) adaptado a terreno real. Buchheit & Laursen (2013). '+np,
+      alt:'2 series si primera vez · 90% esfuerzo si pendiente 5-7%.',tiempo:'~38min',kmNum:2.5},
+    {tipo:'series_pend',nombre:'Gacon 20″/20″ en pendiente · micro-intermitente',zona:3,intens:7,
+      desc:'Cal 15min. 2 series × 10 reps: 20″ SUBIDA máximo (↑ ~'+rGS+' /km) + 20″ bajada suave por sensaciones (RPE 2-3/10). Pausa 4min. Menor lactato que el 30/30. Ideal para iniciación a la calidad en pendiente o semanas de transformación. '+np,
+      alt:'1 serie si primera vez · Cuesta sin irregularidades.',tiempo:'~32min',kmNum:1.8},
+    {tipo:'series_pend',nombre:'Gacon escalera en pendiente · 90→100→105% progresivo',zona:3,intens:9,
+      desc:'Cal 15min. 2 bloques: [3min 90% (↑ '+rSub(v,0.90,pctPend)+' /km) + 2min 95% (↑ '+rSub(v,0.95,pctPend)+' /km) + 1min 100% VAM-equiv. (↑ '+rSub(v,1.0,pctPend)+' /km)] + 6min bajada por sensaciones (RPE 3/10). Pausa 5min. Solo mesociclo de especificidad. Billat & Koralsztein (1996). '+np,
+      alt:'1 bloque si calor · Cuesta conocida, buena tracción.',tiempo:'~50min',kmNum:3.0}
+  ];
+};
+
+// ── BANCO TEMPO SUBIDA + BAJADA TÉCNICA ────────────
+var BANCO_PEND_TEMPO=function(v,pctPend){
+  var lp=labelPend(pctPend);
+  var np=notaPend(pctPend);
+  var rTS=rSub(v,0.87,pctPend);
+  var r80S=rSub(v,0.80,pctPend);
+  var r75S=rSub(v,0.75,pctPend);
+  return [
+    {tipo:'rodaje_pend',nombre:'Tempo umbral en subida · 20min continuo',zona:2,intens:6,
+      desc:'Cal 10min Z1. 20min de subida continua al umbral: ↑ '+rTS+' /km (87% VAM-equiv., RPE 7/10). Bajada 10min por sensaciones (RPE 4/10, foco técnico). La subida al umbral en pendiente activa más fibras tipo I/IIa que en llano. Billat (2001). '+np,
+      alt:'15min si primera vez · 2×10min con 3min pausa si cuesta corta.',tiempo:'~45min',kmNum:mts(v,0.80,1800)/1000},
+    {tipo:'rodaje_pend',nombre:'Tempo progresivo en pendiente · 3 bloques',zona:2,intens:7,
+      desc:'Cal 10min. 3 bloques en '+lp+': [8min ↑ '+r75S+' /km (75% VAM-equiv.)] → [8min ↑ '+r80S+' /km (80%)] → [8min ↑ '+rTS+' /km umbral (87%)]. Entre bloques: 5min bajada por sensaciones (RPE 3-4/10). Simula la acumulación de fatiga en trail. Noakes (2003). '+np,
+      alt:'2 bloques si primera vez · -5% cada bloque en calor.',tiempo:'~55min',kmNum:mts(v,0.80,1440)/1000*2},
+    {tipo:'rodaje_pend',nombre:'Tempo mixto subida Z2 + bajada por sensaciones · circuito',zona:2,intens:5,
+      desc:'Cal 10min. Circuito 4×: [subida 6min ↑ '+r80S+' /km (80% VAM-equiv., RPE 6-7/10) + bajada 4min por sensaciones (RPE 4/10, técnica)]. Total 40min trabajo. Desarrolla economía específica en pendiente y transición aeróbico-umbral. '+np,
+      alt:'3 circuitos si fatiga · Superficie con buena tracción.',tiempo:'~55min',kmNum:mts(v,0.72,2400)/1000*3}
+  ];
+};
+
+// Distribución científica por mesociclo para pendiente pura
+// BASE:     Z1 continuo (50%) + Gacon suave (30%) + Tempo suave (20%)
+// DESARROLLO: Z1 largo (30%) + Gacon 30/30 (35%) + Tempo umbral (35%)
+// ESPECIF.: Sprints (25%) + Gacon escalera (35%) + Tempo progresivo (25%) + Largo (15%)
+// PEAK:     Z1 recuperación (50%) + Gacon 20/20 (30%) + Hill sprints mantenimiento (20%)
+function buildSesionesPendientePura(v,pctPend,tipoMeso){
+  var sp=BANCO_PEND_SPRINTS(v,pctPend);
+  var ro=BANCO_PEND_RODAJE(v,pctPend);
+  var ga=BANCO_PEND_GACON(v,pctPend);
+  var te=BANCO_PEND_TEMPO(v,pctPend);
+  if(tipoMeso==='base')      return [ro[0],ga[1],te[0],ro[1],ga[0],ro[2],te[2],ro[0]];
+  if(tipoMeso==='des')       return [ro[1],ga[0],te[1],ro[3],ga[1],te[0],ro[2],ga[0]];
+  if(tipoMeso==='spec')      return [sp[0],ga[2],te[1],ro[3],sp[1],ga[0],te[0],ro[1]];
+  /* peak */                 return [ro[0],ga[1],ro[2],sp[2],ro[0],ga[1],ro[0],te[2]];
+}
+
 var BANCO_DESC=[
   {tipo:'descanso',nombre:'Descanso activo — movilidad y recuperación',zona:0,intens:0,
    desc:'Sin correr. Opciones: movilidad articular 20min (cadera, tobillos, columna), rodillo de espuma en cuádriceps/gemelos/IT-band, yoga suave, caminata 20-30min. La recuperación activa acelera la eliminación de lactato (Weerapong et al., 2005).',
@@ -1312,9 +1467,17 @@ function readStep1(){
   S.sexo=getVal('sexo');S.nivel=getVal('nivel');S.kmHab=parseInt(getVal('kmhab'))||35;
   S.trabajo=getVal('trabajo');S.clima=getVal('clima');
   S.modalidad=getVal('modalidad')||'road';
-  S.terreno=parseFloat(getVal('terreno'))||0;
-  // Si es road puro, terreno = 0 siempre
-  if(S.modalidad==='road') S.terreno=0;
+  // Leer días trail seleccionados (modo plano+trail)
+  S.diasTrail=[];
+  document.querySelectorAll('[data-g=diasTrail].on').forEach(function(el){
+    S.diasTrail.push(parseInt(el.getAttribute('data-v')));
+  });
+  // Leer pendiente pura
+  S.pendientePura=parseFloat(getVal('pendientePura'))||4;
+  // Asignar terreno según modalidad
+  if(S.modalidad==='road'){ S.terreno=0; }
+  else if(S.modalidad==='trail'){ S.terreno=parseFloat(getVal('terreno'))||3.5; }
+  else if(S.modalidad==='pendiente'){ S.terreno=S.pendientePura; }
   S.cicloDia=document.getElementById('f-ciclo').value||null;
   S.cicloDur=parseInt(document.getElementById('f-ciclo-dur').value)||28;
   // Leer historial de lesiones
@@ -1325,13 +1488,52 @@ function readStep1(){
   });
 }
 
-// Muestra/oculta el selector de pendiente según modalidad
+// ══════════════════════════════════════════════════════
+// SELECTOR MODALIDAD — 3 modos: road / trail / pendiente
+// ══════════════════════════════════════════════════════
 function selModalidad(el){
   document.querySelectorAll('[data-g=modalidad]').forEach(function(b){b.classList.remove('on');});
   el.classList.add('on');
   var val=el.getAttribute('data-v');
-  var bloque=document.getElementById('terreno-desnivel-bloque');
-  if(bloque) bloque.style.display=(val==='trail'||val==='mixto')?'block':'none';
+  var bTrail=document.getElementById('terreno-trail-bloque');
+  var bPend=document.getElementById('terreno-pendiente-bloque');
+  if(bTrail) bTrail.style.display=(val==='trail')?'block':'none';
+  if(bPend)  bPend.style.display=(val==='pendiente')?'block':'none';
+  // Actualizar info Minetti si pendiente pura
+  if(val==='pendiente') actualizarInfoPendientePura();
+}
+
+// Selección de rango de pendiente pura (3-5% o 5-7%)
+function selPendientePura(el){
+  document.querySelectorAll('[data-g=pendientePura]').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  actualizarInfoPendientePura();
+}
+
+// Muestra cálculo VAM equivalente y ritmos subida/bajada para pendiente seleccionada
+function actualizarInfoPendientePura(){
+  var pend=parseFloat(getVal('pendientePura'))||4;
+  var infoEl=document.getElementById('pendiente-vam-info');
+  if(!infoEl) return;
+  // Minetti et al. (2002) — coste subida Y bajada
+  function eMinetti(i){ return 155.4*Math.pow(i,5)-30.4*Math.pow(i,4)-43.3*Math.pow(i,3)+46.3*Math.pow(i,2)+19.5*i+3.6; }
+  var eSubida=eMinetti(pend/100);
+  var eLlano=3.6;
+  var fS=eSubida/eLlano;
+  var vamEj=14;
+  // Ritmo de referencia a VAM en subida y bajada
+  var ritmoLlano=3600/vamEj; // seg/km a VAM en llano
+  var ritmoSub=Math.round(ritmoLlano*fS);
+  function fmtSeg(s){var m=Math.floor(s/60),sc=Math.round(s%60);return (m<10?'0':'')+m+':'+(sc<10?'0':'')+sc;}
+  var ajS=Math.round((fS-1)*100);
+  var etiq=pend<=4?'3-5%':'5-7%';
+  var label=pend<=4?'moderada':'exigente';
+  infoEl.style.display='block';
+  infoEl.innerHTML='<div style="background:rgba(255,140,66,.07);border:1px solid rgba(255,140,66,.22);border-radius:8px;padding:.875rem 1rem;font-size:.76rem;color:var(--orange);line-height:1.9;">'
+    +'<strong>Pendiente '+label+' ('+etiq+' · media '+pend+'%) — fórmula Minetti et al. (2002)</strong><br>'
+    +'↑ <strong>Subida:</strong> +'+ajS+'% coste energético vs llano · ritmo a VAM (ej. 14 km/h): <strong>'+fmtSeg(ritmoSub)+' /km</strong><br>'
+    +'↓ <strong>Bajada:</strong> siempre por sensaciones (RPE). Sin ritmo objetivo — el cuerpo gestiona el esfuerzo excéntrico.'
+    +'</div>';
 }
 
 // ══════════════════════════════════════════════════════
@@ -1386,8 +1588,15 @@ function distanciaAtiempoTerreno(v, p, distM, pendMedia){
 }
 
 // Nota de terreno para añadir a sesiones cuando hay pendiente
+// Para trail/pendiente pura: incluye tanto ritmos de subida como bajada
 function notaTerreno(pendMedia){
   if(!pendMedia||pendMedia<=0) return '';
+  if(S.modalidad==='pendiente'||S.modalidad==='trail'){
+    function eMin(i){return 155.4*Math.pow(i,5)-30.4*Math.pow(i,4)-43.3*Math.pow(i,3)+46.3*Math.pow(i,2)+19.5*i+3.6;}
+    var fS=eMin(pendMedia/100)/3.6;
+    var ajS=Math.round((fS-1)*100);
+    return '⛰️ '+etiquetaTerreno(pendMedia)+' — Minetti (2002): subida +'+ajS+'% coste energético vs llano. Ritmo de subida ajustado. Bajada por sensaciones (RPE 3-4/10).';
+  }
   var ajuste = Math.round(pendMedia * 8.5);
   return '⛰️ Terreno '+etiquetaTerreno(pendMedia)+': ritmos ajustados +'+ajuste+'seg/km respecto a llano. El esfuerzo fisiológico es equivalente. Usa la percepción del esfuerzo (RPE) como referencia principal (Minetti et al., 2002).';
 }
@@ -1986,17 +2195,45 @@ function generarPlan(){
       var sesEntren=plantilla.filter(function(s){return s.tipo!=='descanso';});
       // Índice del día dentro del plan global para alternar trail/road
       var diaIdxGlobal = (semGlobal-1)*dias;
+
+      // ── PENDIENTE PURA: usar banco específico de pendiente ──
+      if(S.modalidad==='pendiente'){
+        var pctP=S.pendientePura||4;
+        var poolPend=buildSesionesPendientePura(vamSem,pctP,tipoMeso);
+        var offset=(globalOffset*3+pos)%poolPend.length;
+        sesEntren=poolPend.slice(offset).concat(poolPend.slice(0,offset));
+      }
+
       sesiones=sesEntren.slice(0,diasSem).map(function(ses,idx){
         var s1=aplicarPerfilASesion(ses,vamSem);
         var s2=aplicarRestriccionesLesiones(s1,vamSem);
-        // Terreno: road=siempre llano; trail=alterna (impares con desnivel); mixto=llano por defecto, el atleta cambia
         var pendAplicada=0;
-        if(S.modalidad==='trail'&&(idx%2===1)&&S.terreno>0){
-          pendAplicada=S.terreno;
+
+        if(S.modalidad==='pendiente'){
+          // Todas las sesiones en pendiente pura
+          pendAplicada=S.pendientePura||4;
           s2._esDesnivel=true;
-        } else if(S.modalidad==='mixto'){
-          s2._esDesnivel=false; // el toggle lo controla el atleta
-          s2._pendTerreno=S.terreno||0;
+          s2._pendTerreno=pendAplicada;
+
+        } else if(S.modalidad==='trail'){
+          // Plano + Trail: asignar pendiente según diasTrail del atleta
+          // El día actual de la semana se recupera del array diasEntrenam en el contexto exterior
+          // Usamos idx para calcular a qué día del array de diasDisp corresponde
+          var diasDisp2=S.diasSemana.length>0?S.diasSemana:[1,3,5,0];
+          var ordenSem=ORDEN_SEMANA.filter(function(d){return diasDisp2.indexOf(d)>=0;});
+          var diaReal=ordenSem[idx];
+          var esTrailHoy=S.diasTrail&&S.diasTrail.indexOf(diaReal)>=0;
+          // Además: respeto científico — no poner Z3 trail dos días seguidos
+          var sesAnterior=idx>0?sesiones[idx-1]:null;
+          var eraTrailAnterior=sesAnterior&&sesAnterior._esDesnivel;
+          if(esTrailHoy&&S.terreno>0&&!(eraTrailAnterior&&(s2.intens||0)>=7)){
+            pendAplicada=S.terreno;
+            s2._esDesnivel=true;
+            s2._pendTerreno=pendAplicada;
+          } else {
+            s2._esDesnivel=false;
+            s2._pendTerreno=0;
+          }
         }
         return aplicarCorreccionTerreno(s2,vamSem,pendAplicada);
       });
