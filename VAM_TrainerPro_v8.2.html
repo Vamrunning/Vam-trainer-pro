@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<!-- saved from url=(0060)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_DEBUG.html -->
+<!-- saved from url=(0061)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v8_7_2.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -289,6 +290,104 @@ svg.carga-svg{display:block;}
   .hdr{padding:.75rem 1rem;}
 }
 </style>
+
+<script>
+function validarAcceso(){
+  var clave=(document.getElementById('acceso-input').value||'').trim().toUpperCase();
+  var btn=document.querySelector('#acceso-clave-bloque .btn-primary');
+  var err=document.getElementById('acceso-error');
+  err.style.display='none';
+
+  // Clave del propietario — acceso directo sin consultar la hoja
+  if(clave===OWNER_KEY){
+    SESION_ACTIVA={tipo:'owner',meses:99,clave:clave};
+    ES_OWNER=true;
+    document.getElementById('acceso-screen').style.display='none';
+    document.getElementById('btn-registro-global').style.display='block';
+    return;
+  }
+
+  if(!clave){
+    err.textContent='Introduce una clave para continuar.';
+    err.style.display='block';
+    return;
+  }
+
+  // Mostrar estado de carga
+  if(btn){btn.textContent='Verificando...';btn.disabled=true;}
+
+  // Consultar Google Sheets en tiempo real
+  fetch(SHEET_URL)
+    .then(function(res){
+      if(!res.ok) throw new Error('Error de red');
+      return res.text();
+    })
+    .then(function(csv){
+      // Parsear el CSV — cada fila es una clave
+      var lineas=csv.split('\n').map(function(l){
+        return l.replace(/"/g,'').trim().toUpperCase();
+      }).filter(function(l){return l.length>0;});
+
+      // La primera fila es la cabecera "CLAVE" — la saltamos
+      var claves=lineas.slice(1);
+
+      // Formato en la hoja: CLAVE o CLAVE,TIPO,MESES
+      // Si solo hay una columna, asume tipo=atleta meses=3
+      var encontrada=null;
+      claves.forEach(function(linea){
+        var partes=linea.split(',');
+        var claveHoja=partes[0].trim();
+        if(claveHoja.toUpperCase()===clave){
+          encontrada={
+            clave:claveHoja,
+            tipo:(partes[1]||'atleta').trim().toLowerCase(),
+            meses:parseInt(partes[2])||3
+          };
+        }
+      });
+
+      if(encontrada){
+        SESION_ACTIVA={tipo:encontrada.tipo,meses:encontrada.meses,clave:clave};
+        ES_OWNER=(encontrada.tipo==='owner');
+        ES_DEMO=(encontrada.tipo==='demo');
+        document.getElementById('acceso-screen').style.display='none';
+        if(ES_OWNER) document.getElementById('btn-registro-global').style.display='block';
+      } else {
+        err.textContent='Clave no válida. Comprueba que la escribiste correctamente.';
+        err.style.display='block';
+      }
+    })
+    .catch(function(e){
+      // Sin conexión — si la clave tiene el formato correcto (Vam...), dejar entrar en modo offline
+      // Esto permite usar la app abriendo el archivo local sin internet
+      var formatoValido=/^VAM[A-Z0-9_\-]{3,}$/i.test(clave);
+      if(formatoValido){
+        SESION_ACTIVA={tipo:'atleta',meses:3,clave:clave,offline:true};
+        document.getElementById('acceso-screen').style.display='none';
+        // Mostrar aviso no bloqueante de modo offline
+        setTimeout(function(){
+          mostrarToast('⚠️ Modo offline: clave no verificada con el servidor. Funcionalidad completa disponible.');
+        },800);
+      } else {
+        err.textContent='Sin conexión a internet. Si tienes una clave válida (formato VamNombre_001) puedes acceder igualmente. Comprueba también que la clave sea correcta.';
+        err.style.display='block';
+      }
+    })
+    .finally(function(){
+      if(btn){btn.textContent='Acceder →';btn.disabled=false;}
+    });
+}
+
+function accesoDemoMode(){
+  SESION_ACTIVA={tipo:'demo',meses:1,clave:'DEMO'};
+  ES_DEMO=true;
+  document.getElementById('acceso-screen').style.display='none';
+}
+
+window.addEventListener('DOMContentLoaded',function(){
+  // La pantalla de acceso se muestra por defecto
+});
+</script>
 </head>
 <body>
 
@@ -522,17 +621,17 @@ svg.carga-svg{display:block;}
   <!-- Bloque trail: días disponibles con desnivel -->
   <div id="terreno-trail-bloque" style="display:none;">
     <div class="info-box" style="font-size:.76rem;margin-bottom:.75rem;">El plan alterna científicamente sesiones en llano con sesiones en pendiente. Marca los días en que tienes acceso a terreno con desnivel (trail/cuestas). El resto se asignarán en llano.</div>
-    <div style="font-size:.7rem;color:var(--muted2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Días con acceso a terreno con desnivel</div>
+    <div style="font-size:.7rem;color:var(--muted2);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Días con acceso a terreno con desnivel</div>
     <div class="radio-grid" style="grid-template-columns:repeat(7,1fr);gap:.4rem;margin-bottom:.75rem;">
-      <div class="rbtn" data-g="diasTrail" data-v="1" onclick="this.classList.toggle(&#39;on&#39;)">L</div>
-      <div class="rbtn" data-g="diasTrail" data-v="2" onclick="this.classList.toggle(&#39;on&#39;)">M</div>
-      <div class="rbtn on" data-g="diasTrail" data-v="3" onclick="this.classList.toggle(&#39;on&#39;)">X</div>
-      <div class="rbtn" data-g="diasTrail" data-v="4" onclick="this.classList.toggle(&#39;on&#39;)">J</div>
-      <div class="rbtn" data-g="diasTrail" data-v="5" onclick="this.classList.toggle(&#39;on&#39;)">V</div>
-      <div class="rbtn on" data-g="diasTrail" data-v="6" onclick="this.classList.toggle(&#39;on&#39;)">S</div>
-      <div class="rbtn on" data-g="diasTrail" data-v="0" onclick="this.classList.toggle(&#39;on&#39;)">D</div>
+      <div class="rbtn" data-g="diasTrail" data-v="1" onclick="this.classList.toggle('on')">L</div>
+      <div class="rbtn" data-g="diasTrail" data-v="2" onclick="this.classList.toggle('on')">M</div>
+      <div class="rbtn on" data-g="diasTrail" data-v="3" onclick="this.classList.toggle('on')">X</div>
+      <div class="rbtn" data-g="diasTrail" data-v="4" onclick="this.classList.toggle('on')">J</div>
+      <div class="rbtn" data-g="diasTrail" data-v="5" onclick="this.classList.toggle('on')">V</div>
+      <div class="rbtn on" data-g="diasTrail" data-v="6" onclick="this.classList.toggle('on')">S</div>
+      <div class="rbtn on" data-g="diasTrail" data-v="0" onclick="this.classList.toggle('on')">D</div>
     </div>
-    <div style="font-size:.7rem;color:var(--muted2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Pendiente media de tus rutas con desnivel</div>
+    <div style="font-size:.7rem;color:var(--muted2);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Pendiente media de tus rutas con desnivel</div>
     <div class="radio-grid g4">
       <div class="rbtn on" data-g="terreno" data-v="3.5" onclick="pick(this)">Suave<small>2-5%</small></div>
       <div class="rbtn" data-g="terreno" data-v="7" onclick="pick(this)">Moderado<small>5-10%</small></div>
@@ -543,7 +642,7 @@ svg.carga-svg{display:block;}
   <!-- Bloque pendiente pura: subselector 3-5% / 5-7% -->
   <div id="terreno-pendiente-bloque" style="display:none;">
     <div class="warn-box" style="font-size:.76rem;margin-bottom:.75rem;">⛰️ Todas las sesiones se realizarán en pendiente. Los ritmos se ajustan automáticamente usando la fórmula de Minetti et al. (2002). La VAM en llano se convierte a VAM equivalente en pendiente.</div>
-    <div style="font-size:.7rem;color:var(--muted2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Selecciona tu rango de pendiente disponible</div>
+    <div style="font-size:.7rem;color:var(--muted2);font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">Selecciona tu rango de pendiente disponible</div>
     <div class="radio-grid g2" style="margin-bottom:.75rem;">
       <div class="rbtn on" data-g="pendientePura" data-v="4" onclick="selPendientePura(this)">🟡 3% – 5%<small>Cuestas moderadas · Series adaptadas · Pendiente media 4%</small></div>
       <div class="rbtn" data-g="pendientePura" data-v="6" onclick="selPendientePura(this)">🔴 5% – 7%<small>Cuestas exigentes · Alta activación glúteo/gemelo · Pendiente media 6%</small></div>
@@ -946,6 +1045,7 @@ svg.carga-svg{display:block;}
 </div>
 
 <script>
+
 // ══════════════════════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════════════════════
@@ -3198,101 +3298,6 @@ var ES_OWNER=false;
 var ES_DEMO=false;
 var REGISTRO_ATLETAS=[];
 
-function validarAcceso(){
-  var clave=(document.getElementById('acceso-input').value||'').trim().toUpperCase();
-  var btn=document.querySelector('#acceso-clave-bloque .btn-primary');
-  var err=document.getElementById('acceso-error');
-  err.style.display='none';
-
-  // Clave del propietario — acceso directo sin consultar la hoja
-  if(clave===OWNER_KEY){
-    SESION_ACTIVA={tipo:'owner',meses:99,clave:clave};
-    ES_OWNER=true;
-    document.getElementById('acceso-screen').style.display='none';
-    document.getElementById('btn-registro-global').style.display='block';
-    return;
-  }
-
-  if(!clave){
-    err.textContent='Introduce una clave para continuar.';
-    err.style.display='block';
-    return;
-  }
-
-  // Mostrar estado de carga
-  if(btn){btn.textContent='Verificando...';btn.disabled=true;}
-
-  // Consultar Google Sheets en tiempo real
-  fetch(SHEET_URL)
-    .then(function(res){
-      if(!res.ok) throw new Error('Error de red');
-      return res.text();
-    })
-    .then(function(csv){
-      // Parsear el CSV — cada fila es una clave
-      var lineas=csv.split('\n').map(function(l){
-        return l.replace(/"/g,'').trim().toUpperCase();
-      }).filter(function(l){return l.length>0;});
-
-      // La primera fila es la cabecera "CLAVE" — la saltamos
-      var claves=lineas.slice(1);
-
-      // Formato en la hoja: CLAVE o CLAVE,TIPO,MESES
-      // Si solo hay una columna, asume tipo=atleta meses=3
-      var encontrada=null;
-      claves.forEach(function(linea){
-        var partes=linea.split(',');
-        var claveHoja=partes[0].trim();
-        if(claveHoja.toUpperCase()===clave){
-          encontrada={
-            clave:claveHoja,
-            tipo:(partes[1]||'atleta').trim().toLowerCase(),
-            meses:parseInt(partes[2])||3
-          };
-        }
-      });
-
-      if(encontrada){
-        SESION_ACTIVA={tipo:encontrada.tipo,meses:encontrada.meses,clave:clave};
-        ES_OWNER=(encontrada.tipo==='owner');
-        ES_DEMO=(encontrada.tipo==='demo');
-        document.getElementById('acceso-screen').style.display='none';
-        if(ES_OWNER) document.getElementById('btn-registro-global').style.display='block';
-      } else {
-        err.textContent='Clave no válida. Comprueba que la escribiste correctamente.';
-        err.style.display='block';
-      }
-    })
-    .catch(function(e){
-      // Sin conexión — si la clave tiene el formato correcto (Vam...), dejar entrar en modo offline
-      // Esto permite usar la app abriendo el archivo local sin internet
-      var formatoValido=/^VAM[A-Z0-9_\-]{3,}$/i.test(clave);
-      if(formatoValido){
-        SESION_ACTIVA={tipo:'atleta',meses:3,clave:clave,offline:true};
-        document.getElementById('acceso-screen').style.display='none';
-        // Mostrar aviso no bloqueante de modo offline
-        setTimeout(function(){
-          mostrarToast('⚠️ Modo offline: clave no verificada con el servidor. Funcionalidad completa disponible.');
-        },800);
-      } else {
-        err.textContent='Sin conexión a internet. Si tienes una clave válida (formato VamNombre_001) puedes acceder igualmente. Comprueba también que la clave sea correcta.';
-        err.style.display='block';
-      }
-    })
-    .finally(function(){
-      if(btn){btn.textContent='Acceder →';btn.disabled=false;}
-    });
-}
-
-function accesoDemoMode(){
-  SESION_ACTIVA={tipo:'demo',meses:1,clave:'DEMO'};
-  ES_DEMO=true;
-  document.getElementById('acceso-screen').style.display='none';
-}
-
-window.addEventListener('DOMContentLoaded',function(){
-  // La pantalla de acceso se muestra por defecto
-});
 
 // ── VISTA ENTRENAMIENTO / DETALLADA ───────────────────
 var VISTA_ACTUAL='detalle';
@@ -3498,21 +3503,7 @@ function construirHTMLInforme(esDemo){
     +'Generado por VAM Trainer Pro · '+fechaStr+' · '+(esDemo?'DOCUMENTO DE EJEMPLO':'Uso personal del atleta')
     +'</div>';
 
-  html+='
-<script>
-window.onerror = function(msg, src, line, col, err) {
-  document.getElementById('_err_log').innerHTML += '<div style="color:red;font-family:monospace;font-size:11px;padding:4px;border-bottom:1px solid #333;">'
-    + '❌ ' + msg + ' — L' + line + ':' + col + '</div>';
-  return false;
-};
-window.addEventListener('unhandledrejection', function(e){
-  document.getElementById('_err_log').innerHTML += '<div style="color:orange;font-family:monospace;font-size:11px;padding:4px;">⚠️ Promise: ' + e.reason + '</div>';
-});
-</script>
-<div id="_err_log" style="position:fixed;bottom:0;left:0;right:0;max-height:200px;overflow-y:auto;background:#111;z-index:9999;padding:8px;">
-  <div style="color:#aaa;font-size:10px;font-family:monospace;">— Error log —</div>
-</div>
-';
+  html+='</body></html>';
   return html;
 }
 
@@ -3541,9 +3532,9 @@ function renderRegistro(){
   rows.innerHTML=REGISTRO_ATLETAS.map(function(a){
     return '<div class="registro-row">'
       +'<span><strong>'+a.nombre+'</strong><br><span style="color:var(--muted2);font-size:.72rem;">'+a.prueba+' · '+a.fecha+'</span></span>'
-      +'<span style="font-family:\&#39;DM Mono\&#39;,monospace;color:var(--accent);">'+a.vam+'</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;color:var(--accent);">'+a.vam+'</span>'
       +'<span style="color:var(--muted);">'+a.semanas+' sem</span>'
-      +'<span style="cursor:pointer;color:var(--red);font-size:.8rem;" onclick="borrarRegistro(&#39;+a.id+&#39;)">✕</span>'
+      +'<span style="cursor:pointer;color:var(--red);font-size:.8rem;" onclick="borrarRegistro('+a.id+')">✕</span>'
       +'</div>';
   }).join('');
 }
@@ -3574,14 +3565,14 @@ var EVAL_CANSANCIO_VAL=0;
 function selEvalEstres(el){
   document.querySelectorAll('#eval-estres-btns .fb-btn').forEach(function(b){b.classList.remove('ok','reg','mal','skip');});
   var v=parseInt(el.getAttribute('data-v'));
-  el.classList.add(v&lt;=1?'ok':v&lt;=2?'reg':v&lt;=3?'mal':'mal');
+  el.classList.add(v<=1?'ok':v<=2?'reg':v<=3?'mal':'mal');
   EVAL_ESTRES_VAL=v;
   calcularPropuesta();
 }
 function selEvalCansancio(el){
   document.querySelectorAll('#eval-cansancio-btns .fb-btn').forEach(function(b){b.classList.remove('ok','reg','mal','skip');});
   var v=parseInt(el.getAttribute('data-v'));
-  el.classList.add(v&lt;=1?'ok':v&lt;=2?'reg':v&lt;=3?'mal':'mal');
+  el.classList.add(v<=1?'ok':v<=2?'reg':v<=3?'mal':'mal');
   EVAL_CANSANCIO_VAL=v;
   calcularPropuesta();
 }
@@ -3606,13 +3597,13 @@ function abrirEval(semNum){
     });
     var totalDias=pd.diasEntrenam.length;
     var completadas=cont.ok+cont.reg+cont.mal;
-    var pctComp=totalDias&gt;0?Math.round(completadas/totalDias*100):0;
+    var pctComp=totalDias>0?Math.round(completadas/totalDias*100):0;
 
     resHtml='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin-bottom:.5rem;">';
-    resHtml+='<div style="background:rgba(74,255,158,.08);border:1px solid rgba(74,255,158,.2);border-radius:6px;padding:.5rem;text-align:center;"><div style="font-family:\&#39;DM Mono\&#39;,monospace;font-size:1rem;color:var(--green);">'+cont.ok+'</div><div style="font-size:.62rem;color:var(--muted2);">Bien</div></div>';
-    resHtml+='<div style="background:rgba(255,140,66,.08);border:1px solid rgba(255,140,66,.2);border-radius:6px;padding:.5rem;text-align:center;"><div style="font-family:\&#39;DM Mono\&#39;,monospace;font-size:1rem;color:var(--orange);">'+cont.reg+'</div><div style="font-size:.62rem;color:var(--muted2);">Regular</div></div>';
-    resHtml+='<div style="background:rgba(255,92,92,.08);border:1px solid rgba(255,92,92,.2);border-radius:6px;padding:.5rem;text-align:center;"><div style="font-family:\&#39;DM Mono\&#39;,monospace;font-size:1rem;color:var(--red);">'+cont.mal+'</div><div style="font-size:.62rem;color:var(--muted2);">Mal</div></div>';
-    resHtml+='<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;padding:.5rem;text-align:center;"><div style="font-family:\&#39;DM Mono\&#39;,monospace;font-size:1rem;color:var(--muted2);">'+cont.skip+'</div><div style="font-size:.62rem;color:var(--muted2);">No hechas</div></div>';
+    resHtml+='<div style="background:rgba(74,255,158,.08);border:1px solid rgba(74,255,158,.2);border-radius:6px;padding:.5rem;text-align:center;"><div style="font-family:\'DM Mono\',monospace;font-size:1rem;color:var(--green);">'+cont.ok+'</div><div style="font-size:.62rem;color:var(--muted2);">Bien</div></div>';
+    resHtml+='<div style="background:rgba(255,140,66,.08);border:1px solid rgba(255,140,66,.2);border-radius:6px;padding:.5rem;text-align:center;"><div style="font-family:\'DM Mono\',monospace;font-size:1rem;color:var(--orange);">'+cont.reg+'</div><div style="font-size:.62rem;color:var(--muted2);">Regular</div></div>';
+    resHtml+='<div style="background:rgba(255,92,92,.08);border:1px solid rgba(255,92,92,.2);border-radius:6px;padding:.5rem;text-align:center;"><div style="font-family:\'DM Mono\',monospace;font-size:1rem;color:var(--red);">'+cont.mal+'</div><div style="font-size:.62rem;color:var(--muted2);">Mal</div></div>';
+    resHtml+='<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;padding:.5rem;text-align:center;"><div style="font-family:\'DM Mono\',monospace;font-size:1rem;color:var(--muted2);">'+cont.skip+'</div><div style="font-size:.62rem;color:var(--muted2);">No hechas</div></div>';
     resHtml+='</div>';
     resHtml+='<div style="font-size:.75rem;color:var(--muted);margin-top:.25rem;">Completadas: <strong style="color:var(--text);">'+completadas+'/'+totalDias+' sesiones ('+pctComp+'%)</strong></div>';
 
@@ -3641,49 +3632,49 @@ function calcularPropuesta(){
   var semNum=EVAL_SEMANA_ACTUAL;
   var ed=EVAL_DATA[semNum]||{};
   var pctComp=ed.pctComp||100;
-  var contMal=(ed.cont&amp;&amp;ed.cont.mal)||0;
-  var contSkip=(ed.cont&amp;&amp;ed.cont.skip)||0;
+  var contMal=(ed.cont&&ed.cont.mal)||0;
+  var contSkip=(ed.cont&&ed.cont.skip)||0;
   var e=EVAL_ESTRES_VAL;   // 1=bajo 2=medio 3=alto 4=muy alto
   var c=EVAL_CANSANCIO_VAL; // 1=fresco 2=normal 3=cansado 4=agotado
 
   // ALGORITMO DE EVALUACIÓN
-  // Señales negativas: completadas &lt;70%, muchas mal/skip, estrés alto, agotamiento
+  // Señales negativas: completadas <70%, muchas mal/skip, estrés alto, agotamiento
   var senal='verde';
   var propuesta='';
   var accion=''; // 'mantener'|'repetir'|'descarga'|'reducirZ3'|'acelerar'
 
   // Calcular puntuación de carga real (0-10)
   var puntuacion=10;
-  if(pctComp&lt;50)  puntuacion-=4;
-  else if(pctComp&lt;70) puntuacion-=2;
-  else if(pctComp&lt;85) puntuacion-=1;
-  if(contMal&gt;=2)  puntuacion-=2;
-  if(contSkip&gt;=2) puntuacion-=1;
-  if(e&gt;=3) puntuacion-=2;
-  if(e&gt;=4) puntuacion-=1;
-  if(c&gt;=3) puntuacion-=2;
-  if(c&gt;=4) puntuacion-=2;
+  if(pctComp<50)  puntuacion-=4;
+  else if(pctComp<70) puntuacion-=2;
+  else if(pctComp<85) puntuacion-=1;
+  if(contMal>=2)  puntuacion-=2;
+  if(contSkip>=2) puntuacion-=1;
+  if(e>=3) puntuacion-=2;
+  if(e>=4) puntuacion-=1;
+  if(c>=3) puntuacion-=2;
+  if(c>=4) puntuacion-=2;
 
   // Decisión
-  if(puntuacion&lt;=3){
+  if(puntuacion<=3){
     senal='rojo';
     accion='repetir';
     propuesta='<strong>🔴 Semana difícil.</strong> Has completado el '+pctComp+'% de las sesiones con sensación de estrés/cansancio elevado.\n\n'
-      +'<strong>Propuesta:</strong> Repetir la Semana '+semNum+' antes de avanzar. El plan se extiende 1 semana. Esto no es un fracaso — es escuchar al cuerpo. La fatiga acumulada sin recuperación lleva a sobreentrenamiento y lesiones (Halson &amp; Jeukendrup, 2004).\n\n'
+      +'<strong>Propuesta:</strong> Repetir la Semana '+semNum+' antes de avanzar. El plan se extiende 1 semana. Esto no es un fracaso — es escuchar al cuerpo. La fatiga acumulada sin recuperación lleva a sobreentrenamiento y lesiones (Halson & Jeukendrup, 2004).\n\n'
       +'<span class="eval-detalle">El plan se regenerará desde la Semana '+(semNum)+' con la misma carga planificada originalmente.</span>';
-  } else if(puntuacion&lt;=5){
+  } else if(puntuacion<=5){
     senal='naranja';
     accion='descarga';
     propuesta='<strong>🟠 Carga acumulada notable.</strong> Sensaciones de cansancio o estrés por encima de lo normal.\n\n'
-      +'<strong>Propuesta:</strong> Insertar una semana de descarga anticipada antes de continuar con la Semana '+(semNum+1)+'. El plan se extiende 1 semana. Las semanas de descarga no son tiempo perdido — son donde ocurren las adaptaciones reales (Mujika &amp; Padilla, 2003).\n\n'
+      +'<strong>Propuesta:</strong> Insertar una semana de descarga anticipada antes de continuar con la Semana '+(semNum+1)+'. El plan se extiende 1 semana. Las semanas de descarga no son tiempo perdido — son donde ocurren las adaptaciones reales (Mujika & Padilla, 2003).\n\n'
       +'<span class="eval-detalle">La semana de descarga reducirá el volumen al 55% con sesiones regenerativas únicamente.</span>';
-  } else if(puntuacion&lt;=7){
+  } else if(puntuacion<=7){
     senal='amarillo';
     accion='reducirZ3';
     propuesta='<strong>🟡 Todo correcto con matices.</strong> Plan completado pero con algo de cansancio acumulado.\n\n'
       +'<strong>Propuesta:</strong> Continuar con la Semana '+(semNum+1)+' reduciendo las sesiones Z3 un 20% (menos repeticiones, misma intensidad). El volumen Z1 se mantiene. Ajuste leve y sin extensión del plan.\n\n'
       +'<span class="eval-detalle">Las sesiones afectadas mostrarán una nota de ajuste automático.</span>';
-  } else if(puntuacion&gt;=9&amp;&amp;c&lt;=1&amp;&amp;e&lt;=1){
+  } else if(puntuacion>=9&&c<=1&&e<=1){
     senal='verde_plus';
     accion='acelerar';
     propuesta='<strong>🟢⬆️ Semana excelente.</strong> Todo completado con sensaciones muy buenas. Tu cuerpo está respondiendo mejor de lo esperado.\n\n'
@@ -3724,7 +3715,7 @@ function actualizarIndicadorSemana(semNum,senal,e){
   if(!ind) return;
   var col=senal==='verde'||senal==='verde_plus'?'var(--green)':senal==='amarillo'?'var(--orange)':'var(--red)';
   var icono=senal==='verde_plus'?'⬆️':senal==='verde'?'✓':senal==='amarillo'?'~':'⚠';
-  ind.innerHTML='<span style="font-family:\&#39;DM Mono\&#39;,monospace;font-size:.6rem;color:&#39;+col+&#39;;margin-left:.35rem;">'+icono+'</span>';
+  ind.innerHTML='<span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:'+col+';margin-left:.35rem;">'+icono+'</span>';
 }
 
 function aplicarReajuste(){
@@ -3815,7 +3806,7 @@ function toggleTerrenoSesion(key, sg, d){
   // Buscar semana — usar asigOriginal (sin correcciones) y vamSem real
   var semData=PLAN_DATA.find(function(p){return p.semNum===sg;});
   if(!semData) return;
-  var sesOriginal=semData.asigOriginal&amp;&amp;semData.asigOriginal[d]
+  var sesOriginal=semData.asigOriginal&&semData.asigOriginal[d]
     ?semData.asigOriginal[d]
     :semData.asig[d];
   if(!sesOriginal||sesOriginal.tipo==='descanso') return;
@@ -3831,7 +3822,7 @@ function toggleTerrenoSesion(key, sg, d){
   // Actualizar nota de terreno
   var notaEl=document.getElementById('nota-terreno-'+key);
   if(notaEl){
-    if(pend&gt;0&amp;&amp;sesCor._notaTerreno){
+    if(pend>0&&sesCor._notaTerreno){
       notaEl.style.display='block';
       notaEl.textContent=sesCor._notaTerreno;
     } else {
@@ -3864,34 +3855,20 @@ function descargarPlanHTML(){
     }catch(e){}
   });
 
-  var planHtml=''
-    +'<meta name="viewport" content="width=device-width,initial-scale=1">'
+  var planHtml='<!DOCTYPE html><html lang="es"><head>'
+    +'<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
     +'<title>VAM Trainer Pro — '+( S.nombre||'Plan')+' — '+prueba+'</title>'
-    +'<link href="./VAM Trainer Prov8.8_files/css2" rel="stylesheet">'
+    +'<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">'
     +'<style>'+estilos+'body{background:#0a0a10;color:#f0f0f8;padding:1.5rem;max-width:920px;margin:0 auto;}'
     +'.no-print,.feedback-bar,.semana-eval-btn,.vista-toggle,.btn-row{display:none!important;}'
     +'.meso-body{display:block!important;}.days-grid{display:block!important;}'
     +'@media print{body{background:#fff;color:#111;}:root{--bg:#fff;--surface:#fff;--surface2:#f7f7f7;--border:#ddd;--border2:#ccc;--text:#111;--muted:#444;--muted2:#777;--accent:#4a7c00;--green:#2d6a00;--blue:#1a4a8a;--orange:#8a4a00;--red:#8a1a1a;}}'
-    +'</style>'
-    +'<div style="font-family:\&#39;Syne\&#39;,sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:.25rem;">VAM<span style="color:#d4f53c;">·</span>trainer Pro</div>'
-    +'<div style="font-family:\&#39;DM Mono\&#39;,monospace;font-size:.65rem;color:#55556a;letter-spacing:.1em;margin-bottom:1.5rem;">PLAN GUARDADO · '+(S.nombre||'—').toUpperCase()+' · '+prueba.toUpperCase()+' · '+fecha+'</div>'
+    +'</style></head><body>'
+    +'<div style="font-family:\'Syne\',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:.25rem;">VAM<span style="color:#d4f53c;">·</span>trainer Pro</div>'
+    +'<div style="font-family:\'DM Mono\',monospace;font-size:.65rem;color:#55556a;letter-spacing:.1em;margin-bottom:1.5rem;">PLAN GUARDADO · '+(S.nombre||'—').toUpperCase()+' · '+prueba.toUpperCase()+' · '+fecha+'</div>'
     +container.innerHTML
     +'<script>function toggleMeso(i){var b=document.getElementById("meso-body-"+i);if(b)b.classList.toggle("open");}function toggleWeek(id){var w=document.getElementById(id);if(w)w.style.display=w.style.display==="none"?"block":"none";}<\/script>'
-    +'
-<script>
-window.onerror = function(msg, src, line, col, err) {
-  document.getElementById('_err_log').innerHTML += '<div style="color:red;font-family:monospace;font-size:11px;padding:4px;border-bottom:1px solid #333;">'
-    + '❌ ' + msg + ' — L' + line + ':' + col + '</div>';
-  return false;
-};
-window.addEventListener('unhandledrejection', function(e){
-  document.getElementById('_err_log').innerHTML += '<div style="color:orange;font-family:monospace;font-size:11px;padding:4px;">⚠️ Promise: ' + e.reason + '</div>';
-});
-</script>
-<div id="_err_log" style="position:fixed;bottom:0;left:0;right:0;max-height:200px;overflow-y:auto;background:#111;z-index:9999;padding:8px;">
-  <div style="color:#aaa;font-size:10px;font-family:monospace;">— Error log —</div>
-</div>
-';
+    +'</body></html>';
 
   var blob=new Blob([planHtml],{type:'text/html;charset=utf-8'});
   var url=URL.createObjectURL(blob);
@@ -3970,7 +3947,7 @@ function exportarICS(){
     var offsetSemLunes=(sg-1)*7;
 
     ORDEN_SEMANA.forEach(function(d){
-      var esDia=semData.diasEntrenam.indexOf(d)&gt;=0;
+      var esDia=semData.diasEntrenam.indexOf(d)>=0;
       if(!esDia) return;
       var ses=semData.asig[d];
       if(!ses||ses.tipo==='descanso') return;
@@ -3996,7 +3973,7 @@ function exportarICS(){
       var dtEnd='TZID=Europe/Madrid:'+fechaDia+'T'+pad(hFin)+pad(mFin)+'00';
 
       var zonaEmoji=ses.zona===1?'Z1':ses.zona===2?'Z2':'Z3';
-      var mesoLabel=sg&lt;=Math.ceil(S.semanas*0.25)?'BASE':sg&lt;=Math.ceil(S.semanas*0.55)?'DESARROLLO':sg&lt;=Math.ceil(S.semanas*0.8)?'ESPECIFICIDAD':'PUESTA A PUNTO';
+      var mesoLabel=sg<=Math.ceil(S.semanas*0.25)?'BASE':sg<=Math.ceil(S.semanas*0.55)?'DESARROLLO':sg<=Math.ceil(S.semanas*0.8)?'ESPECIFICIDAD':'PUESTA A PUNTO';
 
       var titulo='['+zonaEmoji+'] S'+sg+' \u2014 '+(ses.nombre||'Entrenamiento');
       var desc='Semana '+sg+' '+mesoLabel+'\\n';
@@ -4044,21 +4021,7 @@ recalcVAM();
 var hoy=new Date();hoy.setDate(hoy.getDate()+84);
 document.getElementById('f-fecha').valueAsDate=hoy;
 document.getElementById('f-fecha').dispatchEvent(new Event('change'));
-
-
-
-
-<script>
-window.onerror = function(msg, src, line, col, err) {
-  document.getElementById('_err_log').innerHTML += '<div style="color:red;font-family:monospace;font-size:11px;padding:4px;border-bottom:1px solid #333;">'
-    + '❌ ' + msg + ' — L' + line + ':' + col + '</div>';
-  return false;
-};
-window.addEventListener('unhandledrejection', function(e){
-  document.getElementById('_err_log').innerHTML += '<div style="color:orange;font-family:monospace;font-size:11px;padding:4px;">⚠️ Promise: ' + e.reason + '</div>';
-});
 </script>
-<div id="_err_log" style="position:fixed;bottom:0;left:0;right:0;max-height:200px;overflow-y:auto;background:#111;z-index:9999;padding:8px;">
-  <div style="color:#aaa;font-size:10px;font-family:monospace;">— Error log —</div>
-</div>
+
+
 </body></html>
