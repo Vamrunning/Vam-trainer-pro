@@ -437,7 +437,7 @@ svg.carga-svg{display:block;}
     <button class="btn-hoy" id="btn-informe-global" onclick="abrirInforme()" style="background:rgba(212,245,60,.1);color:var(--accent);border-color:rgba(212,245,60,.3);display:none;">★ INFORME</button>
     <button class="btn-hoy" id="btn-registro-global" onclick="abrirRegistro()" style="background:rgba(92,168,255,.08);color:var(--blue);border-color:rgba(92,168,255,.2);display:none;">≡ REGISTRO</button>
     <button class="btn-hoy" onclick="abrirExport()" style="background:rgba(74,255,158,.08);color:var(--green);border-color:rgba(74,255,158,.2);">⇅ PLAN</button>
-    <span class="hdr-badge">v8.4</span>
+    <span class="hdr-badge">v8.5</span>
   </div>
 </div>
 
@@ -2237,7 +2237,7 @@ function generarPlan(){
           } else {
             html+='<div style="font-size:.84rem;font-weight:600;margin-bottom:.25rem;">'+ses.nombre+'</div>';
           }
-          html+='<div class="ses-desc-'+terrenoKey+'" style="font-size:.74rem;color:var(--muted);line-height:1.55;white-space:pre-line;">'+ses.desc+'</div>';
+          html+='<div id="ses-desc-'+terrenoKey+'" style="font-size:.74rem;color:var(--muted);line-height:1.55;white-space:pre-line;">'+ses.desc+'</div>';
           if(ses.alt)html+='<div style="font-size:.68rem;color:var(--blue);margin-top:.3rem;line-height:1.4;">🔄 '+ses.alt+'</div>';
           if(ses._notaEdad)html+='<div style="font-size:.68rem;color:var(--orange);margin-top:.3rem;line-height:1.4;background:rgba(255,140,66,.06);padding:.3rem .5rem;border-radius:4px;">'+ses._notaEdad+'</div>';
           if(ses._notaLesion)html+='<div style="font-size:.68rem;color:var(--red);margin-top:.3rem;line-height:1.4;background:rgba(255,92,92,.06);padding:.3rem .5rem;border-radius:4px;">'+ses._notaLesion+'</div>';
@@ -3581,9 +3581,12 @@ function toggleTerrenoSesion(key, sg, d){
   if(!semData||!semData.asig[d]) return;
   var ses=semData.asig[d];
   var pend=esDesnivel?(S.terreno||0):0;
-  var sesCor=aplicarCorreccionTerreno(JSON.parse(JSON.stringify(ses)),S.VAM||14,pend);
+  // Usar la sesión original guardada (sin correcciones previas) para recalcular limpio
+  var sesOriginal=ses._original?ses._original:ses;
+  if(!ses._original) ses._original=JSON.parse(JSON.stringify(ses));
+  var sesCor=aplicarCorreccionTerreno(JSON.parse(JSON.stringify(sesOriginal)),S.VAM||14,pend);
 
-  var descEl=document.querySelector('.ses-desc-'+key);
+  var descEl=document.getElementById('ses-desc-'+key);
   if(descEl) descEl.textContent=sesCor.desc;
 
   // Actualizar nota de terreno
