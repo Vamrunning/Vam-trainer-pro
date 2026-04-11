@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<!-- saved from url=(0062)file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v9.0_11.html -->
+<!-- saved from url=(0064)file:///C:/Users/usuario/Desktop/VAM%20Trainer%20Pro%20v9.0.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -371,7 +370,7 @@ svg.carga-svg{display:block;}
       <button class="btn btn-secondary" onclick="cerrarInforme()">Cancelar</button>
       <button class="btn btn-primary" style="flex:1" id="informe-btn-descargar" onclick="descargarInforme()">⬇ Descargar informe →</button>
     </div>
-    <div style="text-align:center;margin-top:.75rem;"><a href="file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v9.0_11.html#" onclick="abrirInformeDemo();return false;" style="font-size:.72rem;color:var(--muted2);">Ver ejemplo del informe</a></div>
+    <div style="text-align:center;margin-top:.75rem;"><a href="file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v9.0_13.html#" onclick="abrirInformeDemo();return false;" style="font-size:.72rem;color:var(--muted2);">Ver ejemplo del informe</a></div>
   </div>
 </div>
 
@@ -1265,38 +1264,44 @@ function _varSeed(arr, semGlobal, prueba) {
 }
 
 // Generadores de sesión dinámica
-function _genIEL(v, semGlobal, prueba) {
+function _genIEL(v, semGlobal, prueba, az) {
   var c = _varSeed(_VARIANTES_IEL, semGlobal, prueba);
-  var ritmo = r(v, c.pct);
-  var tRep  = tdd(v, c.pct, c.dist);
+  var pctReal = Math.max(0.80, c.pct + (az||0));
+  var ritmo = r(v, pctReal);
+  var tRep  = tdd(v, pctReal, c.dist);
   var km    = c.reps * c.dist / 1000;
+  var notaAz = (az&&az<0)?' · Intensidad ajustada '+Math.round(pctReal*100)+'% VAM (perfil master: Hunter et al., 2004)':'';
   return {tipo:'series', zona:3, intens:7,
-    nombre:'IEL · '+c.reps+'×'+c.dist+'m al umbral',
-    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+c.dist+'m a '+ritmo+' /km ('+Math.round(c.pct*100)+'% VAM · '+tRep+' por rep). Pausa: '+c.pausa+' trote. Estímulo umbral láctico y MLSS. Total: '+km.toFixed(1)+'km (Billat, 2001).',
+    nombre:'IEL · '+c.reps+'×'+c.dist+'m al '+Math.round(pctReal*100)+'% VAM',
+    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+c.dist+'m a '+ritmo+' /km ('+Math.round(pctReal*100)+'% VAM · '+tRep+' por rep). Pausa: '+c.pausa+' trote. Estímulo umbral láctico y MLSS. Total: '+km.toFixed(1)+'km (Billat, 2001).'+notaAz,
     alt:(c.reps-1)+'×'+c.dist+'m si fatiga · -2″/km si primeras semanas.',
     tiempo:tRep+'×'+c.reps, kmNum:km};
 }
 
-function _genIEM(v, semGlobal, prueba) {
+function _genIEM(v, semGlobal, prueba, az) {
   var c = _varSeed(_VARIANTES_IEM, semGlobal, prueba);
-  var ritmo = r(v, c.pct);
-  var km    = c.reps * (v * c.pct / 3.6) * c.seg / 1000;
+  var pctReal = Math.max(0.88, c.pct + (az||0));
+  var ritmo = r(v, pctReal);
+  var km    = c.reps * (v * pctReal / 3.6) * c.seg / 1000;
   var minSeg = Math.floor(c.seg/60)+'min'+(c.seg%60>0?c.seg%60+'″':'');
+  var notaAz = (az&&az<0)?' · '+Math.round(pctReal*100)+'% VAM ajustado perfil master':'';
   return {tipo:'series', zona:3, intens:9,
-    nombre:'IEM · '+c.reps+'×'+minSeg+' al '+Math.round(c.pct*100)+'% VAM',
-    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+minSeg+' a '+ritmo+' /km. Pausa: '+c.pausa+'. Máximo estímulo VO₂max (Helgerud et al., 2007).',
+    nombre:'IEM · '+c.reps+'×'+minSeg+' al '+Math.round(pctReal*100)+'% VAM',
+    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+minSeg+' a '+ritmo+' /km. Pausa: '+c.pausa+'. Máximo estímulo VO₂max (Helgerud et al., 2007).'+notaAz,
     alt:(c.reps-1)+'×'+minSeg+' si fatiga · Ciclo indoor misma estructura.',
     tiempo:'~'+(Math.round(c.reps*c.seg/60)+20)+'min', kmNum:+km.toFixed(2)};
 }
 
-function _genIIC(v, semGlobal, prueba) {
+function _genIIC(v, semGlobal, prueba, az) {
   var c = _varSeed(_VARIANTES_IIC, semGlobal, prueba);
-  var ritmo = r(v, c.pct);
-  var tRep  = tdd(v, c.pct, c.dist);
+  var pctReal = Math.max(0.92, c.pct + (az||0)*0.5); // IIC: ajuste menor (intensidad máx)
+  var ritmo = r(v, pctReal);
+  var tRep  = tdd(v, pctReal, c.dist);
   var km    = c.reps * c.dist / 1000;
+  var notaAz = (az&&az<0)?' · Ritmo ajustado perfil master':'';
   return {tipo:'series', zona:3, intens:8,
-    nombre:'IIC · '+c.reps+'×'+c.dist+'m al '+Math.round(c.pct*100)+'% VAM',
-    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+c.dist+'m a '+ritmo+' /km ('+tRep+' por rep). Pausa: '+c.pausa+'. Total: '+km.toFixed(1)+'km trabajo.',
+    nombre:'IIC · '+c.reps+'×'+c.dist+'m al '+Math.round(pctReal*100)+'% VAM',
+    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+c.dist+'m a '+ritmo+' /km ('+tRep+' por rep). Pausa: '+c.pausa+'. Total: '+km.toFixed(1)+'km trabajo.'+notaAz,
     alt:(c.reps-2)+'×'+c.dist+'m si fatiga · Cinta misma sesión.',
     tiempo:tRep+'×'+c.reps, kmNum:km};
 }
@@ -1332,27 +1337,28 @@ function _genCuestasLargas(v, semGlobal) {
 
 // buildSeries — ahora recibe semGlobal para generar variantes dinámicas
 // Las sesiones IEL, IEM, IIC, Gacon son generadas fresh cada vez
-function buildSeries(v, prueba, semGlobal) {
+function buildSeries(v, prueba, semGlobal, _ajZ3) {
   var sg = semGlobal || 1;
+  var _az = _ajZ3 || 0; // ajuste de intensidad por edad: -0.03 para >55, etc.
   var s  = {};
 
   // ── INTERMITENTES DINÁMICOS ───────────────────────
   // Gacon: variante según semana
-  s.gacon3030 = _genGacon(v, sg,   prueba);
-  s.gacon2020 = _genGacon(v, sg+4, prueba); // offset para diferenciarlo del anterior
+  s.gacon3030 = _genGacon(v, sg,   prueba, _az);
+  s.gacon2020 = _genGacon(v, sg+4, prueba, _az); // offset para diferenciarlo del anterior
 
   // IEM: variante según semana
-  s.iem_4min = _genIEM(v, sg,   prueba);
-  s.iem_3min = _genIEM(v, sg+4, prueba);
+  s.iem_4min = _genIEM(v, sg,   prueba, _az);
+  s.iem_3min = _genIEM(v, sg+4, prueba, _az);
 
   // IIC: variante según semana
-  s.iic_400 = _genIIC(v, sg,   prueba);
-  s.iic_600 = _genIIC(v, sg+3, prueba);
-  s.iic_800 = _genIIC(v, sg+6, prueba);
+  s.iic_400 = _genIIC(v, sg,   prueba, _az);
+  s.iic_600 = _genIIC(v, sg+3, prueba, _az);
+  s.iic_800 = _genIIC(v, sg+6, prueba, _az);
 
   // IEL: variante según semana
-  s.iel_1000 = _genIEL(v, sg,   prueba);
-  s.iel_1200 = _genIEL(v, sg+4, prueba);
+  s.iel_1000 = _genIEL(v, sg,   prueba, _az);
+  s.iel_1200 = _genIEL(v, sg+4, prueba, _az);
 
   // IIMC — siempre fijo (es un protocolo específico de 8″)
   s.iimc = {tipo:'series',nombre:'IIMC · 3×8×8″ potencia máxima',zona:3,intens:10,
@@ -1360,7 +1366,7 @@ function buildSeries(v, prueba, semGlobal) {
     alt:'Skiping máximo si no hay espacio.',tiempo:'~45min',kmNum:1.5};
 
   // Específicas — también con variante dinámica
-  s.esp_1000 = _genIEL(v, sg+2, prueba); // offset 2 para diferenciarlo del IEL base
+  s.esp_1000 = _genIEL(v, sg+2, prueba, _az); // offset 2 para diferenciarlo del IEL base
   s.esp_1000.nombre = 'Específicas · '+s.esp_1000.nombre.replace('IEL · ','').replace('al umbral','ritmo objetivo');
   s.esp_1000.intens = 8;
 
@@ -1603,8 +1609,8 @@ var _HIST_PLAN   = {};     // historial por slot entre semanas
 var _PLAN_SEED   = 0;      // seed primaria — qué sesión en cada slot
 var _PLAN_SEED2  = 0;      // seed secundaria — orden y distribución dentro de semana
 
-function buildPoolsSesiones(v, prueba, semGlobal) {
-  var se = buildSeries(v, prueba, semGlobal||1);
+function buildPoolsSesiones(v, prueba, semGlobal, ajZ3) {
+  var se = buildSeries(v, prueba, semGlobal||1, ajZ3||0);
   var R  = BANCO_ROD;
   var C  = BANCO_CUESTAS;
 
@@ -1696,7 +1702,7 @@ function elegirSesion(poolKey, slot, semGlobal) {
 // Ahora recibe semGlobal y genera la plantilla de ESA semana específica
 function buildPlantillas(v, prueba, semGlobal) {
   // Reconstruir pools cada semana: buildSeries genera variantes según semGlobal
-  buildPoolsSesiones(v, prueba, semGlobal||1);
+  buildPoolsSesiones(v, prueba, semGlobal||1, typeof ajusteZ3!=='undefined'?ajusteZ3:0);
   var sg = semGlobal || 1;
   var D  = BANCO_DESC;
 
@@ -1924,7 +1930,7 @@ function goStep(n){
 }
 function readStep1(){
   S.nombre=document.getElementById('f-nombre').value;
-  S.edad=parseInt(document.getElementById('f-edad').value)||30;
+  var _edadVal=parseInt(document.getElementById('f-edad').value); S.edad=_edadVal>0?_edadVal:(S.edad||30);
   S.sexo=getVal('sexo');S.nivel=getVal('nivel');S.kmHab=parseInt(getVal('kmhab'))||35;
   S.trabajo=getVal('trabajo');S.clima=getVal('clima');
   S.modalidad=getVal('modalidad')||'road';
@@ -2295,6 +2301,49 @@ function generarPlan(){
 
   var vamInicial=S.VAM,vamFinal=S.vamObj,sem=S.semanas,dias=S.dias;
   var prueba=S.prueba,edad=S.edad,sexo=S.sexo,pruebaEs=PRUEBA_NOMBRE[prueba];
+
+  // ── VALIDACIÓN CRUZADA DE DATOS ────────────────────────────────
+  var _avisos = [];
+
+  // 1. VAM objetivo <= VAM actual → imposible mejorar
+  if(vamFinal > 0 && vamInicial > 0 && vamFinal <= vamInicial) {
+    vamFinal = vamInicial + 0.5; // corregir automáticamente
+    S.vamObj = vamFinal;
+    _avisos.push('⚠️ La VAM objetivo era igual o menor que la actual. Se ha ajustado automáticamente a +0.5 km/h.');
+  }
+
+  // 2. Mejora demasiado ambiciosa: >15% VAM en un ciclo
+  if(vamFinal > 0 && vamInicial > 0) {
+    var _mejoraMax = vamInicial * 1.15;
+    if(vamFinal > _mejoraMax) {
+      _avisos.push('⚠️ Objetivo ambicioso: +'+((vamFinal/vamInicial-1)*100).toFixed(0)+'% VAM en '+sem+' semanas. La mejora fisiológica máxima recomendada es ~8-12% por ciclo (Midgley et al., 2007). El plan se generará con ese objetivo pero puede requerir más tiempo.');
+    }
+  }
+
+  // 3. Marca objetivo más lenta que la actual → objetivo regresivo
+  if(S.tObjS > 0 && S.tActS > 0 && S.tObjS >= S.tActS) {
+    _avisos.push('⚠️ El tiempo objetivo ('+fmt(S.tObjS/((prueba>=21097)?60:1))+') es igual o más lento que el actual. Verifica tus datos en el paso 2.');
+  }
+
+  // 4. Semanas insuficientes para el objetivo
+  if(sem < 8 && vamFinal > vamInicial * 1.05) {
+    _avisos.push('⚠️ Con '+sem+' semanas es difícil conseguir una mejora de VAM superior al 5%. Considera ampliar el plazo si es posible.');
+  }
+
+  // 5. VAM muy baja para la distancia (probablemente error de datos)
+  if(vamInicial > 0 && prueba <= 1500 && vamInicial < 10) {
+    _avisos.push('⚠️ VAM de '+vamInicial+' km/h es inusualmente baja para '+pruebaEs+'. Verifica tu marca actual en el paso 2.');
+  }
+  if(vamInicial > 0 && prueba >= 42195 && vamInicial > 22) {
+    _avisos.push('⚠️ VAM de '+vamInicial+' km/h con objetivo de maratón es inusualmente alta. Verifica tus datos.');
+  }
+
+  // Mostrar avisos si los hay (no bloqueante — el plan se genera igual)
+  if(_avisos.length > 0) {
+    setTimeout(function(){
+      _avisos.forEach(function(av){ mostrarToast(av); });
+    }, 800);
+  }
   // LCG (Linear Congruential Generator) puro — periodo 2^31-1
   // Avanza deterministicamente con cada generarPlan(), sin depender del reloj
   // Espacio: 2^31 * 2^31 = 2^62 ≈ 4.600 millones de millones de combinaciones
@@ -3174,6 +3223,16 @@ function generarPlan(){
 
   document.getElementById('plan-container').innerHTML=html;
   document.getElementById('btn-hoy-global').style.display='block';
+  // Persistencia: guardar plan en localStorage automáticamente
+  try {
+    var _planGuardado = {
+      perfil: S,
+      feedback: FEEDBACK_DATA,
+      timestamp: Date.now(),
+      version: 'v9'
+    };
+    localStorage.setItem('vam_plan_activo', JSON.stringify(_planGuardado));
+  } catch(e) {} // localStorage puede no estar disponible en algunos navegadores
   document.getElementById('btn-update-global').style.display='block';
   document.getElementById('btn-informe-global').style.display='block';
   if(ES_OWNER) document.getElementById('btn-registro-global').style.display='block';
@@ -3906,7 +3965,36 @@ function accesoDemoMode(){
 }
 
 window.addEventListener('DOMContentLoaded',function(){
-  // La pantalla de acceso se muestra por defecto
+  // Detectar plan guardado en localStorage
+  try {
+    var _saved = localStorage.getItem('vam_plan_activo');
+    if(_saved) {
+      var _data = JSON.parse(_saved);
+      // Solo recuperar si es de las últimas 30 días y versión compatible
+      var _edad = Date.now() - (_data.timestamp||0);
+      if(_edad < 30*24*3600*1000 && _data.version==='v9' && _data.perfil) {
+        // Añadir aviso discreto en la pantalla de acceso
+        var _acceso = document.getElementById('acceso-screen');
+        if(_acceso) {
+          var _div = document.createElement('div');
+          _div.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:rgba(92,168,255,.08);border:1px solid rgba(92,168,255,.2);border-radius:8px;font-size:.78rem;color:var(--blue);cursor:pointer;text-align:center;';
+          var _dias = Math.floor(_edad/(1000*3600*24));
+          _div.innerHTML = '↩ Tienes un plan guardado de hace '+(_dias===0?'hoy':_dias+' días')+'. <strong>Recuperar plan</strong>';
+          _div.onclick = function(){
+            try {
+              Object.keys(_data.perfil).forEach(function(k){S[k]=_data.perfil[k];});
+              if(_data.feedback) FEEDBACK_DATA=_data.feedback;
+              restaurarFormulario();
+              document.getElementById('acceso-screen').style.display='none';
+              setTimeout(function(){generarPlan();},300);
+            } catch(e) { localStorage.removeItem('vam_plan_activo'); }
+          };
+          var _inner = _acceso.querySelector('.acceso-inner');
+          if(_inner) _inner.appendChild(_div);
+        }
+      }
+    }
+  } catch(e) {}
 });
 
 // ── VISTA ENTRENAMIENTO / DETALLADA ───────────────────
