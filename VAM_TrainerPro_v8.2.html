@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!-- saved from url=(0064)file:///C:/Users/usuario/Desktop/VAM%20Trainer%20Pro%20v9.0.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -8,22 +9,47 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0a0a10;--surface:#111118;--surface2:#17171f;--surface3:#1d1d27;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --accent:#d4f53c;--accent2:rgba(212,245,60,0.12);
-  --text:#f0f0f8;--muted:#8888a0;--muted2:#55556a;
-  --green:#4aff9e;--blue:#5ca8ff;--orange:#ff8c42;--red:#ff5c5c;--pink:#ff6eb4;
+  /* VAM TRAINER PRO — Sistema de color sport premium */
+  /* Base oscura con superficies elevadas — máximo contraste, máxima legibilidad */
+  --bg:#0d0e12;
+  --surface:#16181e;
+  --surface2:#1e2028;
+  --surface3:#252830;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --border3:rgba(255,255,255,0.16);
+  /* Acento único: verde eléctrico — energía, movimiento, vida */
+  --accent:#00e676;
+  --accent2:rgba(0,230,118,0.10);
+  --accent-dark:#00b359;
+  /* Texto con jerarquía clara */
+  --text:#f4f5f7;
+  --text2:#c8cad0;
+  --muted:#7c8090;
+  --muted2:#4a4d58;
+  /* Colores semánticos — vibrantes sobre fondo oscuro */
+  --green:#00e676;
+  --blue:#4d9fff;
+  --orange:#ffab40;
+  --red:#ff5252;
+  --pink:#ff6eb4;
+  --purple:#b388ff;
+  /* Sombras */
+  --shadow-sm:0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.6);
+  --shadow-accent:0 4px 20px rgba(0,230,118,0.2);
 }
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-.hdr{padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
-.logo{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+.hdr{padding:.875rem 2rem;display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-bottom:1px solid rgba(0,230,118,.1);box-shadow:0 1px 0 rgba(0,230,118,.05),0 2px 8px rgba(0,0,0,.3);}
+.logo{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;color:var(--text);}
 .logo em{color:var(--accent);font-style:normal;}
 .logo-sub{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--muted2);letter-spacing:.1em;margin-top:2px;}
 .hdr-right{display:flex;align-items:center;gap:.75rem;}
 .hdr-badge{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--accent);border:1px solid rgba(212,245,60,.25);padding:.25rem .7rem;border-radius:3px;letter-spacing:.06em;}
 .btn-hoy{font-family:'DM Mono',monospace;font-size:.62rem;background:var(--accent2);color:var(--accent);border:1px solid rgba(212,245,60,.3);padding:.3rem .85rem;border-radius:4px;cursor:pointer;display:none;letter-spacing:.04em;}
 .btn-hoy:hover{background:rgba(212,245,60,.2);}
-.steps{display:flex;align-items:center;justify-content:center;padding:1.25rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:.25rem;}
+.steps{display:flex;align-items:center;justify-content:center;padding:1rem 1.25rem;border-bottom:1px solid var(--border2);flex-wrap:wrap;gap:.25rem;background:var(--surface);}
 .stp{display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--muted2);font-weight:500;cursor:pointer;padding:.25rem .5rem;}
 .stp.active{color:var(--accent);}
 .stp.done{color:var(--muted);}
@@ -31,16 +57,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .stp.active .stp-n{border-color:var(--accent);color:var(--accent);background:var(--accent2);}
 .stp.done .stp-n{border-color:var(--muted2);background:rgba(255,255,255,.03);}
 .stp-sep{width:28px;height:1px;background:var(--border2);}
-.main{max-width:920px;margin:0 auto;padding:2rem 1.25rem;}
+.main{max-width:920px;margin:0 auto;padding:2rem 1.25rem;min-height:calc(100vh - 120px);}
 .scr{display:none;opacity:0;transition:opacity .25s ease;}.scr.on{display:block;opacity:1;}
-.scr-h{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:.3rem;letter-spacing:-.02em;}
-.scr-sub{color:var(--muted);font-size:.85rem;margin-bottom:1.75rem;line-height:1.65;}
+.scr-h{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:.3rem;letter-spacing:-.03em;color:var(--text);}
+.scr-sub{color:var(--text2);font-size:.85rem;margin-bottom:1.75rem;line-height:1.65;}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
 .form-grid.cols3{grid-template-columns:1fr 1fr 1fr;}
 .form-grid.cols1{grid-template-columns:1fr;}
 .field{display:flex;flex-direction:column;gap:.4rem;}
 .field label{font-size:.7rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:.1rem;}
-.field input,.field select,.field textarea{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:'Inter',sans-serif;font-size:.9rem;padding:.65rem .9rem;border-radius:8px;outline:none;width:100%;}
+.field input,.field select,.field textarea{background:var(--surface3);border:1.5px solid var(--border2);color:var(--text);font-family:'Inter',sans-serif;font-size:.9rem;padding:.7rem .9rem;border-radius:10px;outline:none;width:100%;}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(212,245,60,.1);outline:none;}
 .field select option{background:#1a1a26;}
 .field textarea{resize:vertical;min-height:70px;line-height:1.5;}
@@ -49,9 +75,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .radio-grid.g2{grid-template-columns:1fr 1fr;}
 .radio-grid.g3{grid-template-columns:1fr 1fr 1fr;}
 .radio-grid.g4{grid-template-columns:repeat(4,1fr);}
-.rbtn{background:var(--surface2);border:1.5px solid var(--border);color:var(--muted);font-size:.8rem;padding:.8rem .75rem;border-radius:8px;cursor:pointer;transition:all .15s;text-align:center;line-height:1.3;user-select:none;}
-.rbtn:hover{border-color:var(--border2);color:var(--text);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.3);}
-.rbtn.on{background:var(--accent2);border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 1px rgba(212,245,60,.15);}
+.rbtn{background:var(--surface2);border:1.5px solid var(--border2);color:var(--text2);font-size:.8rem;padding:.85rem .75rem;border-radius:10px;cursor:pointer;transition:all .15s;text-align:center;line-height:1.3;user-select:none;}
+.rbtn:hover{border-color:var(--border3);color:var(--text);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+.rbtn.on{background:rgba(0,230,118,.08);border-color:var(--accent);color:var(--accent);font-weight:700;box-shadow:0 0 0 1px rgba(0,230,118,.15);}
 .rbtn small{display:block;font-size:.62rem;color:var(--muted2);margin-top:.2rem;}
 .rbtn.on small{color:rgba(212,245,60,.5);}
 .slider-field{margin-bottom:1rem;}
@@ -64,44 +90,52 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;heigh
 .time-inputs{display:flex;gap:.5rem;align-items:center;}
 .time-inputs input{width:60px;text-align:center;font-family:'DM Mono',monospace;font-size:1rem;}
 .time-sep{font-size:1.1rem;color:var(--muted);font-weight:600;}
-.sdiv{font-family:'DM Mono',monospace;font-size:.7rem;font-weight:700;color:#ffffff;letter-spacing:.12em;text-transform:uppercase;padding:.5rem .75rem;margin-bottom:1rem;margin-top:1.75rem;background:rgba(92,168,255,0.08);border-left:2px solid var(--blue);border-radius:0 4px 4px 0;}.section-block>.sdiv:first-child,.section-block>.sdiv:first-of-type{margin-top:0;}
-.section-block{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;margin-bottom:.75rem;transition:border-color .2s;}.section-block:focus-within{border-color:var(--border2);}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:.75rem;transition:border-color .2s;}
+.sdiv{font-family:'DM Mono',monospace;font-size:.68rem;font-weight:700;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;padding:.45rem .75rem;margin-bottom:1rem;margin-top:1.75rem;background:rgba(37,99,235,0.06);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;}.section-block>.sdiv:first-child,.section-block>.sdiv:first-of-type{margin-top:0;}
+.section-block{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.1rem;margin-bottom:.75rem;transition:all .2s;}.section-block:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent2);}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:.75rem;transition:all .2s;}
 .card.accent-border{border-color:rgba(212,245,60,.2);}
 .chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem;}
-.chip{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.05em;padding:.2rem .6rem;border-radius:20px;border:1px solid var(--border2);color:var(--muted);}
-.chip.green{background:rgba(74,255,158,.08);color:var(--green);border-color:rgba(74,255,158,.2);}
+.chip{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.04em;padding:.22rem .65rem;border-radius:20px;border:1px solid var(--border2);color:var(--text2);}
+.chip.green{background:rgba(0,230,118,.1);color:var(--green);border-color:rgba(0,230,118,.25);}
 .chip.blue{background:rgba(92,168,255,.08);color:var(--blue);border-color:rgba(92,168,255,.2);}
 .chip.orange{background:rgba(255,140,66,.08);color:var(--orange);border-color:rgba(255,140,66,.2);}
 .chip.red{background:rgba(255,92,92,.08);color:var(--red);border-color:rgba(255,92,92,.2);}
-.chip.accent{background:var(--accent2);color:var(--accent);border-color:rgba(212,245,60,.3);}
+.chip.accent{background:var(--accent2);color:var(--accent);border-color:rgba(0,230,118,.3);}
 .chip.pink{background:rgba(255,110,180,.08);color:var(--pink);border-color:rgba(255,110,180,.2);}
-.btn{padding:.8rem 1.5rem;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
-.btn-primary{background:var(--accent);color:#0a0a10;font-size:.95rem;}
-.btn-primary:hover{background:#e2ff55;transform:translateY(-1px);box-shadow:0 4px 16px rgba(212,245,60,.25);}
+.btn{padding:.85rem 1.5rem;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.btn-primary{background:var(--accent);color:#071208;font-size:.95rem;font-weight:800;letter-spacing:.01em;}
+.btn-primary:hover{background:#33eb91;transform:translateY(-1px);box-shadow:var(--shadow-accent);}
 .btn-secondary{background:transparent;border:1.5px solid var(--border2);color:var(--muted);}
 .btn-secondary:hover{border-color:var(--muted);color:var(--text);}
 .btn-full{width:100%;display:block;text-align:center;margin-top:1.25rem;}
 .btn-row{display:flex;gap:.75rem;margin-top:1.25rem;align-items:center;}
 .plan-header{background:linear-gradient(135deg,#111118,#0d1800);border:1px solid rgba(212,245,60,.15);border-radius:14px;padding:1.75rem;margin-bottom:1.5rem;}
-.plan-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:.5rem;}
-.plan-meta{font-size:.8rem;color:var(--muted);line-height:1.7;}
+.plan-title{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:.5rem;color:#ffffff;}
+.plan-meta{font-size:.8rem;color:rgba(255,255,255,.6);line-height:1.7;}
 .plan-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:1.25rem;}
-.pstat{background:rgba(0,0,0,.3);border-radius:8px;padding:.875rem;text-align:center;}
-.pstat-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--accent);}
+.pstat{background:rgba(0,230,118,.05);border-radius:10px;padding:.875rem;text-align:center;border:1px solid rgba(0,230,118,.1);}
+.pstat-val{font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--accent);}
 .pstat-label{font-size:.62rem;color:var(--muted2);margin-top:.2rem;letter-spacing:.04em;}
-.meso{margin-bottom:2rem;}
-.meso-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.875rem;cursor:pointer;}
-.meso-badge{font-family:'DM Mono',monospace;font-size:.65rem;padding:.3rem .8rem;border-radius:4px;letter-spacing:.06em;font-weight:500;}
-.meso-badge.build{background:rgba(92,168,255,.1);color:var(--blue);border:1px solid rgba(92,168,255,.2);}
-.meso-badge.spec{background:rgba(255,140,66,.1);color:var(--orange);border:1px solid rgba(255,140,66,.2);}
-.meso-badge.peak{background:rgba(255,92,92,.1);color:var(--red);border:1px solid rgba(255,92,92,.2);}
-.meso-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;}
+.meso{margin-bottom:2.5rem;}
+.meso-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.875rem;cursor:pointer;padding:.875rem 1rem;background:var(--surface2);border-radius:12px;transition:all .15s;border:1px solid var(--border);user-select:none;-webkit-tap-highlight-color:transparent;}.meso-header:hover{background:var(--surface3);border-color:var(--border2);}
+.meso-badge{font-family:'DM Mono',monospace;font-size:.65rem;padding:.3rem .85rem;border-radius:6px;letter-spacing:.05em;font-weight:700;}
+.meso-badge.build{background:rgba(37,99,235,.1);color:var(--blue);border:1px solid rgba(37,99,235,.2);font-weight:700;}
+.meso-badge.spec{background:rgba(245,158,11,.1);color:var(--orange);border:1px solid rgba(245,158,11,.2);font-weight:700;}
+.meso-badge.peak{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);font-weight:700;}
+.meso-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);}
 .meso-sub{font-size:.75rem;color:var(--muted);margin-left:auto;}
 .meso-body{display:none;}
 .meso-body.open{display:block;}
 .week{margin-bottom:1rem;}
-.week-hdr{display:flex;align-items:center;gap:.5rem;padding:.6rem .875rem;background:var(--surface2);border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none;cursor:pointer;flex-wrap:wrap;}
+.week-hdr{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;background:var(--surface2);border-radius:10px 10px 0 0;border:1px solid var(--border);border-bottom:none;cursor:pointer;flex-wrap:wrap;user-select:none;-webkit-tap-highlight-color:transparent;}
+.week-hdr:hover{background:var(--surface3);}
+.week-toggle-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--border2);color:var(--text2);font-size:.85rem;flex-shrink:0;margin-left:auto;transition:all .2s;}
+.week-hdr:hover .week-toggle-btn{background:rgba(255,255,255,.1);border-color:var(--border3);}
+.week.open .week-toggle-btn{transform:rotate(180deg);}
+.meso-toggle-btn{display:inline-flex;align-items:center;gap:.4rem;margin-left:auto;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:20px;padding:.3rem .75rem;font-size:.7rem;color:var(--text2);font-weight:600;transition:all .2s;flex-shrink:0;}
+.meso-toggle-btn:hover{background:rgba(255,255,255,.1);}
+.meso-toggle-icon{font-size:.65rem;transition:transform .2s;}
+.meso-body.open ~ .meso-header .meso-toggle-icon{transform:rotate(180deg);}
 .week-num{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted2);}
 .week-vam{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--orange);margin-left:.25rem;}
 .days-grid{border:1px solid var(--border);border-radius:0 0 8px 8px;overflow:hidden;}
@@ -137,7 +171,7 @@ svg.carga-svg{display:block;}
 .panel-hoy.open{display:flex;}
 .panel-hoy-inner{background:var(--surface);border-radius:18px 18px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:1.5rem 1.5rem 2rem;}
 .panel-hoy-drag{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 1.25rem;}
-.panel-hoy-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.25rem;}
+.panel-hoy-title{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;margin-bottom:.25rem;color:var(--text);}
 .panel-hoy-sub{font-size:.75rem;color:var(--muted);margin-bottom:1.25rem;}
 .hoy-zona{display:inline-flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;padding:.3rem .75rem;border-radius:20px;margin-bottom:1rem;}
 .hoy-bloque{background:var(--surface2);border-radius:10px;padding:1rem;margin-bottom:.75rem;}
@@ -155,22 +189,136 @@ svg.carga-svg{display:block;}
 .hoy-no-ses{text-align:center;padding:2rem 1rem;color:var(--muted);}
 
 /* ── PANTALLA DE ACCESO ──────────────────────── */
-.acceso-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:1.5rem;}
-.acceso-inner{width:100%;max-width:440px;}
-.acceso-logo{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;text-align:center;margin-bottom:.25rem;}
+/* ── PANTALLA DE ACCESO — DISEÑO COMPLETO ── */
+/* La pantalla ocupa todo y hace scroll — el contenido no está centrado
+   sino que es una landing page real con scroll natural */
+.acceso-screen{
+  position:fixed;inset:0;z-index:500;
+  background:#0a0c10;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+/* Contenido de acceso: layout de landing page */
+.acceso-inner{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:0;
+  width:100%;
+}
+/* Hero section — arriba */
+.acceso-hero{
+  width:100%;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:3rem 1.5rem 2rem;
+  position:relative;
+  text-align:center;
+}
+/* Sección testimonios + opinión — abajo del hero */
+.acceso-bottom{
+  width:100%;
+  max-width:900px;
+  padding:3rem 1.5rem 4rem;
+}
+.acceso-logo{
+  font-family:'Syne',sans-serif;
+  font-size:3.5rem;
+  font-weight:800;
+  letter-spacing:-.04em;
+  color:#ffffff;
+  margin-bottom:.4rem;
+  line-height:1;
+}
 .acceso-logo em{color:var(--accent);font-style:normal;}
-.acceso-sub{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted2);text-align:center;letter-spacing:.1em;margin-bottom:2rem;}
-.acceso-precio{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.25rem;}
-.acceso-precio-val{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;color:var(--accent);text-align:center;line-height:1;}
-.acceso-precio-sub{font-size:.78rem;color:var(--muted);text-align:center;margin-top:.3rem;line-height:1.5;}
-.acceso-features{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
-.acceso-feat{display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:var(--muted);}
-.acceso-feat em{color:var(--accent);font-style:normal;font-size:.9rem;}
-.acceso-input{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:1rem;padding:.8rem 1rem;border-radius:8px;width:100%;outline:none;text-align:center;letter-spacing:.15em;margin-bottom:.75rem;}
-.acceso-input:focus{border-color:var(--accent);}
-.acceso-error{font-size:.75rem;color:var(--red);text-align:center;margin-bottom:.5rem;display:none;}
-.acceso-demo{font-size:.72rem;color:var(--muted2);text-align:center;margin-top:.75rem;cursor:pointer;}
-.acceso-demo:hover{color:var(--muted);}
+.acceso-sub{
+  font-family:'DM Mono',monospace;
+  font-size:.65rem;
+  color:rgba(255,255,255,.4);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  margin-bottom:3rem;
+}
+/* Card de acceso centrada */
+.acceso-card{
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:24px;
+  padding:2.25rem;
+  width:100%;
+  max-width:420px;
+  margin-bottom:2rem;
+}
+.acceso-precio{
+  background:rgba(0,230,118,.06);
+  border:1px solid rgba(0,230,118,.15);
+  border-radius:16px;
+  padding:1.25rem;
+  margin-bottom:1.5rem;
+}
+.acceso-precio-val{
+  font-family:'Syne',sans-serif;
+  font-size:3rem;
+  font-weight:800;
+  color:var(--accent);
+  text-align:center;
+  line-height:1;
+}
+.acceso-precio-sub{
+  font-size:.77rem;
+  color:rgba(255,255,255,.5);
+  text-align:center;
+  margin-top:.35rem;
+  line-height:1.5;
+}
+.acceso-features{
+  display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;
+  text-align:left;
+}
+.acceso-feat{
+  display:flex;align-items:center;gap:.6rem;
+  font-size:.82rem;color:rgba(255,255,255,.7);
+}
+
+.acceso-input{
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.12);
+  color:#fff;
+  font-family:'DM Mono',monospace;
+  font-size:1rem;
+  padding:.85rem 1rem;
+  border-radius:10px;
+  width:100%;
+  outline:none;
+  text-align:center;
+  letter-spacing:.15em;
+  margin-bottom:.75rem;
+  transition:all .2s;
+}
+.acceso-input::placeholder{color:rgba(255,255,255,.3);}
+.acceso-input:focus{
+  border-color:var(--accent);
+  background:rgba(0,230,118,.06);
+  box-shadow:0 0 0 3px rgba(0,230,118,.12);
+}
+.acceso-error{
+  font-size:.75rem;color:var(--red);
+  text-align:center;margin-bottom:.5rem;display:none;
+}
+.acceso-demo{
+  font-size:.73rem;color:rgba(255,255,255,.35);
+  text-align:center;margin-top:.875rem;
+  cursor:pointer;text-decoration:underline;
+  text-underline-offset:3px;
+  transition:color .15s;
+}
+.acceso-demo:hover{color:rgba(255,255,255,.6);}
 
 /* ── VISTA ENTRENAMIENTO ─────────────────────── */
 .vista-toggle{display:flex;gap:.35rem;background:var(--surface2);border-radius:8px;padding:.3rem;margin-bottom:1.25rem;}
@@ -194,15 +342,64 @@ svg.carga-svg{display:block;}
 .registro-inner{background:var(--surface);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:1.75rem;}
 .registro-row{display:grid;grid-template-columns:1fr 100px 90px 60px;gap:.5rem;padding:.6rem .5rem;border-bottom:1px solid var(--border);align-items:center;font-size:.78rem;}
 .registro-row.header{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase;}
-@media(max-width:480px){
-  .section-block{padding:.75rem .75rem;}
+@media(max-width:600px){
+  /* MÓVIL — layout limpio y táctil */
+  .section-block{padding:.75rem;}
   .radio-grid.g4{grid-template-columns:1fr 1fr;}
   .radio-grid.g3{grid-template-columns:1fr 1fr;}
   .form-grid{grid-template-columns:1fr;}
   .form-grid.cols3{grid-template-columns:1fr;}
   .plan-stats{grid-template-columns:repeat(3,1fr);}
-  .day-row{grid-template-columns:52px 1fr!important;}
-  .day-row>div:nth-child(3),.day-row>div:nth-child(4){display:none;}
+  .pstat{padding:.6rem;}
+  .pstat-val{font-size:1rem;}
+  /* Sesión: día + contenido en 2 columnas, col 3 y 4 se ocultan */
+  .day-row{
+    grid-template-columns:52px 1fr !important;
+    padding:.875rem .875rem;
+    gap:.5rem;
+  }
+  .day-row>div:nth-child(3),.day-row>div:nth-child(4){display:none !important;}
+  /* Nombre sesión más grande en móvil */
+  .ses-nombre{font-size:.95rem;}
+  /* Feedback bar en móvil — táctil */
+  .feedback-bar{flex-wrap:wrap;gap:.4rem;}
+  .fb-btn{padding:.35rem .75rem;font-size:.68rem;}
+  /* Week header en móvil */
+  .week-hdr{padding:.75rem .875rem;gap:.4rem;}
+  .week-num{font-size:.72rem;}
+  /* Steps en móvil */
+  .stp span{display:none;}
+  .stp-sep{width:16px;}
+  /* Hdr en móvil */
+  .hdr{padding:.75rem 1rem;}
+  .logo{font-size:1.1rem;}
+  .hdr-badge{display:none;}
+  /* Plan header */
+  .plan-header{padding:1.25rem;}
+  .plan-title{font-size:1.15rem;}
+  /* Meso header */
+  .meso-header{padding:.6rem .75rem;}
+  /* Main padding */
+  .main{padding:1.25rem .875rem;}
+  /* Onboarding */
+  .onboarding-card{padding:.875rem;}
+  /* Zona pills */
+  .zona-pill{font-size:.63rem;padding:.2rem .55rem;}
+  /* Ritmo badge */
+  .ritmo-badge{font-size:.88rem;padding:.3rem .65rem;}
+  /* Testimonios */
+  .testimonios-grid{grid-template-columns:1fr;}
+  /* Acceso landing */
+  .acceso-hero{padding:2rem 1.25rem 1.5rem;}
+  .acceso-logo{font-size:2.8rem;}
+  .acceso-card{padding:1.5rem 1.25rem;}
+  /* Botón sesión hoy */
+  #btn-hoy-global{font-size:.6rem;padding:.35rem .7rem;}
+}
+@media(max-width:380px){
+  .plan-stats{grid-template-columns:repeat(2,1fr);}
+  .radio-grid.g4{grid-template-columns:1fr 1fr;}
+  .acceso-logo{font-size:2.2rem;}
 }
 @media print{
   .hdr,.steps,.btn-row,.panel-hoy,.btn-hoy,.chart-wrap,
@@ -256,9 +453,9 @@ svg.carga-svg{display:block;}
 .ed.hi{background:var(--red);}
 
 /* ── FEEDBACK SESIÓN ─────────────────────────── */
-.feedback-bar{display:flex;gap:.35rem;align-items:center;margin-top:.5rem;}
-.fb-btn{font-family:'DM Mono',monospace;font-size:.6rem;padding:.2rem .55rem;border-radius:5px;border:1px solid var(--border2);color:var(--muted2);cursor:pointer;background:var(--surface2);transition:all .12s;}
-.fb-btn:hover{border-color:var(--border2);color:var(--text);}
+.feedback-bar{display:flex;gap:.35rem;align-items:center;margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border);}
+.fb-btn{font-family:'DM Mono',monospace;font-size:.63rem;padding:.28rem .65rem;border-radius:20px;border:1.5px solid var(--border2);color:var(--text2);cursor:pointer;background:var(--surface3);transition:all .12s;}
+.fb-btn:hover{border-color:var(--border3);color:var(--text);}
 .fb-btn.ok{border-color:var(--green);color:var(--green);background:rgba(74,255,158,.08);}
 .fb-btn.reg{border-color:var(--orange);color:var(--orange);background:rgba(255,140,66,.08);}
 .fb-btn.mal{border-color:var(--red);color:var(--red);background:rgba(255,92,92,.08);}
@@ -299,38 +496,428 @@ svg.carga-svg{display:block;}
   .radio-grid.g4{grid-template-columns:1fr 1fr;}
   .hdr{padding:.75rem 1rem;}
 }
+/* ── VISTA ATLETA / TÉCNICA ── */
+.vista-toggle{display:flex;gap:.4rem;align-items:center;background:var(--surface2);border-radius:8px;padding:.25rem;margin-bottom:1.25rem;width:fit-content;}
+.vista-btn{font-size:.72rem;font-weight:600;padding:.35rem .9rem;border-radius:6px;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .15s;letter-spacing:.02em;}
+.vista-btn.active{background:var(--accent);color:#0a0a10;}
+body.modo-atleta .tecnico-only{display:none!important;}
+body.modo-atleta .atleta-only{display:block!important;}
+body.modo-tecnico .tecnico-only{display:block;}
+body.modo-tecnico .atleta-only{display:none!important;}
+.week.semana-actual{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(0,200,81,.15)!important;}
+.week.semana-actual>.week-hdr{background:linear-gradient(90deg,rgba(0,200,81,.07),transparent);border-left:3px solid var(--accent);padding-left:.85rem;}
+.semana-actual-badge{font-size:.6rem;font-weight:700;background:var(--accent);color:#fff;border-radius:20px;padding:.15rem .55rem;margin-left:.4rem;}
+.ses-atleta-nombre{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.3rem;}
+.ses-atleta-desc{font-size:.77rem;color:var(--muted);line-height:1.65;}
+.ses-atleta-ritmo{display:inline-flex;align-items:center;gap:.4rem;background:rgba(212,245,60,.08);border:1px solid rgba(212,245,60,.2);border-radius:6px;padding:.22rem .6rem;margin-top:.4rem;font-size:.74rem;font-weight:600;color:var(--accent);}
+.onboarding-card{background:linear-gradient(135deg,rgba(37,99,235,.05),rgba(0,200,81,.03));border:1.5px solid rgba(37,99,235,.15);border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;}
+.onboarding-step{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:.65rem;}
+.onboarding-num{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.05rem;}
+
+/* ── SEMANAS BLOQUEADAS (pago mensual) ── */
+.week-locked{position:relative;pointer-events:none;}
+.week-locked .week-hdr{opacity:.35;filter:blur(.3px);}
+.week-locked-overlay{position:absolute;inset:0;background:rgba(10,10,16,.82);
+  border-radius:8px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:.5rem;z-index:2;backdrop-filter:blur(2px);
+  border:1px solid rgba(212,245,60,.08);}
+.week-locked-icon{font-size:1.4rem;}
+.week-locked-msg{font-size:.72rem;color:var(--muted);text-align:center;line-height:1.5;}
+.week-locked-btn{font-size:.68rem;font-weight:700;background:var(--accent);
+  color:#0a0a10;border:none;border-radius:6px;padding:.35rem .9rem;cursor:pointer;
+  pointer-events:all;margin-top:.2rem;}
+/* ── SESIÓN — pestaña adaptaciones ── */
+.ses-adaptaciones{margin-top:.5rem;}
+.ses-adapt-toggle{display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.72rem;font-weight:600;color:var(--blue);cursor:pointer;
+  padding:.35rem .85rem;border:1.5px solid rgba(37,99,235,.25);border-radius:20px;
+  margin-top:.6rem;background:rgba(37,99,235,.06);transition:all .15s;
+  user-select:none;letter-spacing:.01em;}
+.ses-adapt-toggle:hover{background:rgba(37,99,235,.12);border-color:rgba(37,99,235,.4);
+  transform:translateY(-1px);box-shadow:0 2px 8px rgba(37,99,235,.12);}
+.ses-adapt-body{display:none;margin-top:.6rem;padding:.85rem 1rem;
+  background:linear-gradient(135deg,rgba(37,99,235,.04),rgba(0,200,81,.02));
+  border:1px solid rgba(37,99,235,.15);border-radius:10px;font-size:.72rem;
+  color:var(--muted);line-height:1.75;}
+.ses-adapt-body.open{display:block;animation:fadeSlide .2s ease;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+/* ── TESTIMONIOS ── */
+.testimonios-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:600px){.testimonios-grid{grid-template-columns:1fr;}}
+.testimonio-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;padding:1.25rem;
+  transition:all .2s;
+}
+.testimonio-card:hover{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.12);
+  transform:translateY(-2px);
+}
+.testimonio-stars{color:#f5c542;font-size:.9rem;margin-bottom:.6rem;letter-spacing:.05em;}
+.testimonio-texto{
+  font-size:.82rem;color:rgba(255,255,255,.7);
+  line-height:1.65;font-style:italic;margin-bottom:.75rem;
+}
+.testimonio-autor{font-size:.7rem;color:rgba(255,255,255,.4);font-weight:600;}
+.testimonio-prueba{font-size:.65rem;color:var(--accent);margin-left:.4rem;}
+/* ── VISUAL — mejoras generales ── */
+.day-row{position:relative;}
+.zona-pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;
+  font-weight:700;padding:.22rem .65rem;border-radius:20px;letter-spacing:.02em;}
+.zona-pill.z1{background:rgba(0,200,81,.12);color:#009940;border:1.5px solid rgba(0,200,81,.25);}
+.zona-pill.z2{background:rgba(37,99,235,.1);color:var(--blue);border:1.5px solid rgba(37,99,235,.2);}
+.zona-pill.z3{background:rgba(239,68,68,.1);color:var(--red);border:1.5px solid rgba(239,68,68,.2);}
+.ritmo-badge{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:700;
+  color:#006e2c;background:rgba(0,200,81,.08);border:1.5px solid rgba(0,200,81,.2);
+  border-radius:8px;padding:.35rem .8rem;display:inline-block;}
+/* Plan header mejorado */
+.plan-header{background:linear-gradient(135deg,#0d1200,#0a0a18);
+  border:1px solid rgba(212,245,60,.2);border-radius:16px;padding:2rem;
+  margin-bottom:1.5rem;position:relative;overflow:hidden;}
+.plan-header::before{content:'';position:absolute;top:-40px;right:-40px;
+  width:200px;height:200px;background:radial-gradient(circle,rgba(212,245,60,.06),transparent 70%);
+  pointer-events:none;}
+/* Sesión card mejorada */
+.day-row{border-radius:8px;transition:background .12s;}
+.day-row:hover:not(.rest){background:var(--surface2);}
+.ses-nombre-wrap{display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem;flex-wrap:wrap;}
+.ses-nombre{font-size:.88rem;font-weight:700;color:var(--text);}
+
+/* ── ANIMACIONES DE ENTRADA ── */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes gradAnim{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes scanline{from{transform:translateY(-100%)}to{transform:translateY(100vh)}}
+
+/* Pantalla de acceso — gradiente vivo animado */
+/* acceso-screen usa su propio background definido arriba */
+
+/* Logo en acceso — entra con elegancia */
+
+
+
+/* Plan — cada semana entra escalonada */
+.week{
+  animation:slideUp .35s cubic-bezier(.16,1,.3,1) both;
+}
+.week:nth-child(1){animation-delay:.05s}
+.week:nth-child(2){animation-delay:.10s}
+.week:nth-child(3){animation-delay:.15s}
+.week:nth-child(4){animation-delay:.20s}
+.week:nth-child(5){animation-delay:.25s}
+.week:nth-child(6){animation-delay:.30s}
+
+/* Mesociclo — cabecera entra deslizando */
+.meso-header{animation:slideRight .3s cubic-bezier(.16,1,.3,1) both;}
+
+/* Plan header — entrada dramática */
+.plan-header{animation:slideUp .4s cubic-bezier(.16,1,.3,1) both;}
+
+/* Gráfico de carga */
+.chart-wrap{animation:fadeIn .5s .3s both;}
+
+/* Stats del plan */
+.plan-stats .pstat{animation:slideUp .3s cubic-bezier(.16,1,.3,1) both;}
+.plan-stats .pstat:nth-child(1){animation-delay:.1s}
+.plan-stats .pstat:nth-child(2){animation-delay:.15s}
+.plan-stats .pstat:nth-child(3){animation-delay:.2s}
+.plan-stats .pstat:nth-child(4){animation-delay:.25s}
+.plan-stats .pstat:nth-child(5){animation-delay:.3s}
+
+/* Botón ⚡ SESIÓN DE HOY — pulso para llamar atención */
+#btn-hoy-global[style*="block"]{
+  animation:pulse 2.5s 2s 3;
+}
+
+/* Acceso features — entrada escalonada */
+.acceso-feat:nth-child(1){animation:slideRight .3s .2s both cubic-bezier(.16,1,.3,1);}
+.acceso-feat:nth-child(2){animation:slideRight .3s .28s both cubic-bezier(.16,1,.3,1);}
+.acceso-feat:nth-child(3){animation:slideRight .3s .36s both cubic-bezier(.16,1,.3,1);}
+.acceso-feat:nth-child(4){animation:slideRight .3s .44s both cubic-bezier(.16,1,.3,1);}
+.acceso-feat:nth-child(5){animation:slideRight .3s .52s both cubic-bezier(.16,1,.3,1);}
+
+/* ── PULIDO VISUAL FINAL ── */
+
+/* Semana actual — bordes de acento */
+.week.semana-actual{border-color:rgba(0,230,118,.4)!important;
+  box-shadow:0 0 0 2px rgba(0,230,118,.15),var(--shadow-sm)!important;}
+.week.semana-actual>.week-hdr{
+  background:linear-gradient(90deg,rgba(0,230,118,.1) 0%,transparent 70%)!important;}
+.week.semana-actual .week-toggle-btn{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.3);color:var(--accent);}
+
+/* Badge HOY */
+.semana-actual-badge{font-size:.6rem;font-weight:700;background:var(--accent);
+  color:#0a1208;border-radius:20px;padding:.18rem .6rem;margin-left:.4rem;
+  letter-spacing:.04em;}
+
+/* Zona pills — alta legibilidad sobre oscuro */
+.zona-pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.67rem;
+  font-weight:700;padding:.25rem .7rem;border-radius:20px;letter-spacing:.02em;
+  white-space:nowrap;}
+.zona-pill.z1{background:rgba(0,230,118,.12);color:#00e676;border:1.5px solid rgba(0,230,118,.3);}
+.zona-pill.z2{background:rgba(77,159,255,.12);color:#4d9fff;border:1.5px solid rgba(77,159,255,.3);}
+.zona-pill.z3{background:rgba(255,82,82,.12);color:#ff5252;border:1.5px solid rgba(255,82,82,.3);}
+
+/* Nombre sesión */
+.ses-nombre-wrap{display:flex;align-items:center;gap:.6rem;margin-bottom:.45rem;flex-wrap:wrap;}
+.ses-nombre{font-size:.9rem;font-weight:700;color:var(--text);letter-spacing:-.01em;}
+
+/* Badge ritmo — protagonista */
+.ritmo-badge{font-family:'DM Mono',monospace;font-size:1rem;font-weight:700;
+  color:var(--accent);background:rgba(0,230,118,.08);
+  border:1.5px solid rgba(0,230,118,.25);border-radius:8px;
+  padding:.4rem .85rem;display:block;text-align:center;
+  letter-spacing:.02em;}
+
+/* Descripción sesión */
+#ses-desc-t1_d1,div[id^="ses-desc"]{
+  font-size:.78rem;color:var(--text2);line-height:1.65;}
+
+/* Botón adaptaciones — prominente */
+.ses-adapt-toggle{display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.73rem;font-weight:600;color:var(--blue);cursor:pointer;
+  padding:.38rem .9rem;border:1.5px solid rgba(77,159,255,.3);border-radius:20px;
+  margin-top:.65rem;background:rgba(77,159,255,.07);transition:all .15s;
+  user-select:none;}
+.ses-adapt-toggle:hover{background:rgba(77,159,255,.14);
+  border-color:rgba(77,159,255,.5);transform:translateY(-1px);}
+.ses-adapt-body{display:none;margin-top:.6rem;padding:.9rem 1rem;
+  background:rgba(77,159,255,.05);border:1px solid rgba(77,159,255,.15);
+  border-radius:10px;font-size:.73rem;color:var(--text2);line-height:1.75;}
+.ses-adapt-body.open{display:block;animation:fadeSlide .18s ease;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+
+/* Feedback bar */
+.feedback-bar{display:flex;gap:.35rem;align-items:center;margin-top:.65rem;
+  padding-top:.65rem;border-top:1px solid var(--border);}
+.fb-btn.ok{border-color:rgba(0,230,118,.4);color:var(--green);background:rgba(0,230,118,.08);}
+.fb-btn.reg{border-color:rgba(255,171,64,.4);color:var(--orange);background:rgba(255,171,64,.08);}
+.fb-btn.mal{border-color:rgba(255,82,82,.4);color:var(--red);background:rgba(255,82,82,.08);}
+.fb-btn.skip{border-color:var(--border2);color:var(--muted2);}
+
+/* Onboarding card */
+.onboarding-card{background:linear-gradient(135deg,rgba(77,159,255,.07),rgba(0,230,118,.04));
+  border:1px solid rgba(77,159,255,.2);border-radius:14px;
+  padding:1.25rem;margin-bottom:1.25rem;}
+.onboarding-num{width:24px;height:24px;border-radius:50%;background:var(--blue);
+  color:#fff;font-size:.65rem;font-weight:800;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;margin-top:.05rem;}
+
+/* Meso badge colores vivos */
+.meso-badge.build{background:rgba(77,159,255,.12);color:#4d9fff;border:1px solid rgba(77,159,255,.25);}
+.meso-badge.spec{background:rgba(255,171,64,.12);color:#ffab40;border:1px solid rgba(255,171,64,.25);}
+.meso-badge.peak{background:rgba(255,82,82,.12);color:#ff5252;border:1px solid rgba(255,82,82,.25);}
+
+/* Semana eval btn */
+.semana-eval-btn{font-family:'DM Mono',monospace;font-size:.6rem;padding:.22rem .55rem;
+  border-radius:5px;border:1px solid rgba(0,230,118,.3);color:var(--accent);
+  background:rgba(0,230,118,.06);cursor:pointer;margin-left:.4rem;vertical-align:middle;}
+
+/* Línea de alternativa — azul sobre oscuro */
+div[style*="color:var(--blue)"][style*="0.68rem"]{color:#4d9fff!important;}
+
+/* Nota lesión */
+div[style*="color:var(--red)"][style*="0.68rem"]{color:#ff6b6b!important;}
+
+/* Nota progresión */
+div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
+
+/* Paso activo en stepper */
+.stp.active .stp-n{border-color:var(--accent);color:var(--accent);
+  background:rgba(0,230,118,.1);}
+
+/* Selects */
+.field select option{background:var(--surface2);}
+
+/* HBS */
+.hdr-badge{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--accent);
+  border:1px solid rgba(0,230,118,.25);padding:.22rem .65rem;border-radius:3px;
+  letter-spacing:.06em;}
+
+/* Plan header antes del gráfico — texto legible en oscuro */
+.plan-header .plan-meta strong{color:rgba(255,255,255,.9);}
+.chart-title{font-family:'DM Mono',monospace;font-size:.68rem;
+  color:rgba(255,255,255,.5);letter-spacing:.06em;margin-bottom:.75rem;}
+
+/* Paneles modales */
+.panel-hoy-inner,.eval-inner,.test-inner,.export-inner,.panel-update-inner,
+.informe-inner,.registro-inner{background:var(--surface);}
+
+/* Scroll bar */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--border3);}
+
+/* STEP bar mejorada */
+.steps{background:var(--surface);border-bottom:1px solid var(--border);}
+.stp-sep{background:var(--border2);}
+
+/* ── MÓVIL: ritmo inline dentro de la sesión ── */
+.ses-mobile-meta{
+  display:none;
+  align-items:center;
+  gap:.5rem;
+  margin-top:.4rem;
+  flex-wrap:wrap;
+}
+@media(max-width:600px){
+  .ses-mobile-meta{display:flex;}
+}
+.ses-mobile-ritmo{
+  font-family:monospace;font-size:.88rem;font-weight:700;
+  color:var(--accent);background:rgba(0,230,118,.08);
+  border:1.5px solid rgba(0,230,118,.2);border-radius:7px;
+  padding:.28rem .7rem;
+}
+.ses-mobile-km{
+  font-size:.72rem;color:var(--blue);font-weight:600;
+}
+.ses-mobile-subida{
+  font-size:.72rem;color:var(--orange);font-weight:600;
+}
 </style>
 </head>
 <body>
 
 <!-- PANTALLA DE ACCESO -->
 <div class="acceso-screen" id="acceso-screen">
-  <div class="acceso-inner">
-    <div class="acceso-logo">VAM<em>·</em>trainer <span style="font-size:1rem;font-weight:400;color:var(--muted)">Pro</span></div>
-    <div class="acceso-sub">PLANIFICACIÓN CIENTÍFICA DE RUNNING</div>
+<div class="acceso-inner">
 
-    <div class="acceso-precio">
-      <div class="acceso-precio-val">9<span style="font-size:1.4rem;">€</span><span style="font-size:1rem;color:var(--muted);font-family:&#39;Inter&#39;,sans-serif;font-weight:400;">/mes</span></div>
-      <div class="acceso-precio-sub">Plan personalizado completo · Duración según tus semanas de preparación<br>
-      <span style="color:var(--accent);font-size:.75rem;">Informe fisiológico premium disponible · 4,99€ adicional</span></div>
+  <!-- ── HERO SECTION ────────────────────────── -->
+  <div class="acceso-hero">
+    <!-- Fondo decorativo animado -->
+    <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;">
+      <!-- Gradiente animado de fondo -->
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,230,118,.08) 0%,transparent 60%);"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 80%,rgba(77,159,255,.05) 0%,transparent 60%);"></div>
+      <!-- Líneas decorativas -->
+      <svg style="position:absolute;bottom:0;width:100%;height:40%;opacity:.04;" viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <path d="M0,160 C200,80 400,180 600,100 C800,20 1000,140 1200,60 L1200,200 L0,200Z" fill="#00e676"></path>
+      </svg>
+      <!-- Número VAM decorativo -->
+      <div style="position:absolute;right:5%;top:20%;font-family:&#39;DM Mono&#39;,monospace;font-size:8rem;font-weight:800;color:rgba(0,230,118,.03);line-height:1;user-select:none;">VAM</div>
     </div>
 
-    <div class="acceso-features">
-      <div class="acceso-feat"><em>✓</em> Plan personalizado con VAM, edad, sexo y lesiones</div>
-      <div class="acceso-feat"><em>✓</em> Progresión científica semana a semana</div>
-      <div class="acceso-feat"><em>✓</em> Vista entrenamiento limpia para consultar corriendo</div>
-      <div class="acceso-feat"><em>✓</em> Actualizable si cambia tu VAM o tu fecha</div>
-      <div class="acceso-feat"><em>✓</em> Ajuste por terreno, historial de lesiones y perfil edad</div>
-    </div>
+    <!-- Contenido hero -->
+    <div style="position:relative;z-index:1;width:100%;max-width:480px;">
+      <!-- Logo -->
+      <div class="acceso-logo">VAM<em>·</em>trainer <span style="font-size:1.6rem;font-weight:400;color:rgba(255,255,255,.4);">Pro</span></div>
+      <div class="acceso-sub">PLANIFICACIÓN CIENTÍFICA DE RUNNING</div>
 
-    <div id="acceso-clave-bloque">
-      <input class="acceso-input" id="acceso-input" type="text" placeholder="INTRODUCE TU CLAVE" maxlength="20" oninput="this.value=this.value.toUpperCase()">
-      <div class="acceso-error" id="acceso-error">Clave no válida o caducada. Comprueba el email de confirmación.</div>
-      <button class="btn btn-primary btn-full" onclick="validarAcceso()">Acceder →</button>
-    </div>
+      <!-- Card de acceso -->
+      <div class="acceso-card">
+        <!-- Precio -->
+        <div class="acceso-precio">
+          <div class="acceso-precio-val">9<span style="font-size:1.6rem;font-weight:500;">€</span><span style="font-size:1rem;color:rgba(255,255,255,.4);font-weight:400;"> /mes</span></div>
+          <div class="acceso-precio-sub">Plan personalizado · Duración según tu preparación<br>
+          <span style="color:var(--accent);">Informe fisiológico premium · 4,99€</span></div>
+        </div>
 
-    <div class="acceso-demo" onclick="accesoDemoMode()">¿Quieres probarlo primero? → Acceso demo gratuito (sin descarga)</div>
+        <!-- Features -->
+        <div class="acceso-features">
+          <div class="acceso-feat"><em>✓</em> Ritmos exactos basados en tu VAM real</div>
+          <div class="acceso-feat"><em>✓</em> Ajuste por edad, sexo, lesiones y terreno</div>
+          <div class="acceso-feat"><em>✓</em> Progresión científica semana a semana</div>
+          <div class="acceso-feat"><em>✓</em> Sesión de hoy adaptada a tu estado</div>
+          <div class="acceso-feat"><em>✓</em> Planes distintos cada vez — nunca el mismo</div>
+        </div>
+
+        <!-- Input clave -->
+        <div id="acceso-clave-bloque">
+          <input class="acceso-input" id="acceso-input" type="text" placeholder="INTRODUCE TU CLAVE" maxlength="20" oninput="this.value=this.value.toUpperCase()">
+          <div class="acceso-error" id="acceso-error">Clave no válida o caducada. Comprueba el email de confirmación.</div>
+          <button style="width: 100%; background: linear-gradient(135deg, rgb(0, 230, 118), rgb(0, 200, 83)); color: rgb(7, 18, 8); font-weight: 800; font-size: 0.95rem; border: none; border-radius: 10px; padding: 0.95rem; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; box-shadow: rgba(0, 230, 118, 0.25) 0px 4px 20px;" onmouseover="this.style.transform=&#39;translateY(-1px)&#39;;this.style.boxShadow=&#39;0 6px 28px rgba(0,230,118,.35)&#39;" onmouseout="this.style.transform=&#39;&#39;;this.style.boxShadow=&#39;0 4px 20px rgba(0,230,118,.25)&#39;" onclick="validarAcceso()">Acceder al plan →</button>
+        </div>
+        <div class="acceso-demo" onclick="accesoDemoMode()">¿Sin clave? → Prueba el demo gratuito</div>
+      </div>
+
+      <!-- Scroll hint -->
+      <div onclick="document.querySelector(&#39;.acceso-bottom&#39;).scrollIntoView({behavior:&#39;smooth&#39;})" style="margin-top:1.5rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.3rem;opacity:.4;transition:opacity .2s;" onmouseover="this.style.opacity=&#39;.8&#39;" onmouseout="this.style.opacity=&#39;.4&#39;">
+        <span style="font-size:.68rem;color:rgba(255,255,255,.6);letter-spacing:.1em;text-transform:uppercase;font-family:&#39;DM Mono&#39;,monospace;">Ver opiniones</span>
+        <svg width="20" height="12" viewBox="0 0 20 12" fill="none"><path d="M1 1L10 10L19 1" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-linecap="round"></path></svg>
+      </div>
+    </div>
   </div>
+
+  <!-- ── SECCIÓN TESTIMONIOS + OPINIÓN ─────── -->
+  <div class="acceso-bottom">
+    <!-- Divider -->
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;">
+      <div style="flex:1;height:1px;background:rgba(255,255,255,.08);"></div>
+      <div style="font-family:&#39;DM Mono&#39;,monospace;font-size:.65rem;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">Lo que dicen nuestros atletas</div>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,.08);"></div>
+    </div>
+
+    <!-- Grid testimonios -->
+    <div class="testimonios-grid">
+      <div class="testimonio-card">
+        <div class="testimonio-stars">★★★★★</div>
+        <div class="testimonio-texto">"Llevaba años entrenando a ojo. Con VAM Trainer entendí por qué me estancaba. En 12 semanas bajé 4 minutos en el 10km."</div>
+        <div class="testimonio-autor">Marcos R. <span class="testimonio-prueba">10km · VAM 15.2</span></div>
+      </div>
+      <div class="testimonio-card">
+        <div class="testimonio-stars">★★★★★</div>
+        <div class="testimonio-texto">"El plan respeta que tengo 51 años. No me machaca como los planes genéricos. Me adapta los entrenamientos a mi recuperación real."</div>
+        <div class="testimonio-autor">Carmen L. <span class="testimonio-prueba">Media maratón · 51 años</span></div>
+      </div>
+      <div class="testimonio-card">
+        <div class="testimonio-stars">★★★★☆</div>
+        <div class="testimonio-texto">"Los ritmos son exactos y el plan tiene variedad. Lo mejor: antes de salir a correr me adapta la sesión según cómo estoy ese día."</div>
+        <div class="testimonio-autor">Iván M. <span class="testimonio-prueba">5km · Trail runner</span></div>
+      </div>
+      <div class="testimonio-card">
+        <div class="testimonio-stars">★★★★★</div>
+        <div class="testimonio-texto">"Lo uso con mis atletas. La base científica es sólida y los planes tienen una progresión muy bien construida semana a semana."</div>
+        <div class="testimonio-autor">Laura V. <span class="testimonio-prueba">Entrenadora · Galicia</span></div>
+      </div>
+    </div>
+
+    <!-- Formulario de opinión -->
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:2rem;margin-top:2rem;">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div style="font-family:&#39;Syne&#39;,sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.3rem;">¿Ya entrenas con VAM Trainer?</div>
+        <div style="font-size:.8rem;color:rgba(255,255,255,.4);">Tu opinión ayuda a mejorar la app y a otros atletas a decidirse</div>
+      </div>
+      <div id="opinion-form">
+        <!-- Estrellas -->
+        <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:1.25rem;">
+          <span class="star-btn" data-v="1" onclick="selStar(1)" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.2);transition:all .15s;">★</span>
+          <span class="star-btn" data-v="2" onclick="selStar(2)" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.2);transition:all .15s;">★</span>
+          <span class="star-btn" data-v="3" onclick="selStar(3)" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.2);transition:all .15s;">★</span>
+          <span class="star-btn" data-v="4" onclick="selStar(4)" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.2);transition:all .15s;">★</span>
+          <span class="star-btn" data-v="5" onclick="selStar(5)" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.2);transition:all .15s;">★</span>
+        </div>
+        <textarea id="opinion-texto" placeholder="Cuéntanos tu experiencia — qué mejoró en tu entrenamiento..." style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+          color:#fff;border-radius:10px;padding:.85rem 1rem;font-size:.83rem;
+          font-family:&#39;Inter&#39;,sans-serif;resize:none;height:85px;outline:none;
+          margin-bottom:.75rem;line-height:1.55;"></textarea>
+        <input id="opinion-nombre" type="text" placeholder="Tu nombre · prueba objetivo (ej: Carlos · 10km)" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+          color:#fff;border-radius:10px;padding:.8rem 1rem;font-size:.83rem;
+          font-family:&#39;Inter&#39;,sans-serif;outline:none;margin-bottom:.875rem;">
+        <button onclick="enviarOpinion()" style="width:100%;background:linear-gradient(135deg,#00e676,#00c853);color:#071208;font-weight:700;font-size:.88rem;border:none;border-radius:10px;padding:.9rem;cursor:pointer;transition:all .15s;letter-spacing:.02em;box-shadow:0 3px 12px rgba(0,230,118,.2);">
+          Enviar mi opinión →
+        </button>
+      </div>
+      <div id="opinion-enviada" style="display:none;text-align:center;padding:1.5rem;">
+        <div style="font-size:2rem;margin-bottom:.5rem;">🎉</div>
+        <div style="font-size:.9rem;color:var(--accent);font-weight:700;">¡Gracias por tu opinión!</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:.3rem;">Tu experiencia ayuda a mejorar VAM Trainer Pro</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center;margin-top:2rem;padding-bottom:1rem;">
+      <div style="font-size:.65rem;color:rgba(255,255,255,.2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.08em;">VAM TRAINER PRO · PLANIFICACIÓN CIENTÍFICA DE RUNNING</div>
+      <div style="font-size:.62rem;color:rgba(255,255,255,.15);margin-top:.3rem;">vamrunningcoach@gmail.com</div>
+    </div>
+  </div>
+
+<div style="margin-top: 1rem; padding: 0.75rem 1rem; background: rgba(92, 168, 255, 0.08); border: 1px solid rgba(92, 168, 255, 0.2); border-radius: 8px; font-size: 0.78rem; color: var(--blue); cursor: pointer; text-align: center;">↩ Tienes un plan guardado de hace hoy. <strong>Recuperar plan</strong></div><div style="margin-top: 1rem; padding: 0.75rem 1rem; background: rgba(92, 168, 255, 0.08); border: 1px solid rgba(92, 168, 255, 0.2); border-radius: 8px; font-size: 0.78rem; color: var(--blue); cursor: pointer; text-align: center;">↩ Tienes un plan guardado de hace hoy. <strong>Recuperar plan</strong></div></div>
 </div>
 
 <!-- PANEL INFORME FISIOLÓGICO PREMIUM -->
@@ -370,7 +957,7 @@ svg.carga-svg{display:block;}
       <button class="btn btn-secondary" onclick="cerrarInforme()">Cancelar</button>
       <button class="btn btn-primary" style="flex:1" id="informe-btn-descargar" onclick="descargarInforme()">⬇ Descargar informe →</button>
     </div>
-    <div style="text-align:center;margin-top:.75rem;"><a href="file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v9.0_13.html#" onclick="abrirInformeDemo();return false;" style="font-size:.72rem;color:var(--muted2);">Ver ejemplo del informe</a></div>
+    <div style="text-align:center;margin-top:.75rem;"><a href="file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v9.0_24.html#" onclick="abrirInformeDemo();return false;" style="font-size:.72rem;color:var(--muted2);">Ver ejemplo del informe</a></div>
   </div>
 </div>
 
@@ -476,7 +1063,7 @@ svg.carga-svg{display:block;}
   <div class="sdiv">Datos del atleta</div>
   <div class="form-grid">
     <div class="field"><label>Nombre</label><input id="f-nombre" type="text" placeholder="Ej: Carlos García" autocomplete="name"></div>
-    <div class="field"><label>Edad</label><input id="f-edad" type="number" min="14" max="80" placeholder="Ej: 35"><div class="hint">Entre 14 y 80 años · Ajusta recuperación, volumen y estructura del plan</div></div>
+    <div class="field"><label>Edad</label><input id="f-edad" type="number" min="14" max="85" placeholder="Ej: 35" onblur="(function(el){var v=parseInt(el.value);if(el.value&amp;&amp;(v&lt;14||v&gt;85)){el.style.borderColor=&#39;var(--red)&#39;;el.style.boxShadow=&#39;0 0 0 2px rgba(255,92,92,.3)&#39;;mostrarToast(&#39;⚠️ Edad fuera de rango. Introduce entre 14 y 85 años.&#39;);}else{el.style.borderColor=&#39;&#39;;el.style.boxShadow=&#39;&#39;;}})(this)"><div class="hint">Entre 14 y 85 años · Obligatorio — determina la estructura y carga del plan</div></div>
   </div>
   </div>
   <div class="section-block">
@@ -578,7 +1165,7 @@ svg.carga-svg{display:block;}
   <div id="terreno-info" style="display:none;margin-top:.6rem;"></div>
 
   </div>
-  <button class="btn btn-primary btn-full" onclick="goStep(2)">Continuar →</button>
+  <button class="btn btn-primary btn-full" onclick="validarPaso1()">Continuar →</button>
 </div>
 
 <!-- PASO 2 -->
@@ -736,7 +1323,7 @@ svg.carga-svg{display:block;}
   <div class="sdiv">Fecha objetivo</div>
   <div class="form-grid">
     <div class="field">
-      <label>Fecha de competición objetivo</label>
+      <label>Fecha de competición objetivo <span style="color:var(--red);font-size:.75rem;">*obligatorio</span></label>
       <input id="f-fecha" type="date">
       <div class="hint">Se calculará el número exacto de semanas disponibles</div>
     </div>
@@ -778,7 +1365,7 @@ svg.carga-svg{display:block;}
   </div>
   <div class="btn-row">
     <button class="btn btn-secondary" onclick="goStep(3)">← Volver</button>
-    <button class="btn btn-primary" style="flex:1" onclick="goStep(5)">Continuar →</button>
+    <button class="btn btn-primary" style="flex:1" onclick="validarPaso4()">Continuar →</button>
   </div>
 </div>
 
@@ -1812,7 +2399,11 @@ function buildSesionesTrail(v, pctPend, tipoMeso, zona){
   var eS=155.4*Math.pow(i,5)-30.4*Math.pow(i,4)-43.3*Math.pow(i,3)+46.3*Math.pow(i,2)+19.5*i+3.6;
   var fS=eS/3.6;
   function rS(p){ return fmt(rKm(v,p)*fS); }
-  var np='⛰️ Ritmo de subida ajustado +'+Math.round((fS-1)*100)+'% vs llano (Minetti, 2002). Bajada por sensaciones (RPE 3-4/10).';
+  // np se añade al _notaTerreno, no a la desc principal — desc queda limpia
+  var np='';
+  // Función para limpiar np vacío del final de descs
+  function cleanDesc(d){ return d.replace(/\.\s*$/, '').replace(/\s{2,}/g,' ').trim(); }  // vacío: la nota Minetti va en _notaTerreno
+  var _npTerreno='⛰️ Ritmo ajustado +'+Math.round((fS-1)*100)+'% vs llano (Minetti et al., 2002). Bajada siempre por sensaciones.';
 
   // ── Z1: Tiradas y rodajes con CaCo integrado ──
   var z1=[
@@ -1878,6 +2469,11 @@ function buildSesionesTrail(v, pctPend, tipoMeso, zona){
     spec:   [z3[0],z2[1],z1[0],z3[2],z2[0],z3[3],z1[2],z2[3]],  // Z3 no consecutivos
     peak:   [z1[0],z2[0],z1[4],z2[2],z1[5],z2[3],z1[1],z1[2]]
   };
+  // Añadir _notaTerreno a todas las sesiones
+  var allSes=[].concat(z1,z2,z3);
+  allSes.forEach(function(s){
+    if(!s._notaTerreno) s._notaTerreno = _npTerreno;
+  });
   return pools[tipoMeso]||pools.base;
 }
 
@@ -1911,6 +2507,97 @@ function sesionesDescargaTapering(v,prueba){
 // ══════════════════════════════════════════════════════
 // NAVEGACIÓN
 // ══════════════════════════════════════════════════════
+// ── VISTA ATLETA / TÉCNICA ──────────────────────────────
+var _vistaActual = 'atleta'; // por defecto: vista atleta
+
+function toggleVista(modo) {
+  _vistaActual = modo;
+  document.body.classList.toggle('modo-atleta', modo==='atleta');
+  document.body.classList.toggle('modo-tecnico', modo==='tecnico');
+  document.querySelectorAll('.vista-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-vista')===modo);
+  });
+  // En modo atleta: colapsar todas las semanas excepto la actual
+  if(modo==='atleta') {
+    var semActual = _detectarSemanaActual();
+    document.querySelectorAll('.days-grid').forEach(function(el){
+      var id = el.id; // "w1", "w2"...
+      var semN = parseInt(id.replace('w',''));
+      el.style.display = (semN===semActual) ? 'block' : 'none';
+    });
+  } else {
+    // Modo técnico: mostrar todas
+    document.querySelectorAll('.days-grid').forEach(function(el){
+      el.style.display = 'block';
+    });
+  }
+}
+
+function _detectarSemanaActual() {
+  // Detectar qué semana del plan corresponde a hoy
+  if(!S.fecha || !PLAN_DATA.length) return 1;
+  try {
+    var hoy = new Date(); hoy.setHours(0,0,0,0);
+    var fd = new Date(S.fecha+'T00:00:00');
+    fd.setHours(0,0,0,0);
+    var semTotal = PLAN_DATA.length;
+    var diffMs = fd - hoy;
+    var semsRestantes = Math.ceil(diffMs / (7*24*3600*1000));
+    var semActual = semTotal - semsRestantes + 1;
+    return Math.max(1, Math.min(semTotal, semActual));
+  } catch(e) { return 1; }
+}
+
+function irASemanaActual() {
+  var semActual = _detectarSemanaActual();
+  var el = document.getElementById('w'+semActual);
+  if(el) {
+    el.style.display = 'block';
+    el.closest('.week').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+// ── VALIDACIÓN EN TIEMPO REAL POR PASO ─────────────────────────
+function validarPaso1() {
+  // Validar edad
+  var _edad = parseInt(document.getElementById('f-edad').value);
+  if(!_edad || _edad < 14 || _edad > 85) {
+    var el = document.getElementById('f-edad');
+    el.style.borderColor = 'var(--red)';
+    el.style.boxShadow = '0 0 0 2px rgba(255,92,92,.3)';
+    el.focus();
+    mostrarToast('❌ Introduce tu edad (14-85 años) antes de continuar.');
+    setTimeout(function(){ el.style.borderColor=''; el.style.boxShadow=''; }, 3000);
+    return;
+  }
+  // Sexo siempre tiene valor por defecto (Hombre) — no es obligatorio validar
+  goStep(2);
+}
+
+function validarPaso4() {
+  // Validar fecha de competición
+  var _fecha = document.getElementById('f-fecha').value;
+  if(!_fecha) {
+    var el = document.getElementById('f-fecha');
+    el.style.borderColor = 'var(--red)';
+    el.style.boxShadow = '0 0 0 2px rgba(255,92,92,.3)';
+    el.focus();
+    mostrarToast('❌ Selecciona la fecha de tu competición objetivo.');
+    setTimeout(function(){ el.style.borderColor=''; el.style.boxShadow=''; }, 3000);
+    return;
+  }
+  // Verificar que es al menos 4 semanas en el futuro
+  var _hoy = new Date(); _hoy.setHours(0,0,0,0);
+  var _fd = new Date(_fecha+'T00:00:00');
+  var _sems = Math.round((_fd - _hoy) / (7*24*3600*1000));
+  if(_sems < 4) {
+    mostrarToast('⚠️ La fecha debe ser al menos 4 semanas en el futuro. Con menos tiempo no se puede estructurar un plan efectivo.');
+    var _fF=document.getElementById('f-fecha'); if(_fF&&_fF.focus) _fF.focus();
+    return;
+  }
+  goStep(5);
+}
+
 function goStep(n){
   if(n>=2)readStep1();
   if(n>=3){readStep2();updateStep3();}
@@ -2292,7 +2979,301 @@ function aplicarCorreccionTerreno(ses, vamSem, pendMedia){
   return ses2;
 }
 
+// Traducción de nombre técnico → lenguaje atleta
+function nombreAtleta(ses) {
+  var n = ses.nombre || '';
+  // Extraer datos clave de la descripción para el resumen
+  var desc = ses.desc || '';
+
+  // IEL — series de umbral
+  if(n.indexOf('IEL')===0) {
+    var m = n.match(/(\d+)×(\d+)m/);
+    if(m) {
+      var ritmoM = desc.match(/\d+×\d+m a (\d+:\d+)/);
+      return m[1]+' series de '+m[2]+'m'+(ritmoM?' a '+ritmoM[1]+' /km':'');
+    }
+  }
+  // IEM — series por tiempo a VAM
+  if(n.indexOf('IEM')===0) {
+    var m = n.match(/(\d+)×(\d+min[\d″]*)/);
+    if(m) {
+      var ritmoM = desc.match(/a (\d+:\d+) \/km/);
+      return m[1]+' series de '+m[2]+(ritmoM?' a '+ritmoM[1]+' /km':'');
+    }
+  }
+  // IIC — series a VAM
+  if(n.indexOf('IIC')===0) {
+    var m = n.match(/(\d+)×(\d+)m/);
+    if(m) {
+      var ritmoM = desc.match(/\d+m a (\d+:\d+)/);
+      return m[1]+' series de '+m[2]+'m'+(ritmoM?' a '+ritmoM[1]+' /km':'');
+    }
+  }
+  // Intermitente Gacon
+  if(n.indexOf('Intermitente')===0||n.indexOf('Gacon')>=0) {
+    var m = n.match(/(\d+″\/\d+″)/);
+    var s = n.match(/(\d+)×(\d+) reps/);
+    if(s) return s[1]+' series × '+s[2]+' repeticiones '+( m?m[1]:'');
+  }
+  // Cuestas
+  if(n.indexOf('Cuestas')===0||n.indexOf('cuestas')===0) {
+    var m = n.match(/(\d+)×(\d+)m/);
+    if(m) return m[1]+' subidas de '+m[2]+'m en cuesta';
+  }
+  // Pirámide
+  if(n.indexOf('Pirámide')===0) {
+    return 'Series en pirámide de distancias';
+  }
+  // Series largas
+  if(n.indexOf('Series largas')===0) {
+    var m = n.match(/(\d+)×(\d+)m/);
+    if(m) return m[1]+' series largas de '+m[2]+'m';
+  }
+  // Fartlek
+  if(n.indexOf('Fartlek')===0) return 'Fartlek — ritmos variados continuos';
+  // Progresivo
+  if(n.indexOf('Progresivo')===0) return n.replace('Progresivo','Rodaje progresivo');
+  // Tempo
+  if(n.indexOf('Tempo')===0) {
+    var m = desc.match(/a (\d+:\d+) \/km/);
+    return 'Rodaje al umbral'+(m?' a '+m[1]+' /km':'');
+  }
+  // Continuo al umbral
+  if(n.indexOf('Continuo al umbral')===0) {
+    var m = desc.match(/a (\d+:\d+) \/km/);
+    return 'Rodaje firme'+(m?' a '+m[1]+' /km':'');
+  }
+  // Rodajes — devolver tal cual pero limpios
+  return n.replace('Rodaje regenerativo','Trote suave de recuperación')
+          .replace('Rodaje continuo extensivo','Rodaje continuo suave')
+          .replace('Rodaje medio','Rodaje medio')
+          .replace('Tirada aeróbica','Tirada larga suave')
+          .replace('Tirada larga','Tirada larga');
+}
+
+// Descripción corta para el atleta — máximo 2 líneas
+function descAtleta(ses) {
+  var n = ses.nombre || '';
+  var desc = ses.desc || '';
+
+  // Extraer lo esencial: calentamiento + qué hacer + ritmo
+  var cal = desc.match(/Cal (\d+)min/);
+  var calStr = cal ? 'Calienta '+cal[1]+'min suave. ' : '';
+
+  // IEL
+  if(n.indexOf('IEL')===0) {
+    var m = n.match(/(\d+)×(\d+)m/);
+    var ritmo = desc.match(/\d+m a (\d+:\d+)/);
+    var pausa = desc.match(/Pausa: ([^.]+)/);
+    if(m&&ritmo) return calStr+m[1]+' veces '+m[2]+'m a '+ritmo[1]+' /km. Entre serie y serie: '+(pausa?pausa[1]:'descanso')+'.'
+      +' Es el entrenamiento de umbral — ritmo sostenido pero controlado.';
+  }
+  // IEM
+  if(n.indexOf('IEM')===0) {
+    var m = n.match(/(\d+)×(\d+min)/);
+    var ritmo = desc.match(/a (\d+:\d+) \/km/);
+    var pausa = desc.match(/Pausa: ([^.]+)/);
+    if(m&&ritmo) return calStr+m[1]+' bloques de '+m[2]+' corriendo a '+ritmo[1]+' /km. '+(pausa?'Descansa '+pausa[1]+'. ':'')
+      +'Es exigente — al terminar deberías estar muy cansado pero sin agotarte por completo.';
+  }
+  // IIC
+  if(n.indexOf('IIC')===0) {
+    var m = n.match(/(\d+)×(\d+)m/);
+    var ritmo = desc.match(/\d+×\d+m a (\d+:\d+)/);
+    var pausa = desc.match(/Pausa: ([^.]+)/);
+    if(m&&ritmo) return calStr+m[1]+' series de '+m[2]+'m a '+ritmo[1]+' /km a tope. '+(pausa?'Descansa '+pausa[1]+' entre cada una. ':'')
+      +'Ve al máximo en cada serie — la pausa es para recuperarte de verdad.';
+  }
+  // Gacon/Intermitente
+  if(n.indexOf('Intermitente')===0||n.indexOf('Gacon')>=0) {
+    var seg = n.match(/(\d+)″\/(\d+)″/);
+    var s = n.match(/(\d+)×(\d+) reps/);
+    var ritmo = desc.match(/a (\d+:\d+) \/km/);
+    if(seg&&s) return calStr+s[1]+' series de '+s[2]+' repeticiones: '+seg[1][0]+'″ rápido a '+
+      (ritmo?ritmo[1]+' /km':'')+', '+seg[1].split('/')[1]+' trotando. Pausa 3min entre series.'+
+      ' Cortos pero intensos — mejoran tu capacidad máxima de oxígeno.';
+  }
+  // Cuestas
+  if(n.indexOf('Cuestas cortas')===0) {
+    var m = n.match(/(\d+)×(\d+)m/);
+    if(m) return calStr+m[1]+' subidas de '+m[2]+'m en cuesta explosivas. Sube fuerte, baja trotando. '+
+      'Fortalece piernas y mejora la zancada.';
+  }
+  if(n.indexOf('Cuestas largas')===0) {
+    var m = n.match(/(\d+)×(\d+)m/);
+    if(m) return calStr+m[1]+' subidas de '+m[2]+'m en cuesta a ritmo esforzado pero no máximo. '+
+      'Baja caminando o trotando suave. Fuerza-resistencia.';
+  }
+  // Rodajes — extraer ritmo y tiempo
+  var ritmoZ = desc.match(/a (\d+:\d+) \/km/);
+  var tiempo = ses.tiempo || '';
+  if(ritmoZ && tiempo) {
+    var tiempoLeg = tiempo.replace('~','').replace('min',' min');
+    return calStr+'Corre '+tiempoLeg+(ritmoZ?' a '+ritmoZ[1]+' /km':'')+'. Ritmo cómodo — deberías poder hablar sin problema.';
+  }
+  // Fallback
+  return calStr+(desc.split('.')[0]+'.').replace('Cal '+((cal||['',''])[1])+'min a.*?\. ','');
+}
+
+
+
+// Adaptaciones fisiológicas por tipo de sesión
+var _ADAPTACIONES = {
+  'IEL': {
+    titulo: 'Umbral láctico y MLSS',
+    texto: 'Esta sesión eleva el umbral láctico (MLSS): el punto de intensidad máxima que puedes sostener sin que el lactato se acumule. Cuanto más alto el umbral, más rápido corres sin "acidarte". Adaptación principal: mitocondrias más eficientes en la fibra muscular tipo IIa.',
+    ref: 'Billat et al. (2001) · Seiler & Kjerland (2006)'
+  },
+  'IEM': {
+    titulo: 'VO₂max y potencia aeróbica',
+    texto: 'El entrenamiento más poderoso para subir la VAM. Maximiza el tiempo a VO₂max — el consumo máximo de oxígeno. Adaptaciones: mayor gasto cardíaco, más capilares musculares, mejor extracción de O₂. El corazón bombea más sangre por latido.',
+    ref: 'Helgerud et al. (2007) · Buchheit & Laursen (2013)'
+  },
+  'IIC': {
+    titulo: 'Potencia a VAM y tolerancia al lactato',
+    texto: 'Trabajo a velocidad aeróbica máxima. Desarrolla la capacidad de tolerar y tamponar el lactato, y enseña al cuerpo a reutilizarlo como combustible. Crea la "reserva de velocidad" que necesitas en los kilómetros finales.',
+    ref: 'Daniels (2014) · Jones & Carter (2000)'
+  },
+  'Intermitente': {
+    titulo: 'Tiempo acumulado a VO₂max',
+    texto: 'Los intervalos cortos (20-40″) permiten acumular más tiempo total a intensidad máxima que los intervalos largos. La pausa corta no permite recuperación completa — el corazón y los pulmones permanecen a alta demanda durante toda la sesión.',
+    ref: 'Buchheit & Laursen (2013) · Billat (2001)'
+  },
+  'Cuestas': {
+    titulo: 'Fuerza específica y economía de carrera',
+    texto: 'Las cuestas desarrollan la fuerza explosiva del tren inferior con bajo impacto articular. Mejoran la zancada, la potencia de impulso y la rigidez del tendón de Aquiles. Un corredor con mejor fuerza muscular gasta menos energía a cada zancada.',
+    ref: 'Ferley et al. (2014) · Blagrove et al. (2018)'
+  },
+  'Tempo': {
+    titulo: 'Umbral aeróbico y eficiencia metabólica',
+    texto: 'El rodaje al umbral mejora la capacidad de oxidar lactato antes de que se acumule. Es el mejor predictor del rendimiento en pruebas de 5km a maratón. Desarrolla la "cabeza de motor" aeróbica que te permite mantener ritmos altos durante mucho tiempo.',
+    ref: 'Billat (2001) · Seiler (2010)'
+  },
+  'Fartlek': {
+    titulo: 'Transiciones aeróbico-anaeróbicas',
+    texto: 'Los cambios de ritmo enseñan al cuerpo a gestionar el lactato durante esfuerzos variables. Mejoran la recuperación activa entre esfuerzos y desarrollan la capacidad de acelerar cuando ya estás fatigado — clave en los cambios de ritmo en competición.',
+    ref: 'Seiler & Kjerland (2006)'
+  },
+  'Rodaje': {
+    titulo: 'Base aeróbica y recuperación activa',
+    texto: 'Los rodajes suaves (55-72% VAM) son el fundamento de todo. Desarrollan la red de capilares musculares, aumentan las mitocondrias en fibras lentas, mejoran la oxidación de grasas y permiten recuperar de sesiones duras sin añadir estrés. El 80% del volumen total debe ser en esta zona.',
+    ref: 'Maffetone (2010) · Seiler (2010) · Lydiard (1983)'
+  },
+  'Tirada': {
+    titulo: 'Capacidad glucolítica y lipolítica',
+    texto: 'Las tiradas largas (1h 15min o más) agotan el glucógeno muscular y activan la lipolisis — el uso de grasa como combustible. Crean adaptaciones estructurales duraderas: más mitocondrias, mayor densidad capilar y mejor economía de carrera. Base indispensable para media maratón y maratón.',
+    ref: 'Lydiard (1983) · Noakes (2003) · Seiler (2010)'
+  },
+  'Progresivo': {
+    titulo: 'Control del ritmo y umbral dinámico',
+    texto: 'Los rodajes progresivos enseñan a gestionar el ritmo bajo fatiga y mejoran la capacidad de elevar la intensidad cuando el glucógeno ya está parcialmente consumido. Desarrollan el umbral funcional de forma gradual sin el estrés de una sesión de umbral pura.',
+    ref: 'Daniels (2014) · Billat (2001)'
+  }
+};
+
+function _getAdaptacion(sesNombre) {
+  var n = sesNombre || '';
+  for(var k in _ADAPTACIONES) {
+    if(n.indexOf(k) >= 0) return _ADAPTACIONES[k];
+  }
+  if(n.indexOf('IEL')>=0) return _ADAPTACIONES['IEL'];
+  if(n.indexOf('IEM')>=0) return _ADAPTACIONES['IEM'];
+  if(n.indexOf('IIC')>=0) return _ADAPTACIONES['IIC'];
+  return null;
+}
+
+function toggleAdaptacion(id) {
+  var el = document.getElementById(id);
+  if(el) el.classList.toggle('open');
+}
+
+
+// ── FORMULARIO DE OPINIÓN ────────────────────────────────────
+var _opinionStars = 0;
+
+function selStar(n) {
+  _opinionStars = n;
+  document.querySelectorAll('.star-btn').forEach(function(s) {
+    var v = parseInt(s.getAttribute('data-v'));
+    s.style.filter = v <= n ? 'grayscale(0)' : 'grayscale(1)';
+    s.style.color = v <= n ? '#f5c542' : '';
+    s.style.transform = v <= n ? 'scale(1.15)' : 'scale(1)';
+  });
+}
+
+function enviarOpinion() {
+  var texto = (document.getElementById('opinion-texto').value||'').trim();
+  var nombre = (document.getElementById('opinion-nombre').value||'').trim();
+  if(!_opinionStars) { mostrarToast('⭐ Selecciona una puntuación antes de enviar.'); return; }
+  if(!texto) { mostrarToast('💬 Escribe unas palabras sobre tu experiencia.'); return; }
+  // Guardar en localStorage para mostrar en testimonios
+  try {
+    var opinions = JSON.parse(localStorage.getItem('vam_opinions')||'[]');
+    opinions.push({
+      stars: _opinionStars,
+      texto: texto,
+      autor: nombre || 'Atleta anónimo',
+      fecha: new Date().toLocaleDateString('es-ES')
+    });
+    localStorage.setItem('vam_opinions', JSON.stringify(opinions.slice(-20)));
+  } catch(e) {}
+  // Abrir email con la opinión pre-rellenada
+  var subject = encodeURIComponent('Opinión VAM Trainer Pro — ' + _opinionStars + ' estrellas');
+  var body = encodeURIComponent(
+    'Puntuación: ' + '★'.repeat(_opinionStars) + '\n\n' +
+    texto + '\n\n' +
+    (nombre ? 'Atleta: ' + nombre : '')
+  );
+  window.open('mailto:vamrunningcoach@gmail.com?subject=' + subject + '&body=' + body);
+  // Mostrar confirmación
+  document.getElementById('opinion-form').style.display = 'none';
+  document.getElementById('opinion-enviada').style.display = 'block';
+}
+
 function generarPlan(){
+  // ── VALIDACIÓN BLOQUEANTE ────────────────────────────────────────
+  // Leer edad y fecha antes de continuar
+  var _edadCheck = parseInt(document.getElementById('f-edad').value);
+  var _fechaCheck = document.getElementById('f-fecha').value;
+
+  // 1. Edad obligatoria
+  if(!_edadCheck || _edadCheck < 14 || _edadCheck > 85) {
+    // Resaltar campo vacío y volver al paso 1
+    var _elEdad = document.getElementById('f-edad');
+    if(_elEdad) {
+      _elEdad.style.border = '2px solid var(--red)';
+      if(_elEdad.focus) _elEdad.focus();
+      setTimeout(function(){ _elEdad.style.border = ''; }, 3000);
+    }
+    mostrarToast('❌ Introduce tu edad antes de generar el plan.');
+    goStep(1);
+    return;
+  }
+
+  // 2. Fecha de competición obligatoria
+  if(!_fechaCheck) {
+    var _elFecha = document.getElementById('f-fecha');
+    if(_elFecha) {
+      _elFecha.style.border = '2px solid var(--red)';
+      if(_elFecha.focus) _elFecha.focus();
+      setTimeout(function(){ _elFecha.style.border = ''; }, 3000);
+    }
+    mostrarToast('❌ Introduce la fecha de tu competición objetivo.');
+    goStep(4);
+    return;
+  }
+
+  // 3. Fecha en el futuro (mínimo 4 semanas)
+  var _hoyCheck = new Date(); _hoyCheck.setHours(0,0,0,0);
+  var _fdCheck = new Date(_fechaCheck+'T00:00:00');
+  var _semsCheck = Math.round((_fdCheck - _hoyCheck) / (7*24*3600*1000));
+  if(_semsCheck < 4) {
+    mostrarToast('❌ La fecha objetivo debe ser al menos 4 semanas en el futuro.');
+    goStep(4);
+    return;
+  }
+  // ── FIN VALIDACIÓN BLOQUEANTE ────────────────────────────────────
+
   readStep1();readStep2();readStep4();
   S.salud=getVal('salud');S.estres=parseInt(document.getElementById('estres-slider').value);
   S.sueno=getVal('sueno');S.notas=document.getElementById('f-notas').value;
@@ -2509,6 +3490,28 @@ function generarPlan(){
   // Función que aplica ajustes fisiológicos reales por edad y sexo
   function aplicarPerfilASesion(ses,vamSem){
     if(!ses||ses.tipo==='descanso') return ses;
+
+    // ── Primera semana: tiradas progresivas ─────────────────────────
+    // La primera semana no debe empezar con una tirada larga máxima
+    // independientemente del nivel del atleta
+    if(ses.zona === 1 && ses.kmNum && ses.kmNum > 12) {
+      // Detectar semana del plan para aplicar factor progresivo inicial
+      // _semGlobalActual se pasa desde sesionesParaTipo
+      var _sgActual = typeof _currentSemGlobal !== 'undefined' ? _currentSemGlobal : 99;
+      if(_sgActual <= 2) {
+        // Semana 1-2: máximo 45min / ~8km para cualquier atleta
+        var ses2prog = JSON.parse(JSON.stringify(ses));
+        var maxKmInicio = _sgActual === 1 ? 8 : 10;
+        if(ses2prog.kmNum > maxKmInicio) {
+          ses2prog.kmNum = maxKmInicio;
+          var minutos = Math.round(maxKmInicio * 60 / (vamSem * 0.65));
+          ses2prog.tiempo = minutos + 'min';
+          ses2prog.nombre = ses2prog.nombre.replace(/\d+h \d+min|\d+min/, minutos+'min');
+          ses2prog._notaProgresion = '📈 Semana inicial: tirada acortada a '+minutos+'min para respetar la progresión de carga. Irá aumentando semana a semana (Buist et al., 2007).';
+        }
+        return ses2prog;
+      }
+    }
 
     // ── Restricciones de alto impacto (>55 y perimenopáusicas) ──────
     if(restringirAltoImpacto&&ses.nombre&&ses.nombre.indexOf('IIMC')>=0){
@@ -2790,6 +3793,7 @@ function generarPlan(){
 
         } else {
           // Día plano: sesión normal de road con volumen completo
+          var _currentSemGlobal = semGlobal;
           var s1=aplicarPerfilASesion(ses,vamSem);
           var s2=aplicarRestriccionesLesiones(s1,vamSem);
           s2._esDesnivel=false;
@@ -2944,7 +3948,34 @@ function generarPlan(){
   html+='<div style="font-family:monospace;font-size:.65rem;color:var(--accent);border:1px solid rgba(212,245,60,.3);padding:.3rem .7rem;border-radius:6px;flex-shrink:0;text-align:center;line-height:1.4;">▶ SESIÓN<br>DE HOY</div>';
   html+='</div>';
 
-  // GRÁFICO DE CARGA SEMANAL
+  // ONBOARDING — solo si primera vez (no han visto el plan antes)
+  var _yaVio = (function(){try{return localStorage.getItem('vam_onboard_visto');}catch(e){return null;}})();
+  if(!_yaVio) {
+  html+='<div class="onboarding-card" id="onboarding-card">';
+  html+='<div style="font-weight:800;font-size:.9rem;margin-bottom:.75rem;color:var(--blue);">👋 Tu plan está listo, '+(S.nombre||'atleta')+'. Así funciona:</div>';
+  html+='<div class="onboarding-step"><div class="onboarding-num">1</div><div style="font-size:.78rem;color:var(--muted);line-height:1.5;"><strong style="color:var(--text);">Busca tu semana</strong> — pulsa <em style="color:var(--accent);font-weight:600;">↓ Mi semana actual</em> para ir directo a lo que toca hoy.</div></div>';
+  html+='<div class="onboarding-step"><div class="onboarding-num">2</div><div style="font-size:.78rem;color:var(--muted);line-height:1.5;"><strong style="color:var(--text);">Antes de salir a entrenar</strong> — pulsa ⚡ <em style="color:var(--accent);font-weight:600;">¿Cómo estás hoy?</em> arriba. Si estás cansado el plan se adapta automáticamente.</div></div>';
+  html+='<div class="onboarding-step" style="margin-bottom:0;"><div class="onboarding-num">3</div><div style="font-size:.78rem;color:var(--muted);line-height:1.5;"><strong style="color:var(--text);">Al terminar</strong> — marca ✓ Bien / ~ Regular / ✗ Mal. Así llevo el seguimiento de tu progreso.</div></div>';
+  html+='<button onclick="(function(){localStorage.setItem(\'vam_onboard_visto\',\'1\');document.getElementById(\'onboarding-card\').style.display=\'none\';})()" style="font-size:.7rem;color:var(--muted);background:none;border:none;cursor:pointer;margin-top:.6rem;padding:0;text-decoration:underline;text-underline-offset:3px;display:block;">Entendido, no mostrar de nuevo</button>';
+  html+='</div>'; // fin onboarding-card
+  } // fin if(!_yaVio)
+
+  // BOTÓN MI SEMANA ACTUAL
+  var _semActualCalc = (function(){
+    try {
+      var hoy=new Date(); hoy.setHours(0,0,0,0);
+      var fd=new Date(S.fecha?S.fecha+'T00:00:00':new Date());
+      fd.setHours(0,0,0,0);
+      var semsRestantes=Math.ceil((fd-hoy)/(7*24*3600*1000));
+      return Math.max(1,Math.min(sem,sem-semsRestantes+1));
+    } catch(e){return 1;}
+  })();
+  html+='<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;">';
+  html+='<button onclick="irASemanaActual()" style="background:var(--accent);color:#0a0a10;border:none;border-radius:8px;padding:.5rem 1.1rem;font-size:.78rem;font-weight:700;cursor:pointer;letter-spacing:.02em;">↓ Mi semana actual (S'+_semActualCalc+')</button>';
+  html+='<span style="font-size:.72rem;color:var(--muted);">'+sem+' semanas · '+volBasePico+'km pico · '+dias+' días/semana</span>';
+  html+='</div>';
+
+  // GRÁFICO DE CARGA SEMANAL — solo en vista técnica
   html+='<div class="chart-wrap">';
   html+='<div class="chart-title">Curva de carga semanal — volumen (km) y progresión de VAM</div>';
   html+='<div class="chart-svg-wrap">'+svgTxt+'</div>';
@@ -2956,9 +3987,12 @@ function generarPlan(){
   html+='<span><em style="background:rgba(212,245,60,0.6);height:2px;border-radius:0;"></em>VAM progresiva</span>';
   html+='</div></div>';
 
-  // CAJA CIENTÍFICA
-  html+='<div class="info-box" style="margin-bottom:1.5rem;"><strong>Base científica:</strong> Bloques Issurin (2008/2010) · 80/20 Seiler (2006) · ATR Acumulación→Transformación→Realización→Recuperación · VAM progresiva '+vamInicial.toFixed(2)+'→'+vamFinal.toFixed(2)+'km/h · Volumen desde historial real (Buist et al., 2007) · Anti-Z3 consecutivos · '+perf.aerPct+'% aeróbico en competición · Fuerza integrada González Badillo (2002) / Reguero (2020) · CaCo Orfelio León (2004) / Montoya (2012) · '+buildPlantillas(vamInicial,prueba).base.length+' variantes de plantilla por fase · v9.0</div>';
+  // CAJA CIENTÍFICA — colapsable
+  html+='<details style="margin-bottom:1.5rem;"><summary style="cursor:pointer;padding:.5rem .75rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:.72rem;color:var(--muted2);list-style:none;display:flex;align-items:center;gap:.5rem;">⚗️ Base científica y metodología ▾</summary>';
+  html+='<div style="padding:.75rem;background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;">';
+  html+='<div class="info-box" style="margin:0;"><strong>Base científica:</strong> Bloques Issurin (2008/2010) · 80/20 Seiler (2006) · ATR Acumulación→Transformación→Realización→Recuperación · VAM progresiva '+vamInicial.toFixed(2)+'→'+vamFinal.toFixed(2)+'km/h · Volumen desde historial real (Buist et al., 2007) · Anti-Z3 consecutivos · '+perf.aerPct+'% aeróbico en competición · Fuerza integrada González Badillo (2002) / Reguero (2020) · CaCo Orfelio León (2004) / Montoya (2012) · '+buildPlantillas(vamInicial,prueba).base.length+' variantes de plantilla por fase · v9.0</div>';
 
+  html+='</div></details>';
   // CARD PERFIL EDAD + SEXO
   if(perfilTexto){
     var perfilColor=esMayor55?'var(--red)':esMayor?'var(--orange)':esMujer?'var(--pink)':'var(--blue)';
@@ -3017,17 +4051,36 @@ function generarPlan(){
   // MESOCICLOS
   var mesoColors=['build','build','spec','peak'];
   mesociclos.forEach(function(meso,mi){
-    html+='<div class="meso"><div class="meso-header" onclick="toggleMeso('+mi+')"><span class="meso-badge '+meso.color+'">'+(mi===0?'BASE':mi===1?'DESARROLLO':mi===2?'ESPECIFICIDAD':'PUESTA A PUNTO')+'</span><span class="meso-title">'+meso.label+'</span><span class="meso-sub">'+meso.sems+' sem &nbsp;▼</span></div>';
+    html+='<div class="meso"><div class="meso-header" onclick="toggleMeso('+mi+')">';
+    html+='<span class="meso-badge '+meso.color+'">'+(mi===0?'BASE':mi===1?'DESARROLLO':mi===2?'ESPECIFICIDAD':'PUESTA A PUNTO')+'</span>';
+    html+='<span class="meso-title">'+meso.label+'</span>';
+    html+='<span style="font-size:.72rem;color:var(--muted);margin-left:.35rem;">'+meso.sems+' sem</span>';
+    html+='<div class="meso-toggle-btn" id="mtbtn-'+mi+'"><span style="font-size:.7rem;">Ver semanas</span><span class="meso-toggle-icon">▼</span></div>';
+    html+='</div>';
     html+='<div class="meso-body open" id="meso-body-'+mi+'"><div class="card" style="margin-bottom:1rem;border-color:rgba(255,255,255,.06)"><div style="font-size:.78rem;color:var(--muted);line-height:1.7;">'+meso.desc+'</div></div>';
 
     var planMeso=PLAN_DATA.filter(function(p){return p.mesoIdx===mi;});
     planMeso.forEach(function(semData){
       var sg=semData.semNum;
-      html+='<div class="week"><div class="week-hdr" onclick="toggleWeek(\'w'+sg+'\')">';
-      html+='<span class="week-num">SEM '+sg+'</span>';
-      html+='<span style="font-size:.75rem;font-weight:600;color:'+(semData.descarga?'var(--green)':'var(--text)')+'">'+( semData.descarga?'♻️ Recuperación':'💪 '+semData.faseLabel)+'</span>';
-      html+='<span class="week-vam">VAM '+semData.vamSem.toFixed(1)+'</span>';
-      html+='<span style="font-family:\'DM Mono\',monospace;font-size:.68rem;color:var(--accent);margin-left:auto;">'+semData.volSem+'km</span>';
+      var _esActual=(sg===_semActualCalc);
+      // Mes a mes: bloquear semanas fuera del mes activo
+      var _mesBloqueado = false;
+      if(false && typeof SESION_ACTIVA !== "undefined" && SESION_ACTIVA && SESION_ACTIVA.tipo !== "owner" && SESION_ACTIVA.tipo !== "tester") { // CANDADOS DESACTIVADOS — modo prueba
+        try {
+          var _planGenMs = parseInt(localStorage.getItem("vam_plan_gen_ts")||"0");
+          var _planGenDate = _planGenMs ? new Date(_planGenMs) : new Date();
+          var _hoyLock = new Date();
+          var _mesesTrans = (_hoyLock.getFullYear()-_planGenDate.getFullYear())*12+(_hoyLock.getMonth()-_planGenDate.getMonth());
+          var _semIni = Math.floor(_mesesTrans * 4.33) + 1;
+          var _semFin = _semIni + 4;
+          _mesBloqueado = (sg < _semIni || sg > _semFin);
+        } catch(e) {}
+      }
+      html+='<div class="week'+(_esActual?' semana-actual':'')+(_mesBloqueado?' week-locked':'')+'"><div class="week-hdr" onclick="'+(_mesBloqueado?'':'toggleWeek(\'w'+sg+'\')' )+'">'; 
+      html+='<span class="week-num">SEM '+sg+'</span>'+(_esActual?'<span class="semana-actual-badge">HOY</span>':'');
+      html+='<span style="font-size:.8rem;font-weight:700;color:'+(semData.descarga?'var(--green)':'var(--text)')+'">'+( semData.descarga?'♻️ Recuperación':'💪 '+semData.faseLabel)+'</span>';
+      html+='<span class="week-vam" style="background:rgba(37,99,235,.08);color:var(--blue);border:1px solid rgba(37,99,235,.15);border-radius:20px;padding:.15rem .6rem;font-size:.65rem;">VAM '+semData.vamSem.toFixed(1)+'</span>';
+      html+='<span style="font-weight:700;font-size:.75rem;color:var(--accent);margin-left:auto;background:var(--accent2);padding:.2rem .6rem;border-radius:20px;">'+semData.volSem+'km</span>';
       html+='<span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--green);margin-left:.35rem;" title="'+semData.minZ1+'min">Z1:'+semData.kmZ1t+'</span>';
       html+='<span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--blue);margin-left:.22rem;" title="'+semData.minZ2+'min">Z2:'+semData.kmZ2t+'</span>';
       html+='<span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--red);margin-left:.22rem;" title="'+semData.minZ3+'min">Z3:'+semData.kmZ3t+'</span>';
@@ -3035,12 +4088,21 @@ function generarPlan(){
       if(sexo==='F'&&semData.descarga)html+='<span class="chip pink" style="font-size:.55rem;padding:.1rem .35rem;margin-left:.22rem;">♀</span>';
       // Indicador de estrés registrado para esta semana
       html+='<span class="estres-week no-print" id="estres-ind-'+sg+'"></span>';
-      // Botón evaluar semana (visible solo si hay feedback registrado o es la semana actual)
-      html+='<span class="semana-eval-btn no-print" onclick="abrirEval('+sg+')" id="eval-btn-'+sg+'" title="Cuéntame cómo fue la semana y ajusto el plan">📊 Revisar semana</span>';
-      html+='<span style="font-size:.7rem;color:var(--muted2);margin-left:.35rem;">▼</span></div>';
+      // Botón evaluar semana
+      html+='<span class="semana-eval-btn no-print" onclick="abrirEval('+sg+')" id="eval-btn-'+sg+'">📊 Semana</span>';
+      // Botón toggle — prominente y táctil
+      html+='<div class="week-toggle-btn" id="wtbtn-'+sg+'">▼</div>';
+      html+='</div>';
 
+      if(_mesBloqueado) {
+        html+='<div class="week-locked-overlay">';
+        html+='<div class="week-locked-icon">🔒</div>';
+        html+='<div class="week-locked-msg">Semana disponible a partir del próximo mes.<br>Renueva tu suscripción para ver la planificación completa.</div>';
+        html+='<button class="week-locked-btn" onclick="event.stopPropagation()">Renovar suscripción →</button>';
+        html+='</div>';
+      }
       html+='<div class="days-grid" id="w'+sg+'" style="display:block">';
-      html+='<div style="display:grid;grid-template-columns:68px 1fr 145px 90px;gap:.5rem;padding:.4rem 1rem;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);"><span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--muted2);">DÍA</span><span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--muted2);">SESIÓN</span><span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--muted2);">TIEMPO / KM</span><span style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--muted2);">ZONA</span></div>';
+      html+='<div style="display:grid;grid-template-columns:72px 1fr 140px 88px;gap:.5rem;padding:.5rem 1rem;background:var(--surface3);border-bottom:1px solid var(--border);border-radius:8px 8px 0 0;"><span style="font-size:.6rem;color:var(--muted2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;">DÍA</span><span style="font-size:.6rem;color:var(--muted2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;">SESIÓN</span><span style="font-size:.6rem;color:var(--muted2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;">DURACIÓN</span><span style="font-size:.6rem;color:var(--muted2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;">ZONA</span></div>';
 
       ORDEN_SEMANA.forEach(function(d){
         var esDia=semData.diasEntrenam.indexOf(d)>=0;
@@ -3053,8 +4115,8 @@ function generarPlan(){
         html+='<div style="font-family:\'DM Mono\',monospace;font-size:.72rem;color:var(--muted);padding-top:.1rem;line-height:1.4;">'+DIA_LABELS[d]+(_fl?'<br><span style="font-size:.62rem;color:var(--muted2);">'+_fl+'</span>':'')+'</div>';
         html+='<div>';
         if(esD&&!ses){
-          html+='<div style="font-size:.82rem;font-weight:600;color:var(--muted2);">Descanso</div>';
-          html+='<div style="font-size:.72rem;color:var(--muted2);margin-top:.2rem;">Recuperación pasiva o caminata suave.</div>';
+          html+='<div style="font-size:.82rem;font-weight:500;color:var(--muted2);">😴 Descanso</div>';
+          html+='<div style="font-size:.72rem;color:var(--muted2);margin-top:.15rem;">Recuperación pasiva. Camina si quieres.</div>';
         } else if(ses){
           // Toggle terreno (solo si modalidad es mixto o trail)
           var terrenoKey='t'+sg+'_d'+d;
@@ -3064,30 +4126,93 @@ function generarPlan(){
             var toggleBg=esDesnivel?'rgba(255,140,66,.1)':'var(--surface2)';
             var toggleBorder=esDesnivel?'rgba(255,140,66,.3)':'var(--border2)';
             var toggleLabel=esDesnivel?'⛰ Desnivel':'🏃 Llano';
-            html+='<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;">';
-            html+='<div style="font-size:.84rem;font-weight:600;">'+tipoIcono(ses.tipo)+' '+ses.nombre+'</div>';
+            html+='<div class="ses-nombre-wrap">';
+            html+='<span class="ses-nombre">'+tipoIcono(ses.tipo)+' '+ses.nombre+'</span>';
+            var _zpCT=ses.zona===1?'z1':ses.zona===2?'z2':'z3';
+            var _zpTT=ses.zona===1?'Z1 Aeróbico':ses.zona===2?'Z2 Umbral':'Z3 Intensidad';
+            html+='<span class="zona-pill '+_zpCT+'">' + _zpTT + '</span>';
             if(S.modalidad==='mixto'){
-              html+='<button id="toggle-terreno-'+terrenoKey+'" onclick="toggleTerrenoSesion(\''+terrenoKey+'\','+sg+','+d+')" '
-                +'style="font-family:\'DM Mono\',monospace;font-size:.58rem;padding:.18rem .5rem;border-radius:5px;border:1px solid '+toggleBorder+';color:'+toggleColor+';background:'+toggleBg+';cursor:pointer;">'+toggleLabel+'</button>';
+              html+='<button id="toggle-terreno-'+terrenoKey+'" onclick="toggleTerrenoSesion(\"'+terrenoKey+'\",'+sg+','+d+')" style="font-family:\'DM Mono\',monospace;font-size:.6rem;padding:.22rem .6rem;border-radius:20px;border:1.5px solid '+toggleBorder+';color:'+toggleColor+';background:'+toggleBg+';cursor:pointer;font-weight:600;">'+toggleLabel+'</button>';
             } else {
-              // trail: icono informativo sin toggle
-              html+='<span style="font-family:\'DM Mono\',monospace;font-size:.58rem;padding:.18rem .5rem;border-radius:5px;border:1px solid '+toggleBorder+';color:'+toggleColor+';background:'+toggleBg+';">'+toggleLabel+'</span>';
+              html+='<span style="font-size:.6rem;padding:.22rem .6rem;border-radius:20px;border:1.5px solid '+toggleBorder+';color:'+toggleColor+';background:'+toggleBg+';font-weight:600;">'+toggleLabel+'</span>';
             }
             html+='</div>';
           } else {
-            html+='<div style="font-size:.84rem;font-weight:600;margin-bottom:.25rem;">'+tipoIcono(ses.tipo)+' '+ses.nombre+'</div>';
+            html+='<div class="ses-nombre-wrap">';
+            html+='<span class="ses-nombre">'+tipoIcono(ses.tipo)+' '+ses.nombre+'</span>';
+            var _zpClass=ses.zona===1?'z1':ses.zona===2?'z2':'z3';
+            var _zpTxt=ses.zona===1?'Z1 Aeróbico':ses.zona===2?'Z2 Umbral':'Z3 Intensidad';
+            html+='<span class="zona-pill '+_zpClass+'">'+_zpTxt+'</span>';
+            html+='</div>';
           }
-          html+='<div id="ses-desc-'+terrenoKey+'" style="font-size:.74rem;color:var(--muted);line-height:1.55;white-space:pre-line;">'+fmtDesc(ses.desc)+'</div>';
+          // Extraer ritmos clave para mostrar como pills antes de la desc
+          var _descTxt = fmtDesc(ses.desc)||'';
+          var _ritmoPills = [];
+          // Extraer todos los ritmos XX:XX /km de la descripción
+          var _rMatches = _descTxt.match(/(\d{1,2}:\d{2})\s*\/km/g)||[];
+          if(_rMatches.length > 0 && ses.tipo !== 'rodaje_trail' && ses.tipo !== 'cuestas_trail') {
+            // Ritmos únicos
+            var _rUniq = _rMatches.filter(function(r,i,a){return a.indexOf(r)===i;}).slice(0,3);
+            if(_rUniq.length > 0) {
+              html+='<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.45rem;">';
+              _rUniq.forEach(function(rm){
+                html+='<span style="font-family:monospace;font-size:.78rem;font-weight:700;color:var(--accent);background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.2);border-radius:6px;padding:.18rem .55rem;">'+rm+'</span>';
+              });
+              html+='</div>';
+            }
+          }
+          // Descripción con "leer más" si es larga (>180 chars)
+          if(_descTxt.length > 180) {
+            var _descShort = _descTxt.slice(0, 180).replace(/\s\S*$/, '')+'…';
+            html+='<div id="ses-desc-'+terrenoKey+'" style="font-size:.74rem;color:var(--text2);line-height:1.6;white-space:pre-line;">';
+            html+='<span id="desc-short-'+terrenoKey+'">'+_descShort+'</span>';
+            html+='<span id="desc-full-'+terrenoKey+'" style="display:none;">'+_descTxt+'</span>';
+            html+='<span id="desc-toggle-'+terrenoKey+'" onclick="(function(k){var s=document.getElementById(\'desc-short-\'+k),f=document.getElementById(\'desc-full-\'+k),t=document.getElementById(\'desc-toggle-\'+k);if(f.style.display===\'none\'){s.style.display=\'none\';f.style.display=\'inline\';t.textContent=\'menos ▴\';}else{s.style.display=\'inline\';f.style.display=\'none\';t.textContent=\'más ▾\';}})(\''+terrenoKey+'\')" style="color:var(--blue);cursor:pointer;font-size:.7rem;margin-left:.3rem;user-select:none;"> más ▾</span>';
+            html+='</div>';
+          } else {
+            html+='<div id="ses-desc-'+terrenoKey+'" style="font-size:.74rem;color:var(--text2);line-height:1.6;white-space:pre-line;">'+_descTxt+'</div>';
+          }
           if(ses.alt)html+='<div style="font-size:.68rem;color:var(--blue);margin-top:.3rem;line-height:1.4;">🔄 '+ses.alt+'</div>';
+          // Pestaña de adaptaciones fisiológicas
+          var _adapt = _getAdaptacion(ses.nombre);
+          if(_adapt) {
+            var _adaptId = 'adapt-'+terrenoKey;
+            html+='<div class="ses-adaptaciones">';
+            html+='<span class="ses-adapt-toggle" onclick="toggleAdaptacion(this.nextSibling.id)">🔬 Ver adaptación fisiológica ▾</span>';
+            html+='<div class="ses-adapt-body" id="'+_adaptId+'">';
+            html+='<strong style="color:var(--blue);font-size:.72rem;">'+_adapt.titulo+'</strong><br>';
+            html+=_adapt.texto+'<br>';
+            html+='<span style="color:var(--muted2);font-size:.65rem;margin-top:.4rem;display:block;">📚 '+_adapt.ref+'</span>';
+            // Añadir ajuste por edad/sexo si existe
+            if(ses._notaEdad) {
+              html+='<div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid rgba(0,0,0,.06);font-size:.68rem;color:var(--orange);line-height:1.5;">'+ses._notaEdad+'</div>';
+            }
+            html+='</div></div>';
+          }
           // Badge especial para sesiones de fuerza
           if(ses.tipo==='fuerza'){html+='<div style="font-size:.65rem;color:var(--green);margin-top:.3rem;background:rgba(74,255,158,.07);border:1px solid rgba(74,255,158,.18);border-radius:4px;padding:.2rem .5rem;display:inline-block;">💪 Sesión de fuerza — sin correr hoy</div>';}
-          if(ses._notaEdad)html+='<div style="font-size:.68rem;color:var(--orange);margin-top:.3rem;line-height:1.4;background:rgba(255,140,66,.06);padding:.3rem .5rem;border-radius:4px;">'+ses._notaEdad+'</div>';
+          // _notaEdad va dentro del panel de adaptaciones, no suelta en la sesión
           if(ses._notaLesion)html+='<div style="font-size:.68rem;color:var(--red);margin-top:.3rem;line-height:1.4;background:rgba(255,92,92,.06);padding:.3rem .5rem;border-radius:4px;">'+ses._notaLesion+'</div>';
+          if(ses._notaProgresion)html+='<div style="font-size:.68rem;color:var(--green);margin-top:.3rem;line-height:1.4;background:rgba(74,255,158,.05);padding:.3rem .5rem;border-radius:4px;">'+ses._notaProgresion+'</div>';
           if(ses._notaTerreno)html+='<div id="nota-terreno-'+terrenoKey+'" style="font-size:.68rem;color:var(--orange);margin-top:.3rem;line-height:1.4;background:rgba(255,140,66,.06);padding:.3rem .5rem;border-radius:4px;white-space:pre-line;">'+ses._notaTerreno+'</div>';
           else html+='<div id="nota-terreno-'+terrenoKey+'" style="display:none;font-size:.68rem;color:var(--orange);margin-top:.3rem;line-height:1.4;background:rgba(255,140,66,.06);padding:.3rem .5rem;border-radius:4px;white-space:pre-line;"></div>';
           // FEEDBACK DE SESIÓN COMPLETADA
           var fbKey='s'+sg+'_d'+d;
           var fbVal=FEEDBACK_DATA[fbKey]||'';
+          // META MÓVIL — ritmo y zona visibles en col2 cuando col3/col4 se ocultan
+          var _mobRitmo = fmtTiempo(ses.tiempo);
+          var _mobKm = kmDia>0 ? '~'+kmDia+'km' : '';
+          var _mobSubida = '';
+          if(ses.tipo==='rodaje_trail'||ses.tipo==='cuestas_trail'){
+            var _ms2=(ses.desc||'').match(/↑[^↓]*?(\d{1,2}:\d{2})\s*\/km/);
+            if(_ms2) _mobSubida = '↑ '+_ms2[1]+' /km';
+          }
+          html+='<div class="ses-mobile-meta">';
+          html+='<span class="ses-mobile-ritmo">'+_mobRitmo+'</span>';
+          if(_mobKm) html+='<span class="ses-mobile-km">'+_mobKm+'</span>';
+          if(_mobSubida) html+='<span class="ses-mobile-subida">'+_mobSubida+'</span>';
+          html+='</div>';
+
           html+='<div class="feedback-bar no-print" id="fb-bar-'+fbKey+'">';
           html+='<span style="font-family:\'DM Mono\',monospace;font-size:.58rem;color:var(--muted2);">¿Cómo fue?</span>';
           ['ok','reg','mal','skip'].forEach(function(v){
@@ -3100,10 +4225,22 @@ function generarPlan(){
         html+='</div>';
         html+='<div style="text-align:right;">';
         if(ses&&!esD){
-          html+='<div style="font-family:\'DM Mono\',monospace;font-size:.88rem;font-weight:500;color:var(--accent);">'+fmtTiempo(ses.tiempo)+'</div>';
-          if(kmDia>0)html+='<div style="font-family:\'DM Mono\',monospace;font-size:.68rem;color:var(--blue);margin-top:.12rem;">~'+kmDia+'km</div>';
-          var pv=ses.zona===1?'55-72%':ses.zona===2?'75-87%':'88-105%';
-          html+='<div style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--orange);margin-top:.1rem;">'+pv+' VAM</div>';
+          html+='<div class="ritmo-badge">'+fmtTiempo(ses.tiempo)+'</div>';
+          if(kmDia>0)html+='<div style="font-size:.68rem;color:var(--blue);margin-top:.25rem;text-align:right;">~'+kmDia+'km</div>';
+          // Para trail: extraer ritmo de subida de la descripción y mostrarlo
+          var _ritmoSubida='';
+          if(ses.tipo==='rodaje_trail'||ses.tipo==='cuestas_trail'){
+            var _mSub=(ses.desc||'').match(/Subida[:\s]+(\d{1,2}:\d{2})\s*\/km/i)||
+                      (ses.desc||'').match(/↑[^↓]*?(\d{1,2}:\d{2})\s*\/km/);
+            if(_mSub) _ritmoSubida=_mSub[1];
+          }
+          if(_ritmoSubida){
+            html+='<div style="font-size:.65rem;color:var(--orange);margin-top:.2rem;text-align:right;font-weight:600;">↑ '+_ritmoSubida+' /km</div>';
+            html+='<div style="font-size:.58rem;color:var(--muted);margin-top:.1rem;text-align:right;">↓ por sensaciones</div>';
+          } else {
+            var pv=ses.zona===1?'55-72%':ses.zona===2?'75-87%':'88-105%';
+            html+='<div style="font-size:.6rem;color:var(--muted);margin-top:.1rem;text-align:right;">'+pv+' VAM</div>';
+          }
         }
         html+='</div>';
         html+='<div style="text-align:right;">';
@@ -3223,6 +4360,18 @@ function generarPlan(){
 
   document.getElementById('plan-container').innerHTML=html;
   document.getElementById('btn-hoy-global').style.display='block';
+  // Activar modo atleta por defecto y colapsar semanas no actuales
+
+  setTimeout(function(){
+    var semActual = _detectarSemanaActual();
+    document.querySelectorAll('.days-grid').forEach(function(el){
+      var semN = parseInt(el.id.replace('w',''));
+      el.style.display = (semN===semActual) ? 'block' : 'none';
+    });
+    // Scroll a semana actual si existe
+    var elActual = document.getElementById('semana-bloque-'+semActual);
+    if(elActual && elActual.scrollIntoView) setTimeout(function(){ elActual.scrollIntoView({behavior:'smooth',block:'start'}); }, 400);
+  }, 100);
   // Persistencia: guardar plan en localStorage automáticamente
   try {
     var _planGuardado = {
@@ -3232,6 +4381,10 @@ function generarPlan(){
       version: 'v9'
     };
     localStorage.setItem('vam_plan_activo', JSON.stringify(_planGuardado));
+    // Guardar timestamp de primera generación (no sobreescribir si ya existe)
+    if(!localStorage.getItem('vam_plan_gen_ts')) {
+      localStorage.setItem('vam_plan_gen_ts', String(Date.now()));
+    }
   } catch(e) {} // localStorage puede no estar disponible en algunos navegadores
   document.getElementById('btn-update-global').style.display='block';
   document.getElementById('btn-informe-global').style.display='block';
@@ -3468,20 +4621,71 @@ function ejecutarActualizacion(){
 // IMPRESIÓN PDF OPTIMIZADA
 // ══════════════════════════════════════════════════════
 function imprimirPlan(){
-  // Expandir todos los mesociclos antes de imprimir
+  // Calcular semanas que puede imprimir según suscripción
+  var _genTs = parseInt(localStorage.getItem('vam_plan_gen_ts')||'0');
+  var _genDate = _genTs ? new Date(_genTs) : new Date();
+  var _hoy = new Date();
+  var _mesesPagados = 1; // por defecto: 1 mes
+  // En modo owner/tester: imprimir todo
+  if(typeof SESION_ACTIVA !== 'undefined' && SESION_ACTIVA &&
+     (SESION_ACTIVA.tipo === 'owner' || SESION_ACTIVA.tipo === 'tester')) {
+    _mesesPagados = 999;
+  }
+  var _semMaxImprimir = Math.ceil(_mesesPagados * 4.33);
+
+  // Expandir mesociclos
   document.querySelectorAll('.meso-body').forEach(function(b){b.classList.add('open');});
-  document.querySelectorAll('.days-grid').forEach(function(g){g.style.display='block';});
-  // Pequeña pausa para que el DOM se actualice
+
+  // Mostrar/ocultar semanas según mes pagado
+  document.querySelectorAll('.days-grid').forEach(function(g){
+    var semN = parseInt(g.id.replace('w',''));
+    if(semN <= _semMaxImprimir) {
+      g.style.display = 'block';
+    } else {
+      // Marcar como no-print para que no salga
+      g.setAttribute('data-noprint', '1');
+      g.style.display = 'none';
+    }
+  });
+
   setTimeout(function(){
     window.print();
-  },150);
+    // Restaurar
+    setTimeout(function(){
+      document.querySelectorAll('[data-noprint]').forEach(function(g){
+        g.removeAttribute('data-noprint');
+      });
+    }, 1000);
+  }, 200);
 }
 
 // ══════════════════════════════════════════════════════
 // INTERACTIVIDAD
 // ══════════════════════════════════════════════════════
-function toggleMeso(i){var b=document.getElementById('meso-body-'+i);if(b)b.classList.toggle('open');}
-function toggleWeek(id){var b=document.getElementById(id);if(b)b.style.display=b.style.display==='none'?'block':'none';}
+function toggleMeso(i){
+  var b=document.getElementById('meso-body-'+i);
+  if(!b) return;
+  var isOpen = b.classList.contains('open');
+  b.classList.toggle('open');
+  // Rotar el botón toggle del mesociclo
+  var tbtn = document.getElementById('mtbtn-'+i);
+  if(tbtn) {
+    var icon = tbtn.querySelector('.meso-toggle-icon');
+    if(icon) icon.style.transform = isOpen ? '' : 'rotate(180deg)';
+    var label = tbtn.querySelector('span:first-child');
+    if(label) label.textContent = isOpen ? 'Ver semanas' : 'Ocultar';
+  }
+}
+function toggleWeek(id){
+  var b=document.getElementById(id);
+  if(!b) return;
+  var isOpen = b.style.display!=='none';
+  b.style.display = isOpen ? 'none' : 'block';
+  // Rotar el botón toggle
+  var sg = id.replace('w','');
+  var tbtn = document.getElementById('wtbtn-'+sg);
+  if(tbtn) tbtn.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
 
 // ══════════════════════════════════════════════════════
 // SELECTOR DE MÉTODO VAM
