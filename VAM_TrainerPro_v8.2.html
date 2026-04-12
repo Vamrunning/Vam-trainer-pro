@@ -1,11 +1,12 @@
 
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/usuario/Desktop/VAM%20Trainer%20Pro%20v9.0.html -->
+
+<!-- VAM Trainer Pro v9.0 -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VAM Trainer Pro v9.0</title>
-<link href="./VAM Trainer Pro v9.0_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -797,10 +798,10 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 80%,rgba(77,159,255,.05) 0%,transparent 60%);"></div>
       <!-- Líneas decorativas -->
       <svg style="position:absolute;bottom:0;width:100%;height:40%;opacity:.04;" viewBox="0 0 1200 200" preserveAspectRatio="none">
-        <path d="M0,160 C200,80 400,180 600,100 C800,20 1000,140 1200,60 L1200,200 L0,200Z" fill="#00e676"></path>
+        <path d="M0,160 C200,80 400,180 600,100 C800,20 1000,140 1200,60 L1200,200 L0,200Z" fill="#00e676"/>
       </svg>
       <!-- Número VAM decorativo -->
-      <div style="position:absolute;right:5%;top:20%;font-family:&#39;DM Mono&#39;,monospace;font-size:8rem;font-weight:800;color:rgba(0,230,118,.03);line-height:1;user-select:none;">VAM</div>
+      <div style="position:absolute;right:5%;top:20%;font-family:'DM Mono',monospace;font-size:8rem;font-weight:800;color:rgba(0,230,118,.03);line-height:1;user-select:none;">VAM</div>
     </div>
 
     <!-- Contenido hero -->
@@ -831,15 +832,17 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
         <div id="acceso-clave-bloque">
           <input class="acceso-input" id="acceso-input" type="text" placeholder="INTRODUCE TU CLAVE" maxlength="20" oninput="this.value=this.value.toUpperCase()">
           <div class="acceso-error" id="acceso-error">Clave no válida o caducada. Comprueba el email de confirmación.</div>
-          <button style="width: 100%; background: linear-gradient(135deg, rgb(0, 230, 118), rgb(0, 200, 83)); color: rgb(7, 18, 8); font-weight: 800; font-size: 0.95rem; border: none; border-radius: 10px; padding: 0.95rem; cursor: pointer; transition: 0.15s; letter-spacing: 0.02em; box-shadow: rgba(0, 230, 118, 0.25) 0px 4px 20px;" onmouseover="this.style.transform=&#39;translateY(-1px)&#39;;this.style.boxShadow=&#39;0 6px 28px rgba(0,230,118,.35)&#39;" onmouseout="this.style.transform=&#39;&#39;;this.style.boxShadow=&#39;0 4px 20px rgba(0,230,118,.25)&#39;" onclick="validarAcceso()">Acceder al plan →</button>
+          <button style="width:100%;background:linear-gradient(135deg,#00e676,#00c853);color:#071208;font-weight:800;font-size:.95rem;border:none;border-radius:10px;padding:.95rem;cursor:pointer;transition:all .15s;letter-spacing:.02em;box-shadow:0 4px 20px rgba(0,230,118,.25);" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 28px rgba(0,230,118,.35)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,230,118,.25)'" onclick="validarAcceso()">Acceder al plan →</button>
         </div>
         <div class="acceso-demo" onclick="accesoDemoMode()">¿Sin clave? → Prueba el demo gratuito</div>
       </div>
 
       <!-- Scroll hint -->
-      <div onclick="document.querySelector(&#39;.acceso-bottom&#39;).scrollIntoView({behavior:&#39;smooth&#39;})" style="margin-top:1.5rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.3rem;opacity:.4;transition:opacity .2s;" onmouseover="this.style.opacity=&#39;.8&#39;" onmouseout="this.style.opacity=&#39;.4&#39;">
-        <span style="font-size:.68rem;color:rgba(255,255,255,.6);letter-spacing:.1em;text-transform:uppercase;font-family:&#39;DM Mono&#39;,monospace;">Ver opiniones</span>
-        <svg width="20" height="12" viewBox="0 0 20 12" fill="none"><path d="M1 1L10 10L19 1" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-linecap="round"></path></svg>
+      <div onclick="document.querySelector('.acceso-bottom').scrollIntoView({behavior:'smooth'})"
+        style="margin-top:1.5rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.3rem;opacity:.4;transition:opacity .2s;"
+        onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='.4'">
+        <span style="font-size:.68rem;color:rgba(255,255,255,.6);letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;">Ver opiniones</span>
+        <svg width="20" height="12" viewBox="0 0 20 12" fill="none"><path d="M1 1L10 10L19 1" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-linecap="round"/></svg>
       </div>
     </div>
   </div>
@@ -849,7 +852,7 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
     <!-- Divider -->
     <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;">
       <div style="flex:1;height:1px;background:rgba(255,255,255,.08);"></div>
-      <div style="font-family:&#39;DM Mono&#39;,monospace;font-size:.65rem;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">Lo que dicen nuestros atletas</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">Lo que dicen nuestros atletas</div>
       <div style="flex:1;height:1px;background:rgba(255,255,255,.08);"></div>
     </div>
 
@@ -880,7 +883,7 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
     <!-- Formulario de opinión -->
     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:2rem;margin-top:2rem;">
       <div style="text-align:center;margin-bottom:1.5rem;">
-        <div style="font-family:&#39;Syne&#39;,sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.3rem;">¿Ya entrenas con VAM Trainer?</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:.3rem;">¿Ya entrenas con VAM Trainer?</div>
         <div style="font-size:.8rem;color:rgba(255,255,255,.4);">Tu opinión ayuda a mejorar la app y a otros atletas a decidirse</div>
       </div>
       <div id="opinion-form">
@@ -892,14 +895,17 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
           <span class="star-btn" data-v="4" onclick="selStar(4)" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.2);transition:all .15s;">★</span>
           <span class="star-btn" data-v="5" onclick="selStar(5)" style="font-size:2rem;cursor:pointer;color:rgba(255,255,255,.2);transition:all .15s;">★</span>
         </div>
-        <textarea id="opinion-texto" placeholder="Cuéntanos tu experiencia — qué mejoró en tu entrenamiento..." style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+        <textarea id="opinion-texto" placeholder="Cuéntanos tu experiencia — qué mejoró en tu entrenamiento..."
+          style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
           color:#fff;border-radius:10px;padding:.85rem 1rem;font-size:.83rem;
-          font-family:&#39;Inter&#39;,sans-serif;resize:none;height:85px;outline:none;
+          font-family:'Inter',sans-serif;resize:none;height:85px;outline:none;
           margin-bottom:.75rem;line-height:1.55;"></textarea>
-        <input id="opinion-nombre" type="text" placeholder="Tu nombre · prueba objetivo (ej: Carlos · 10km)" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+        <input id="opinion-nombre" type="text" placeholder="Tu nombre · prueba objetivo (ej: Carlos · 10km)"
+          style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
           color:#fff;border-radius:10px;padding:.8rem 1rem;font-size:.83rem;
-          font-family:&#39;Inter&#39;,sans-serif;outline:none;margin-bottom:.875rem;">
-        <button onclick="enviarOpinion()" style="width:100%;background:linear-gradient(135deg,#00e676,#00c853);color:#071208;font-weight:700;font-size:.88rem;border:none;border-radius:10px;padding:.9rem;cursor:pointer;transition:all .15s;letter-spacing:.02em;box-shadow:0 3px 12px rgba(0,230,118,.2);">
+          font-family:'Inter',sans-serif;outline:none;margin-bottom:.875rem;">
+        <button onclick="enviarOpinion()"
+          style="width:100%;background:linear-gradient(135deg,#00e676,#00c853);color:#071208;font-weight:700;font-size:.88rem;border:none;border-radius:10px;padding:.9rem;cursor:pointer;transition:all .15s;letter-spacing:.02em;box-shadow:0 3px 12px rgba(0,230,118,.2);">
           Enviar mi opinión →
         </button>
       </div>
@@ -912,12 +918,12 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
 
     <!-- Footer -->
     <div style="text-align:center;margin-top:2rem;padding-bottom:1rem;">
-      <div style="font-size:.65rem;color:rgba(255,255,255,.2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.08em;">VAM TRAINER PRO · PLANIFICACIÓN CIENTÍFICA DE RUNNING</div>
+      <div style="font-size:.65rem;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;letter-spacing:.08em;">VAM TRAINER PRO · PLANIFICACIÓN CIENTÍFICA DE RUNNING</div>
       <div style="font-size:.62rem;color:rgba(255,255,255,.15);margin-top:.3rem;">vamrunningcoach@gmail.com</div>
     </div>
   </div>
 
-<div style="margin-top: 1rem; padding: 0.75rem 1rem; background: rgba(92, 168, 255, 0.08); border: 1px solid rgba(92, 168, 255, 0.2); border-radius: 8px; font-size: 0.78rem; color: var(--blue); cursor: pointer; text-align: center;">↩ Tienes un plan guardado de hace hoy. <strong>Recuperar plan</strong></div><div style="margin-top: 1rem; padding: 0.75rem 1rem; background: rgba(92, 168, 255, 0.08); border: 1px solid rgba(92, 168, 255, 0.2); border-radius: 8px; font-size: 0.78rem; color: var(--blue); cursor: pointer; text-align: center;">↩ Tienes un plan guardado de hace hoy. <strong>Recuperar plan</strong></div></div>
+</div>
 </div>
 
 <!-- PANEL INFORME FISIOLÓGICO PREMIUM -->
@@ -957,7 +963,7 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
       <button class="btn btn-secondary" onclick="cerrarInforme()">Cancelar</button>
       <button class="btn btn-primary" style="flex:1" id="informe-btn-descargar" onclick="descargarInforme()">⬇ Descargar informe →</button>
     </div>
-    <div style="text-align:center;margin-top:.75rem;"><a href="file:///C:/Users/usuario/Downloads/VAM_TrainerPro_v9.0_24.html#" onclick="abrirInformeDemo();return false;" style="font-size:.72rem;color:var(--muted2);">Ver ejemplo del informe</a></div>
+    <div style="text-align:center;margin-top:.75rem;"><a href="#" onclick="abrirInformeDemo();return false;" style="font-size:.72rem;color:var(--muted2);">Ver ejemplo del informe</a></div>
   </div>
 </div>
 
@@ -1063,7 +1069,7 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
   <div class="sdiv">Datos del atleta</div>
   <div class="form-grid">
     <div class="field"><label>Nombre</label><input id="f-nombre" type="text" placeholder="Ej: Carlos García" autocomplete="name"></div>
-    <div class="field"><label>Edad</label><input id="f-edad" type="number" min="14" max="85" placeholder="Ej: 35" onblur="(function(el){var v=parseInt(el.value);if(el.value&amp;&amp;(v&lt;14||v&gt;85)){el.style.borderColor=&#39;var(--red)&#39;;el.style.boxShadow=&#39;0 0 0 2px rgba(255,92,92,.3)&#39;;mostrarToast(&#39;⚠️ Edad fuera de rango. Introduce entre 14 y 85 años.&#39;);}else{el.style.borderColor=&#39;&#39;;el.style.boxShadow=&#39;&#39;;}})(this)"><div class="hint">Entre 14 y 85 años · Obligatorio — determina la estructura y carga del plan</div></div>
+    <div class="field"><label>Edad</label><input id="f-edad" type="number" min="14" max="85" placeholder="Ej: 35" onblur="(function(el){var v=parseInt(el.value);if(el.value&&(v<14||v>85)){el.style.borderColor='var(--red)';el.style.boxShadow='0 0 0 2px rgba(255,92,92,.3)';mostrarToast('⚠️ Edad fuera de rango. Introduce entre 14 y 85 años.');}else{el.style.borderColor='';el.style.boxShadow='';}})(this)"><div class="hint">Entre 14 y 85 años · Obligatorio — determina la estructura y carga del plan</div></div>
   </div>
   </div>
   <div class="section-block">
@@ -1320,15 +1326,30 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
   <div class="scr-h">Objetivo y tiempo disponible</div>
   <div class="scr-sub">Define cuándo quieres conseguir tu marca y cuántos días puedes entrenar.</div>
   <div class="section-block">
-  <div class="sdiv">Fecha objetivo</div>
+  <div class="sdiv">Fechas del plan</div>
   <div class="form-grid">
     <div class="field">
-      <label>Fecha de competición objetivo <span style="color:var(--red);font-size:.75rem;">*obligatorio</span></label>
-      <input id="f-fecha" type="date">
-      <div class="hint">Se calculará el número exacto de semanas disponibles</div>
+      <label>Fecha de inicio del plan <span style="color:var(--red);font-size:.75rem;">*obligatorio</span></label>
+      <input id="f-fecha-inicio" type="date" onchange="actualizarCoste()">
+      <div class="hint">¿Cuándo quieres empezar a entrenar? Puede ser hoy o una fecha futura</div>
     </div>
-    <div style="display:flex;align-items:flex-end;padding-bottom:.2rem;">
-      <div id="semanas-disp" style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:.75rem 1rem;flex:1;font-family:&#39;DM Mono&#39;,monospace;font-size:.85rem;color:var(--muted);">12 semanas · 3 meses de acceso<br><span style="color:var(--accent);font-family:&#39;DM Mono&#39;,monospace;font-size:.9rem;font-weight:600;">27€ total</span> <span style="font-size:.7rem;color:var(--muted2);">(3 × 9€)</span><br><span style="font-size:.7rem;color:var(--muted2);">✅ Planificación estándar</span></div>
+    <div class="field">
+      <label>Fecha de competición objetivo <span style="color:var(--red);font-size:.75rem;">*obligatorio</span></label>
+      <input id="f-fecha" type="date" onchange="actualizarCoste()">
+      <div class="hint">Día de tu prueba o carrera objetivo</div>
+    </div>
+  </div>
+  <!-- Panel coste calculado -->
+  <div id="semanas-disp" style="background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.12);border-radius:12px;padding:1rem 1.25rem;margin-top:.5rem;display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;">
+      <div>
+        <div id="semanas-disp-texto" style="font-family:'DM Mono',monospace;font-size:.88rem;color:var(--text);font-weight:600;"></div>
+        <div id="semanas-disp-aviso" style="font-size:.72rem;color:var(--muted);margin-top:.25rem;"></div>
+      </div>
+      <div style="text-align:right;">
+        <div id="semanas-disp-precio" style="font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:800;color:var(--accent);"></div>
+        <div id="semanas-disp-desglose" style="font-size:.68rem;color:var(--muted2);margin-top:.1rem;"></div>
+      </div>
     </div>
   </div>
   </div>
@@ -1592,7 +1613,7 @@ var S={
   pendientePura:4,
   diasTrail:[3,6,0],
   prueba:1500,tActS:330,tObjS:290,vamAuto:0,vamManual:0,
-  fecha:null,semanas:12,dias:4,diasSemana:[1,3,5,0],tiempoSesion:60,
+  fecha:null,fechaInicio:null,semanas:12,dias:4,diasSemana:[1,3,5,0],tiempoSesion:60,
   salud:'ok',estres:3,sueno:'med',notas:'',lesion:'',
   lesionesHist:[]
 };
@@ -2575,26 +2596,24 @@ function validarPaso1() {
 }
 
 function validarPaso4() {
-  // Validar fecha de competición
-  var _fecha = document.getElementById('f-fecha').value;
-  if(!_fecha) {
-    var el = document.getElementById('f-fecha');
-    el.style.borderColor = 'var(--red)';
-    el.style.boxShadow = '0 0 0 2px rgba(255,92,92,.3)';
-    el.focus();
+  var elIni=document.getElementById('f-fecha-inicio');
+  var elFin=document.getElementById('f-fecha');
+  if(!elIni||!elIni.value){
+    if(elIni){elIni.style.borderColor='var(--red)';setTimeout(function(){elIni.style.borderColor='';},3000);}
+    mostrarToast('❌ Selecciona la fecha de inicio del plan.');
+    return;
+  }
+  if(!elFin||!elFin.value){
+    if(elFin){elFin.style.borderColor='var(--red)';setTimeout(function(){elFin.style.borderColor='';},3000);}
     mostrarToast('❌ Selecciona la fecha de tu competición objetivo.');
-    setTimeout(function(){ el.style.borderColor=''; el.style.boxShadow=''; }, 3000);
     return;
   }
-  // Verificar que es al menos 4 semanas en el futuro
-  var _hoy = new Date(); _hoy.setHours(0,0,0,0);
-  var _fd = new Date(_fecha+'T00:00:00');
-  var _sems = Math.round((_fd - _hoy) / (7*24*3600*1000));
-  if(_sems < 4) {
-    mostrarToast('⚠️ La fecha debe ser al menos 4 semanas en el futuro. Con menos tiempo no se puede estructurar un plan efectivo.');
-    var _fF=document.getElementById('f-fecha'); if(_fF&&_fF.focus) _fF.focus();
-    return;
-  }
+  var dIni=new Date(elIni.value+'T00:00:00');
+  var dFin=new Date(elFin.value+'T00:00:00');
+  var sems=Math.round((dFin-dIni)/(7*24*3600*1000));
+  if(sems<4){mostrarToast('⚠️ Debe haber al menos 4 semanas entre inicio y competición.');return;}
+  var hoy=new Date();hoy.setHours(0,0,0,0);
+  if(dIni<new Date(hoy.getTime()-8*24*3600*1000)){mostrarToast('⚠️ La fecha de inicio no puede ser más de una semana en el pasado.');return;}
   goStep(5);
 }
 
@@ -2761,8 +2780,20 @@ function readStep2(){
 }
 function readStep4(){
   var fd=document.getElementById('f-fecha').value;
-  S.fecha=fd||null; // guardar como string YYYY-MM-DD, no como Date
-  if(S.fecha){var hoy=new Date();hoy.setHours(0,0,0,0);var fdDate=new Date(S.fecha+'T00:00:00');S.semanas=Math.max(4,Math.round((fdDate-hoy)/(1000*60*60*24*7)));}
+  var fi=document.getElementById('f-fecha-inicio').value;
+  S.fecha=fd||null;
+  S.fechaInicio=fi||null;
+  if(S.fecha && S.fechaInicio){
+    // Calcular semanas entre inicio y fin
+    var dIni=new Date(S.fechaInicio+'T00:00:00');
+    var dFin=new Date(S.fecha+'T00:00:00');
+    S.semanas=Math.max(4,Math.round((dFin-dIni)/(1000*60*60*24*7)));
+  } else if(S.fecha){
+    // Fallback: desde hoy
+    var hoy=new Date();hoy.setHours(0,0,0,0);
+    var fdDate=new Date(S.fecha+'T00:00:00');
+    S.semanas=Math.max(4,Math.round((fdDate-hoy)/(1000*60*60*24*7)));
+  }
   S.dias=parseInt(getVal('dias'))||4;
   S.diasSemana=[];
   document.querySelectorAll('[data-g=diasem].on').forEach(function(el){S.diasSemana.push(parseInt(el.getAttribute('data-v')));});
@@ -2935,18 +2966,44 @@ document.getElementById('estres-slider').addEventListener('input',function(){
   var msgs=['','Muy bajo. Recuperación excelente.','Bajo. Recuperación óptima.','Bajo-moderado. Sin ajustes.','Moderado. Plan normal.','Moderado. Vigilar acumulación.','Moderado-alto. Reducir 10% volumen.','Alto. Evitar 2 Z3 seguidos.','Alto. Descarga anticipada si persiste.','Muy alto. Reducir intensidad y volumen.','Máximo. Solo rodajes suaves y descanso.'];
   document.getElementById('estres-info').textContent=msgs[v]||'';
 });
-document.getElementById('f-fecha').addEventListener('change',function(){
-  var fd=new Date(this.value),hoy=new Date();hoy.setHours(0,0,0,0);
-  var sem=Math.max(4,Math.round((fd-hoy)/(1000*60*60*24*7)));
+// Poner fecha de inicio por defecto = hoy
+(function(){
+  var el=document.getElementById('f-fecha-inicio');
+  if(el&&!el.value){var h=new Date();el.value=h.getFullYear()+'-'+String(h.getMonth()+1).padStart(2,'0')+'-'+String(h.getDate()).padStart(2,'0');}
+})();
+
+function actualizarCoste(){
+  var elIni=document.getElementById('f-fecha-inicio');
+  var elFin=document.getElementById('f-fecha');
+  var panel=document.getElementById('semanas-disp');
+  if(!panel) return;
+  if(!elIni||!elFin||!elIni.value||!elFin.value){panel.style.display='none';return;}
+  var dIni=new Date(elIni.value+'T00:00:00');
+  var dFin=new Date(elFin.value+'T00:00:00');
+  if(dFin<=dIni){panel.style.display='none';return;}
+  var sem=Math.max(4,Math.round((dFin-dIni)/(1000*60*60*24*7)));
   var meses=Math.ceil(sem/4.33);
-  var total=(meses*9).toFixed(0);
-  var semTxt=sem<8?'⚠️ Plan intensivo':sem<16?'✅ Planificación estándar':'✅ Periodización completa';
-  document.getElementById('semanas-disp').innerHTML=
-    sem+' semanas · '+meses+' '+(meses===1?'mes':'meses')+' de acceso<br>'
-    +'<span style="color:var(--accent);font-family:\'DM Mono\',monospace;font-size:.9rem;font-weight:600;">'+total+'€ total</span>'
-    +' <span style="font-size:.7rem;color:var(--muted2);">('+meses+' × 9€)</span><br>'
-    +'<span style="font-size:.7rem;color:var(--muted2);">'+semTxt+'</span>';
-});
+  var total=meses*9;
+  var aviso=sem<8?'⚠️ Plan muy corto — máxima intensidad':sem<12?'✅ Preparación básica':sem<20?'✅ Planificación estándar':'✅ Periodización avanzada';
+  var opts={day:'numeric',month:'short'};
+  var txtIni=dIni.toLocaleDateString('es-ES',opts);
+  var txtFin=dFin.toLocaleDateString('es-ES',opts);
+  var t1=document.getElementById('semanas-disp-texto');
+  var t2=document.getElementById('semanas-disp-aviso');
+  var t3=document.getElementById('semanas-disp-precio');
+  var t4=document.getElementById('semanas-disp-desglose');
+  if(t1)t1.textContent=sem+' semanas · '+txtIni+' → '+txtFin;
+  if(t2)t2.textContent=aviso;
+  if(t3)t3.textContent=total+'€';
+  if(t4)t4.textContent=meses+' '+(meses===1?'mes':'meses')+' × 9€/mes';
+  panel.style.display='block';
+}
+document.getElementById('f-fecha').addEventListener('change',actualizarCoste);
+try{document.addEventListener('DOMContentLoaded',function(){
+  var fi=document.getElementById('f-fecha-inicio');
+  if(fi)fi.addEventListener('change',actualizarCoste);
+  setTimeout(actualizarCoste,100);
+});}catch(e){}
 
 var PRUEBA_NOMBRE={800:'800m',1000:'1000m',1500:'1500m',3000:'3000m',5000:'5 km',10000:'10 km',21097:'Media Maratón',42195:'Maratón'};
 var ORDEN_SEMANA=[1,2,3,4,5,6,0];
@@ -3250,28 +3307,16 @@ function generarPlan(){
     return;
   }
 
-  // 2. Fecha de competición obligatoria
-  if(!_fechaCheck) {
-    var _elFecha = document.getElementById('f-fecha');
-    if(_elFecha) {
-      _elFecha.style.border = '2px solid var(--red)';
-      if(_elFecha.focus) _elFecha.focus();
-      setTimeout(function(){ _elFecha.style.border = ''; }, 3000);
-    }
-    mostrarToast('❌ Introduce la fecha de tu competición objetivo.');
-    goStep(4);
-    return;
-  }
-
-  // 3. Fecha en el futuro (mínimo 4 semanas)
-  var _hoyCheck = new Date(); _hoyCheck.setHours(0,0,0,0);
-  var _fdCheck = new Date(_fechaCheck+'T00:00:00');
-  var _semsCheck = Math.round((_fdCheck - _hoyCheck) / (7*24*3600*1000));
-  if(_semsCheck < 4) {
-    mostrarToast('❌ La fecha objetivo debe ser al menos 4 semanas en el futuro.');
-    goStep(4);
-    return;
-  }
+    // 2. Fecha inicio obligatoria
+  var _fechaInicioCheck=(document.getElementById('f-fecha-inicio')||{}).value||'';
+  if(!_fechaInicioCheck){mostrarToast('❌ Introduce la fecha de inicio del plan.');goStep(4);return;}
+  // 3. Fecha fin obligatoria
+  if(!_fechaCheck){mostrarToast('❌ Introduce la fecha de tu competición objetivo.');goStep(4);return;}
+  // 4. Al menos 4 semanas entre inicio y fin
+  var _dIniCk=new Date(_fechaInicioCheck+'T00:00:00');
+  var _dFinCk=new Date(_fechaCheck+'T00:00:00');
+  var _semsCk=Math.round((_dFinCk-_dIniCk)/(7*24*3600*1000));
+  if(_semsCk<4){mostrarToast('❌ Debe haber al menos 4 semanas entre inicio y competición.');goStep(4);return;}
   // ── FIN VALIDACIÓN BLOQUEANTE ────────────────────────────────────
 
   readStep1();readStep2();readStep4();
@@ -3913,7 +3958,15 @@ function generarPlan(){
   var html='';
   // Calcular fecha inicio del plan para mostrar fechas reales en cada día
   var _fechaInicioRender=null;
-  if(S.fecha){
+  if(S.fechaInicio){
+    // Usar la fecha de inicio elegida por el atleta
+    var _fc=new Date(S.fechaInicio+'T00:00:00');
+    // Ajustar al lunes más cercano para que la semana empiece en lunes
+    var _dow=_fc.getDay();
+    if(_dow!==1) _fc.setDate(_fc.getDate()+(_dow===0?-6:(1-_dow)));
+    _fechaInicioRender=_fc;
+  } else if(S.fecha){
+    // Fallback: calcular desde fecha objetivo
     var _fc=typeof S.fecha==='string'?new Date(S.fecha+'T00:00:00'):new Date(S.fecha);
     _fc.setDate(_fc.getDate()-S.semanas*7);
     var _dow=_fc.getDay();
