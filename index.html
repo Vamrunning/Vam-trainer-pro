@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 
 <!-- VAM Trainer Pro v9.0 -->
@@ -1222,6 +1223,18 @@ div[style*="color:var(--green)"][style*="0.68rem"]{color:#00e676!important;}
         </div>
       </div>
     </div>
+    <!-- SELECTOR DESNIVEL DE PRUEBA — solo visible en modalidad trail/pendiente -->
+    <div id="bloque-desnivel-prueba" style="display:none;margin-top:.75rem;">
+      <div style="font-size:.7rem;color:var(--muted2);font-family:&#39;DM Mono&#39;,monospace;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;">&#9968;&#65039; ¿Tu marca fue en prueba con desnivel?</div>
+      <div class="info-box" style="margin-bottom:.6rem;font-size:.74rem;">Si tu marca se obtuvo en una carrera/prueba con desnivel, la app corrige la VAM a su equivalente en plano para calcular ritmos de entrenamiento precisos (Minetti et al., 2002). Si fue en llano, déjalo en "Llano".</div>
+      <div class="radio-grid g4">
+        <div class="rbtn on" data-g="desnivelPrueba" data-v="0" onclick="pick(this)">&#127939; Llano<small>Pista / asfalto plano</small></div>
+        <div class="rbtn" data-g="desnivelPrueba" data-v="3" onclick="pick(this)">&#128993; &#8804;5% desnivel<small>Trail suave (~3% media)</small></div>
+        <div class="rbtn" data-g="desnivelPrueba" data-v="6.5" onclick="pick(this)">&#127825; 5–8% desnivel<small>Trail medio (~6.5% media)</small></div>
+        <div class="rbtn" data-g="desnivelPrueba" data-v="10" onclick="pick(this)">&#128308; &gt;8% desnivel<small>Trail exigente (~10% media)</small></div>
+      </div>
+      <div id="desnivel-prueba-info" style="margin-top:.5rem;"></div>
+    </div>
   </div>
 
   <!-- OPCIÓN B: Test de campo (botón que abre modal) -->
@@ -1612,6 +1625,7 @@ var S={
   modalidad:'road', // 'road' | 'trail' | 'pendiente'
   pendientePura:4,
   diasTrail:[3,6,0],
+  desnivelPrueba:0, // % desnivel medio de la prueba donde se obtuvo la marca (0=llano)
   prueba:1500,tActS:330,tObjS:290,vamAuto:0,vamManual:0,
   fecha:null,fechaInicio:null,semanas:12,dias:4,diasSemana:[1,3,5,0],tiempoSesion:60,
   salud:'ok',estres:3,sueno:'med',notas:'',lesion:'',
@@ -1627,6 +1641,10 @@ var PLAN_DATA=[];
 // ══════════════════════════════════════════════════════
 function pad(n){return n<10?'0'+n:String(n);}
 function fmt(s){if(!isFinite(s)||s<0)return'--:--';var sc=Math.round(s);var m=Math.floor(sc/60);sc=sc%60;return pad(m)+':'+pad(sc);}
+// Formatea tiempo de repetición en formato legible: 55" o 1'10" o 2'30"
+function fmtRep(s){if(!isFinite(s)||s<0)return'--';var sc=Math.round(s);var m=Math.floor(sc/60);sc=sc%60;if(m===0)return sc+'″';if(sc===0)return m+'\'';return m+'\''+pad(sc)+'″';}
+// tddRep: tiempo de rep en formato legible (minutos/segundos)
+function tddRep(v,p,d){return fmtRep(tD(v,p,d));}
 function fmtH(s){var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=Math.round(s%60);return pad(h)+':'+pad(m)+':'+pad(sc);}
 
 // Convierte string de tiempo a formato legible: "90min" → "1h 30min", "45min" → "45min"
@@ -1702,75 +1720,75 @@ function getDistribucionZonas(prueba,tipoMeso){
 var BANCO_ROD=[
   // 0 — Regenerativo corto
   function(v){return{tipo:'rodaje',nombre:'Rodaje regenerativo 30min',zona:1,intens:1,
-    desc:'30min a '+r(v,0.55)+' /km (55% VAM). Ritmo de conversación total. Activa circulación y elimina metabolitos sin generar fatiga (Weerapong et al., 2005). Llano y suave.',
+    desc:'30min a '+r(v,0.55)+' /km. Ritmo de conversación total. Llano y suave.',
     alt:'Cinta 30min · Bici Z1 40min si fatiga ≥8.',tiempo:'30min',kmNum:mts(v,0.55,1800)/1000};},
   // 1 — Rodaje extensivo 1h
   function(v){return{tipo:'rodaje',nombre:'Rodaje continuo extensivo 1h',zona:1,intens:2,
-    desc:'60min a '+r(v,0.60)+' /km (60% VAM). Conversación fluida. Desarrolla densidad capilar y eficiencia mitocondrial (Hawley & Burke, 1998).',
-    alt:'Cinta 55min · Calor: 55% VAM · Fatiga: 40min.',tiempo:'1h',kmNum:mts(v,0.60,3600)/1000};},
+    desc:'60min a '+r(v,0.60)+' /km. Conversación fluida sin dificultad.',
+    alt:'Cinta 55min · Calor: bajar a '+r(v,0.55)+' /km · Fatiga: 40min.',tiempo:'1h',kmNum:mts(v,0.60,3600)/1000};},
   // 2 — Tirada aeróbica 1h 15min
   function(v){return{tipo:'rodaje',nombre:'Tirada aeróbica 1h 15min',zona:1,intens:2,
-    desc:'75min a '+r(v,0.61)+' /km (61% VAM). Activa metabolismo lipídico y adaptación mitocondrial de larga duración (Midgley et al., 2007). Sin cambios de ritmo.',
+    desc:'75min a '+r(v,0.61)+' /km. Sin cambios de ritmo. Conversación posible en todo momento.',
     alt:'Cinta 2×37min · 50min si tiempo justo.',tiempo:'1h 15min',kmNum:mts(v,0.61,4500)/1000};},
   // 3 — Rodaje medio 45min
-  function(v){return{tipo:'rodaje',nombre:'Rodaje medio 45min',zona:1,intens:3,
-    desc:'45min a '+r(v,0.70)+' /km (70% VAM). Zona aeróbica de transición. Conversación con algo de dificultad.',
+  function(v){return{tipo:'rodaje',nombre:'Rodaje medio 45min',zona:1,intens:2,
+    desc:'45min a '+r(v,0.70)+' /km. Conversación con algo de dificultad.',
     alt:'Cinta 45min · Fatiga: bajar a '+r(v,0.65)+' /km.',tiempo:'45min',kmNum:mts(v,0.70,2700)/1000};},
   // 4 — Progresivo 6km con aceleración final
-  function(v){return{tipo:'rodaje',nombre:'Progresivo 6km con arranque final',zona:2,intens:5,
-    desc:'2km '+r(v,0.63)+' /km · 2km '+r(v,0.72)+' /km · 1.5km '+r(v,0.82)+' /km · 500m '+r(v,0.90)+' /km. Acostumbra al organismo al cambio de ritmo y al esfuerzo sostenido en el tramo final.',
-    alt:'En cinta · Fatiga: 4km progresivos.',tiempo:tdd(v,0.75,6000),kmNum:6};},
+  function(v){return{tipo:'rodaje',nombre:'Progresivo 6km con arranque final',zona:3,intens:7,
+    desc:'2km a '+r(v,0.63)+' /km · 2km a '+r(v,0.72)+' /km · 1.5km a '+r(v,0.82)+' /km · 500m a '+r(v,0.90)+' /km.',
+    alt:'En cinta · Fatiga: 4km progresivos.',tiempo:'~'+Math.round(tD(v,0.75,6000)/60)+'min',kmNum:6};},
   // 5 — Fartlek estructurado 55min
   function(v){return{tipo:'rodaje',nombre:'Fartlek estructurado 55min',zona:2,intens:5,
-    desc:'10min a '+r(v,0.63)+' + 5× [3min a '+r(v,0.82)+' + 2min a '+r(v,0.65)+'] + 10min a '+r(v,0.63)+'. Desarrolla la capacidad de cambio de ritmo y recuperación entre esfuerzos (Seiler, 2010).',
+    desc:'10min a '+r(v,0.63)+' /km + 5× [3min a '+r(v,0.82)+' /km + 2min a '+r(v,0.65)+' /km] + 10min a '+r(v,0.63)+' /km.',
     alt:'Cinta con cambios · 3 bloques si fatiga.',tiempo:'55min',kmNum:mts(v,0.74,3300)/1000};},
   // 6 — Umbral continuo 35min
   function(v){return{tipo:'rodaje',nombre:'Continuo al umbral 35min',zona:2,intens:6,
-    desc:'10min cal '+r(v,0.65)+' + 35min a '+r(v,0.85)+' /km (85% VAM · umbral anaeróbico) + 5min vuelta calma. Máximo estímulo para elevar el MLSS (Billat, 2001).',
+    desc:'10min calentamiento a '+r(v,0.65)+' /km + 35min a '+r(v,0.85)+' /km (umbral) + 5min vuelta calma a '+r(v,0.60)+' /km.',
     alt:'25min umbral en cinta · Fatiga: 20min.',tiempo:'50min',kmNum:mts(v,0.80,2100)/1000};},
   // 7 — Tempo 8km
   function(v){return{tipo:'rodaje',nombre:'Tempo continuo 8km',zona:2,intens:6,
-    desc:'10min cal + 8km a '+r(v,0.86)+' /km (86% VAM). Alta rentabilidad para 10km y media maratón (Seiler, 2010). Tiempo estimado: '+tdd(v,0.86,8000)+'.',
-    alt:'5km tempo · Lluvia: 2×4km con 3min pausa.',tiempo:tdd(v,0.86,8000),kmNum:8};},
+    desc:'Cal 10min a '+r(v,0.62)+' /km + 8km a '+r(v,0.86)+' /km (~'+Math.round(tD(v,0.86,8000)/60)+'min) + 5min vuelta calma a '+r(v,0.60)+' /km.',
+    alt:'5km tempo · Lluvia: 2×4km con 3min pausa a '+r(v,0.62)+' /km.',tiempo:'~'+Math.round(tD(v,0.86,8000)/60+15)+'min',kmNum:8};},
   // 8 — Fartlek libre 50min
   function(v){return{tipo:'rodaje',nombre:'Fartlek libre 50min',zona:2,intens:4,
-    desc:'50min: 10min a '+r(v,0.63)+' + alternar libremente tramos de 2-4min entre '+r(v,0.70)+' y '+r(v,0.83)+' según sensaciones. Variedad de ritmos en una sola sesión sin estructura rígida.',
+    desc:'50min: 10min a '+r(v,0.63)+' /km + alternar libremente tramos de 2-4min entre '+r(v,0.70)+' y '+r(v,0.83)+' /km según sensaciones.',
     alt:'Cinta · 35min si fatiga.',tiempo:'50min',kmNum:mts(v,0.74,3000)/1000};},
   // 9 — Tirada larga 1h 30min
   function(v){return{tipo:'rodaje',nombre:'Tirada larga 1h 30min',zona:1,intens:2,
-    desc:'90min a '+r(v,0.60)+'/'+r(v,0.63)+' /km (60-63% VAM). Base aeróbica máxima. Adaptación mitocondrial y oxidación de grasas (Volek et al., 2016). Hidratación cada 20min.',
+    desc:'90min a '+r(v,0.60)+'/'+r(v,0.63)+' /km. Hidratación cada 20min.',
     alt:'60min en cinta · 2×45min si cansancio.',tiempo:'1h 30min',kmNum:mts(v,0.61,5400)/1000};},
   // 10 — Tirada larga 1h 40min
   function(v){return{tipo:'rodaje',nombre:'Tirada larga 1h 40min',zona:1,intens:2,
-    desc:'100min a '+r(v,0.61)+'/'+r(v,0.63)+' /km. Progresión desde 90min. Aumenta oxidación lipídica y depósitos glucogénicos. Últimos 10min a '+r(v,0.70)+' (Lydiard, 1983).',
-    alt:'90min si no recuperado · Geles si >75min.',tiempo:'1h 40min',kmNum:mts(v,0.62,6000)/1000};},
+    desc:'100min a '+r(v,0.61)+'/'+r(v,0.63)+' /km. Últimos 10min a '+r(v,0.70)+' /km.',
+    alt:'90min si no recuperado · Gel si >75min.',tiempo:'1h 40min',kmNum:mts(v,0.62,6000)/1000};},
   // 11 — Tirada larga 1h 50min
   function(v){return{tipo:'rodaje',nombre:'Tirada larga 1h 50min',zona:1,intens:3,
-    desc:'110min a '+r(v,0.61)+'/'+r(v,0.63)+' /km. Progresión desde 100min. Últimos 20min a '+r(v,0.70)+'. Estimula la transición grasa-glucógeno y resistencia muscular sostenida (Noakes, 2003). Geles cada 45min.',
+    desc:'110min a '+r(v,0.61)+'/'+r(v,0.63)+' /km. Últimos 20min a '+r(v,0.70)+' /km. Gel cada 45min.',
     alt:'100min si acumulación de fatiga.',tiempo:'1h 50min',kmNum:mts(v,0.62,6600)/1000};},
   // 12 — Tirada larga 2h base maratón
   function(v){return{tipo:'rodaje',nombre:'Tirada larga 2h base maratón',zona:1,intens:2,
-    desc:'2h a '+r(v,0.60)+'/'+r(v,0.62)+' /km · últimos 20min a '+r(v,0.72)+'. Vacía depósitos de glucógeno y entrena la transición grasa-glucosa (Noakes, 2003). Geles si >75min.',
+    desc:'2h a '+r(v,0.60)+'/'+r(v,0.62)+' /km. Últimos 20min a '+r(v,0.72)+' /km. Gel si >75min.',
     alt:'90min en cinta · AM+PM si imprescindible.',tiempo:'~2h',kmNum:mts(v,0.61,7200)/1000};},
   // 13 — Progresivo largo 10km
   function(v){return{tipo:'rodaje',nombre:'Progresivo largo 10km',zona:2,intens:6,
-    desc:'2.5km '+r(v,0.67)+' + 2.5km '+r(v,0.73)+' + 2.5km '+r(v,0.80)+' + 2.5km '+r(v,0.87)+' /km. Simula la gestión del ritmo en competición. Total 10km con intensidad creciente.',
+    desc:'2.5km a '+r(v,0.67)+' /km + 2.5km a '+r(v,0.73)+' /km + 2.5km a '+r(v,0.80)+' /km + 2.5km a '+r(v,0.87)+' /km. Total 10km.',
     alt:'7km progresivos si tiempo justo · Cinta.',tiempo:fmtTiempo('~'+Math.round(tD(v,0.77,10000)/60)+'min'),kmNum:10};},
   // 14 — Cambios de ritmo cortos 45min
   function(v){return{tipo:'rodaje',nombre:'Cambios de ritmo cortos 45min',zona:2,intens:5,
-    desc:'10min a '+r(v,0.65)+' + 8× [1min a '+r(v,0.90)+' + 90seg a '+r(v,0.65)+'] + 10min a '+r(v,0.65)+'. Desarrolla la capacidad de recuperación entre esfuerzos cortos de alta intensidad.',
+    desc:'10min a '+r(v,0.65)+' /km + 8× [1min a '+r(v,0.90)+' /km + 90seg a '+r(v,0.65)+' /km] + 10min a '+r(v,0.65)+' /km.',
     alt:'Cinta · 5 bloques si fatiga.',tiempo:'45min',kmNum:mts(v,0.75,2700)/1000};},
   // 15 — Umbral fraccionado 3×10min
   function(v){return{tipo:'rodaje',nombre:'Umbral fraccionado 3×10min',zona:2,intens:7,
-    desc:'Cal 10min. 3×10min a '+r(v,0.87)+' /km (87% VAM · umbral) con 3min trote suave entre repeticiones. Mayor tolerancia al umbral que el continuo al reducir la fatiga acumulada. Billat (2001).',
+    desc:'10min calentamiento a '+r(v,0.62)+' /km. 3×10min a '+r(v,0.87)+' /km con 3min trote a '+r(v,0.62)+' /km entre repeticiones.',
     alt:'2×10min si primera vez · 2×12min variante.',tiempo:'~55min',kmNum:mts(v,0.87,1800)/1000};},
   // 16 — Tirada media 50min con cambio final
   function(v){return{tipo:'rodaje',nombre:'Tirada 50min con km finales rápidos',zona:1,intens:4,
-    desc:'35min a '+r(v,0.63)+' /km + 10min a '+r(v,0.78)+' + 5min a '+r(v,0.85)+'. Acumula fatiga aeróbica y trabaja el umbral en condiciones de pre-fatiga (Billat, 2001).',
+    desc:'35min a '+r(v,0.63)+' /km + 10min a '+r(v,0.78)+' /km + 5min a '+r(v,0.85)+' /km.',
     alt:'30+8+4min · Cinta si lluvia.',tiempo:'50min',kmNum:mts(v,0.70,3000)/1000};},
   // 17 — Fartlek largo en ondas 1h 10min
   function(v){return{tipo:'rodaje',nombre:'Fartlek largo en ondas 1h 10min',zona:2,intens:5,
-    desc:'70min: alternar cada 5-7min entre '+r(v,0.65)+' (Z1) y '+r(v,0.80)+' (Z2) de forma continua y fluida. Sin pausas. Varía la ola según sensaciones. Alta rentabilidad aeróbica con carga moderada.',
+    desc:'70min: alternar cada 5-7min entre '+r(v,0.65)+' /km (suave) y '+r(v,0.80)+' /km (umbral). Sin pausas.',
     alt:'50min · Cinta con cambios programados.',tiempo:'1h 10min',kmNum:mts(v,0.73,4200)/1000};}
 ];
 
@@ -1787,33 +1805,33 @@ var BANCO_ROD=[
 
 // Variantes por tipo — arrays de configuraciones {reps, dist/tiempo, pct}
 var _VARIANTES_IEL = [
-  {reps:5, dist:1000, pct:0.87, pausa:'90″'},
-  {reps:4, dist:1200, pct:0.87, pausa:'2min'},
-  {reps:6, dist:800,  pct:0.87, pausa:'75″'},
-  {reps:3, dist:1500, pct:0.87, pausa:'2min30″'},
-  {reps:7, dist:700,  pct:0.87, pausa:'75″'},
-  {reps:4, dist:1400, pct:0.87, pausa:'2min'},
-  {reps:5, dist:1100, pct:0.87, pausa:'90″'},
-  {reps:3, dist:1600, pct:0.87, pausa:'3min'},
-  {reps:8, dist:600,  pct:0.87, pausa:'60″'},
-  {reps:4, dist:1300, pct:0.87, pausa:'2min'},
-  {reps:6, dist:900,  pct:0.87, pausa:'80″'},
-  {reps:2, dist:2000, pct:0.85, pausa:'3min'}
+  {reps:5, dist:1000, pct:0.87, pausa:'90″'},      // ~4:18 trabajo → 90″ OK (ratio ~1:0.35, pausa fija estándar IEL)
+  {reps:4, dist:1200, pct:0.87, pausa:'2min'},       // ~5:10 → 2min OK
+  {reps:6, dist:800,  pct:0.87, pausa:'90″'},        // ~3:27 → 90″ OK
+  {reps:3, dist:1500, pct:0.87, pausa:'2min30″'},    // ~6:27 → 2min30″ OK
+  {reps:7, dist:700,  pct:0.87, pausa:'75″'},        // ~3:01 → 75″ OK
+  {reps:4, dist:1400, pct:0.87, pausa:'2min'},        // ~6:02 → 2min OK
+  {reps:5, dist:1100, pct:0.87, pausa:'90″'},        // ~4:44 → 90″ OK
+  {reps:3, dist:1600, pct:0.87, pausa:'3min'},        // ~6:53 → 3min OK
+  {reps:6, dist:800,  pct:0.87, pausa:'2min'},        // ~3:27 → 2min (corregido de 60″ — insuficiente)
+  {reps:4, dist:1300, pct:0.87, pausa:'2min'},        // ~5:36 → 2min OK
+  {reps:6, dist:900,  pct:0.87, pausa:'90″'},        // ~3:52 → 90″ OK
+  {reps:2, dist:2000, pct:0.85, pausa:'3min'}         // ~8:30 → 3min OK
 ];
 
 var _VARIANTES_IEM = [
-  {reps:5, seg:240, pct:0.98, pausa:'igual trabajo'},
-  {reps:6, seg:180, pct:1.00, pausa:'3min'},
-  {reps:4, seg:300, pct:0.97, pausa:'igual trabajo'},
-  {reps:8, seg:150, pct:1.00, pausa:'2min30″'},
-  {reps:5, seg:210, pct:0.98, pausa:'igual trabajo'},
-  {reps:4, seg:270, pct:0.98, pausa:'igual trabajo'},
-  {reps:6, seg:200, pct:0.99, pausa:'3min'},
-  {reps:3, seg:360, pct:0.97, pausa:'4min'},
-  {reps:7, seg:160, pct:1.00, pausa:'2min'},
-  {reps:4, seg:330, pct:0.97, pausa:'igual trabajo'},
-  {reps:5, seg:250, pct:0.98, pausa:'igual trabajo'},
-  {reps:6, seg:220, pct:0.99, pausa:'3min'}
+  {reps:5, seg:240, pct:0.98, pausa:'igual trabajo'},    // 4min trabajo → 4min pausa OK
+  {reps:6, seg:180, pct:1.00, pausa:'3min'},             // 3min trabajo → 3min pausa OK
+  {reps:4, seg:300, pct:0.97, pausa:'igual trabajo'},    // 5min → 5min OK
+  {reps:6, seg:150, pct:1.00, pausa:'3min'},             // 2.5min a VAM → 3min pausa (corregido de 8×150s)
+  {reps:5, seg:210, pct:0.98, pausa:'igual trabajo'},    // 3.5min → igual OK
+  {reps:4, seg:270, pct:0.98, pausa:'igual trabajo'},    // 4.5min → igual OK
+  {reps:6, seg:200, pct:0.99, pausa:'3min'},             // 3.3min → 3min OK
+  {reps:3, seg:360, pct:0.97, pausa:'4min'},             // 6min → 4min OK (ratio 0.67, aceptable)
+  {reps:7, seg:160, pct:1.00, pausa:'3min'},             // 2.7min a VAM → 3min pausa (corregido)
+  {reps:4, seg:330, pct:0.97, pausa:'igual trabajo'},    // 5.5min → igual OK
+  {reps:5, seg:250, pct:0.98, pausa:'igual trabajo'},    // 4.2min → igual OK
+  {reps:6, seg:220, pct:0.99, pausa:'3min'}              // 3.7min → 3min OK
 ];
 
 var _VARIANTES_IIC = [
@@ -1876,14 +1894,13 @@ function _genIEL(v, semGlobal, prueba, az) {
   var c = _varSeed(_VARIANTES_IEL, semGlobal, prueba);
   var pctReal = Math.max(0.80, c.pct + (az||0));
   var ritmo = r(v, pctReal);
-  var tRep  = tdd(v, pctReal, c.dist);
+  var tRep  = tddRep(v, pctReal, c.dist);
   var km    = c.reps * c.dist / 1000;
-  var notaAz = (az&&az<0)?' · Intensidad ajustada '+Math.round(pctReal*100)+'% VAM (perfil master: Hunter et al., 2004)':'';
   return {tipo:'series', zona:3, intens:7,
     nombre:'IEL · '+c.reps+'×'+c.dist+'m al '+Math.round(pctReal*100)+'% VAM',
-    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+c.dist+'m a '+ritmo+' /km ('+Math.round(pctReal*100)+'% VAM · '+tRep+' por rep). Pausa: '+c.pausa+' trote. Estímulo umbral láctico y MLSS. Total: '+km.toFixed(1)+'km (Billat, 2001).'+notaAz,
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+c.reps+'×'+c.dist+'m a '+ritmo+' /km ('+tRep+' por rep). Pausa: '+c.pausa+' trote a '+r(v,0.55)+' /km. Total series: '+km.toFixed(1)+'km.',
     alt:(c.reps-1)+'×'+c.dist+'m si fatiga · -2″/km si primeras semanas.',
-    tiempo:tRep+'×'+c.reps, kmNum:km};
+    tiempo:c.reps+'×('+tRep+')', kmNum:km};
 }
 
 function _genIEM(v, semGlobal, prueba, az) {
@@ -1891,56 +1908,57 @@ function _genIEM(v, semGlobal, prueba, az) {
   var pctReal = Math.max(0.88, c.pct + (az||0));
   var ritmo = r(v, pctReal);
   var km    = c.reps * (v * pctReal / 3.6) * c.seg / 1000;
+  var tRepSeg = fmtRep(c.seg); // ej: 4' o 3'30" o 2'30"
   var minSeg = Math.floor(c.seg/60)+'min'+(c.seg%60>0?c.seg%60+'″':'');
-  var notaAz = (az&&az<0)?' · '+Math.round(pctReal*100)+'% VAM ajustado perfil master':'';
   return {tipo:'series', zona:3, intens:9,
     nombre:'IEM · '+c.reps+'×'+minSeg+' al '+Math.round(pctReal*100)+'% VAM',
-    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+minSeg+' a '+ritmo+' /km. Pausa: '+c.pausa+'. Máximo estímulo VO₂max (Helgerud et al., 2007).'+notaAz,
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+c.reps+'×'+tRepSeg+' a '+ritmo+' /km. Pausa: '+c.pausa+' a '+r(v,0.55)+' /km.',
     alt:(c.reps-1)+'×'+minSeg+' si fatiga · Ciclo indoor misma estructura.',
-    tiempo:'~'+(Math.round(c.reps*c.seg/60)+20)+'min', kmNum:+km.toFixed(2)};
+    tiempo:c.reps+'×('+tRepSeg+')', kmNum:+km.toFixed(2)};
 }
 
 function _genIIC(v, semGlobal, prueba, az) {
   var c = _varSeed(_VARIANTES_IIC, semGlobal, prueba);
-  var pctReal = Math.max(0.92, c.pct + (az||0)*0.5); // IIC: ajuste menor (intensidad máx)
+  var pctReal = Math.max(0.92, c.pct + (az||0)*0.5);
   var ritmo = r(v, pctReal);
-  var tRep  = tdd(v, pctReal, c.dist);
+  var tRep  = tddRep(v, pctReal, c.dist);
   var km    = c.reps * c.dist / 1000;
-  var notaAz = (az&&az<0)?' · Ritmo ajustado perfil master':'';
   return {tipo:'series', zona:3, intens:8,
     nombre:'IIC · '+c.reps+'×'+c.dist+'m al '+Math.round(pctReal*100)+'% VAM',
-    desc:'Cal 15min a '+r(v,0.62)+'. '+c.reps+'×'+c.dist+'m a '+ritmo+' /km ('+tRep+' por rep). Pausa: '+c.pausa+'. Total: '+km.toFixed(1)+'km trabajo.'+notaAz,
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+c.reps+'×'+c.dist+'m a '+ritmo+' /km ('+tRep+' por rep). Pausa: '+c.pausa+' a '+r(v,0.55)+' /km. Total: '+km.toFixed(1)+'km.',
     alt:(c.reps-2)+'×'+c.dist+'m si fatiga · Cinta misma sesión.',
-    tiempo:tRep+'×'+c.reps, kmNum:km};
+    tiempo:c.reps+'×('+tRep+')', kmNum:km};
 }
 
 function _genGacon(v, semGlobal, prueba) {
   var c = _varSeed(_VARIANTES_GACON, semGlobal, prueba);
   var ritmo = r(v, c.pct);
-  var minSeg = Math.floor(c.seg/60)>0?Math.floor(c.seg/60)+'min':''+c.seg+'″';
+  var tRepSeg = c.seg+'″'; // Gacon es siempre segundos: 20", 25", 30", 40"
   return {tipo:'series', zona:3, intens:8,
     nombre:'Intermitente '+c.label+' · '+c.series+'×'+c.reps+' reps',
-    desc:'Cal 15min a '+r(v,0.62)+'. '+c.series+' series × '+c.reps+' reps: '+c.seg+'″ a '+ritmo+' /km + '+c.seg+'″ trote. Pausa entre series: 3min. Maximiza tiempo a VO₂max (Buchheit & Laursen, 2013).',
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+c.series+' series × '+c.reps+' reps: '+tRepSeg+' a '+ritmo+' /km + '+tRepSeg+' trote a '+r(v,0.55)+' /km. Pausa entre series: 3min andando.',
     alt:(c.series-1)+' series si fatiga · Ciclo indoor misma estructura.',
-    tiempo:'~'+(c.series*c.reps*c.seg/30+20)+'min', kmNum:+(c.series*c.reps*(v*c.pct/3.6)*c.seg/1000).toFixed(2)};
+    tiempo:c.series*c.reps+'×('+tRepSeg+'/'+tRepSeg+')', kmNum:+(c.series*c.reps*(v*c.pct/3.6)*c.seg/1000).toFixed(2)};
 }
 
 function _genCuestasCortas(v, semGlobal) {
   var c = _varSeed(_VARIANTES_CUESTAS_CORTAS, semGlobal, 0);
+  var tRep = tddRep(v, 0.97, c.dist);
   return {tipo:'cuestas', zona:3, intens:8,
     nombre:'Cuestas cortas · '+c.reps+'×'+c.dist+'m explosivas',
-    desc:'Cal 15min. '+c.reps+'×'+c.dist+'m en cuesta ≤3% al '+c.pct+' esfuerzo. Bajada trotando (recuperación completa). Potencia neuromuscular y fuerza específica de carrera (Ferley et al., 2014).',
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+c.reps+'×'+c.dist+'m en cuesta ≤3% — '+tRep+' por rep. Bajada trotando a '+r(v,0.55)+' /km (recuperación completa). Ritmo subida ref: '+r(v,0.97)+' /km.',
     alt:(c.reps-2)+'×'+c.dist+'m si fatiga · Cinta inclinada 3%.',
-    tiempo:'~40min', kmNum:c.reps*c.dist/1000*0.6};
+    tiempo:c.reps+'×('+tRep+') (~40min)', kmNum:c.reps*c.dist/1000*0.6};
 }
 
 function _genCuestasLargas(v, semGlobal) {
   var c = _varSeed(_VARIANTES_CUESTAS_LARGAS, semGlobal, 0);
+  var tRep = tddRep(v, 0.87, c.dist);
   return {tipo:'cuestas', zona:3, intens:7,
     nombre:'Cuestas largas · '+c.reps+'×'+c.dist+'m',
-    desc:'Cal 15min. '+c.reps+'×'+c.dist+'m en cuesta ≤3% al '+c.pct+' RPE. Pausa: bajada + 90seg andando. Fuerza-resistencia específica (Ferley et al., 2014).',
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+c.reps+'×'+c.dist+'m en cuesta ≤3% al '+c.pct+' RPE — '+tRep+' por rep. Pausa: bajada a '+r(v,0.55)+' /km + 90seg andando. Ritmo ref: '+r(v,0.87)+' /km.',
     alt:(c.reps-1)+'×'+c.dist+'m si primera vez · Reducir si mucho calor.',
-    tiempo:'~50min', kmNum:c.reps*c.dist/1000*0.5};
+    tiempo:c.reps+'×('+tRep+') (~50min)', kmNum:c.reps*c.dist/1000*0.5};
 }
 
 // buildSeries — ahora recibe semGlobal para generar variantes dinámicas
@@ -1969,23 +1987,101 @@ function buildSeries(v, prueba, semGlobal, _ajZ3) {
   s.iel_1200 = _genIEL(v, sg+4, prueba, _az);
 
   // IIMC — siempre fijo (es un protocolo específico de 8″)
+  // Tiempo real: cal 15min + 3×(8×8″ + 8×2min pausa + 6min entre series) ≈ 15+3×(1:04+16+6) = 15+69 = 84min → simplificado ~45min (sin pausas largas intraserie)
+  // Corrección: 8 reps × (8″ trabajo + 2min pausa) = 8×128″ = 1024″ ≈ 17min × 3 series + 2×6min pausas = 51+12 = 63min + 15cal = 78min total
+  var iimc_serie_seg = 8*(8+120); // 8 reps × (8″+120″ pausa)
+  var iimc_total_min = Math.round((15*60 + 3*iimc_serie_seg + 2*360) / 60);
   s.iimc = {tipo:'series',nombre:'IIMC · 3×8×8″ potencia máxima',zona:3,intens:10,
-    desc:'Cal 15min. 3 series × 8 reps de 8″ al máximo posible. Pausa reps: 2min. Pausa series: 6min. Potencia neuromuscular máxima y velocidad de contracción.',
-    alt:'Skiping máximo si no hay espacio.',tiempo:'~45min',kmNum:1.5};
+    desc:'Cal 15min a '+r(v,0.62)+' /km. 3 series × 8 reps de 8″ al máximo absoluto. Pausa entre reps: 2min. Pausa entre series: 6min. Tiempo total: ~'+iimc_total_min+'min.',
+    alt:'Skiping máximo si no hay espacio.',tiempo:'24×(8″) (~'+iimc_total_min+'min)',kmNum:1.5};
 
   // Específicas — también con variante dinámica
   s.esp_1000 = _genIEL(v, sg+2, prueba, _az); // offset 2 para diferenciarlo del IEL base
   s.esp_1000.nombre = 'Específicas · '+s.esp_1000.nombre.replace('IEL · ','').replace('al umbral','ritmo objetivo');
   s.esp_1000.intens = 8;
 
+  // ── NUEVAS SESIONES — Canova/Daniels complementarias ─────────────
+
+  // 1. SERIES A RITMO DE COMPETICIÓN (fase especificidad)
+  // Basado en Canova: extensión progresiva del ritmo objetivo
+  // Usa vamObj implícita a través de la progresión del plan
+  var rObj = r(v, 1.02); // aprox ritmo objetivo (ligeramente por encima de VAM actual)
+  var tRObj = tdd(v, 1.02, 1000);
+  var _VARIANTES_RITMO_OBJ = [
+    {reps:5, dist:800,  label:'5×800m'},
+    {reps:4, dist:1000, label:'4×1000m'},
+    {reps:3, dist:1200, label:'3×1200m'},
+    {reps:6, dist:600,  label:'6×600m'},
+    {reps:4, dist:1200, label:'4×1200m'},
+    {reps:5, dist:1000, label:'5×1000m'},
+    {reps:3, dist:1500, label:'3×1500m'},
+    {reps:6, dist:800,  label:'6×800m'}
+  ];
+  var _rv = _VARIANTES_RITMO_OBJ[Math.abs((sg*17+15+_PLAN_SEED*41+_PLAN_SEED2*13) % _VARIANTES_RITMO_OBJ.length)];
+  var _rvTRep = tddRep(v, 1.02, _rv.dist);
+  var _rvKm = _rv.reps * _rv.dist / 1000;
+  var _rvPausa = _rv.dist >= 1200 ? '2min30″' : _rv.dist >= 1000 ? '2min' : '90″';
+  var _rvTotalMin = Math.round((15*60 + _rv.reps*(((_rv.dist/1000)/(v*1.02/3.6))*3600 + (_rvPausa==='2min30″'?150:_rvPausa==='2min'?120:90)))/60);
+  s.ritmo_obj = {tipo:'series', zona:3, intens:8,
+    nombre:'Ritmo competición · '+_rv.label,
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+_rv.reps+'×'+_rv.dist+'m a '+r(v,1.02)+' /km ('+_rvTRep+' por rep). Pausa: '+_rvPausa+' trote a '+r(v,0.60)+' /km. Total series: '+_rvKm.toFixed(1)+'km.',
+    alt:(_rv.reps-1)+'×'+_rv.dist+'m si primera vez en este bloque.',
+    tiempo:_rv.reps+'×('+_rvTRep+') (~'+_rvTotalMin+'min)', kmNum:_rvKm};
+
+  // 2. STRIDES / ACELERONES NEUROMUSCULARES (Daniels R-pace + Canova sprints cortos)
+  // Al final de rodajes Z1 — activan fibras rápidas sin generar fatiga
+  // Variantes dinámicas de distancia y número
+  var _VARIANTES_STRIDES = [
+    {reps:6,  dist:80,  label:'6×80m'},
+    {reps:8,  dist:80,  label:'8×80m'},
+    {reps:6,  dist:100, label:'6×100m'},
+    {reps:8,  dist:100, label:'8×100m'},
+    {reps:10, dist:80,  label:'10×80m'},
+    {reps:6,  dist:120, label:'6×120m'},
+    {reps:8,  dist:60,  label:'8×60m'},
+    {reps:10, dist:60,  label:'10×60m'}
+  ];
+  var _sv = _VARIANTES_STRIDES[Math.abs((sg*17+17+_PLAN_SEED*41+_PLAN_SEED2*13) % _VARIANTES_STRIDES.length)];
+  var _svTRep = tddRep(v, 1.08, _sv.dist); // ~108% VAM = ritmo fluido pero con presencia
+  var _svTotalMin = Math.round((40*60 + _sv.reps*((_sv.dist/1000)/(v*1.08/3.6)*3600 + 60))/60); // +rodaje previo
+  s.strides = {tipo:'rodaje', zona:1, intens:3,
+    nombre:'Rodaje con strides · '+_sv.label,
+    desc:'40min a '+r(v,0.62)+' /km. Al terminar: '+_sv.reps+'×'+_sv.dist+'m de aceleración progresiva hasta '+r(v,1.08)+' /km ('+_svTRep+' por stride). Recuperación: 60″ andando entre cada uno. No es una serie — es una aceleración suave y fluida.',
+    alt:'4 strides si primera vez · Superficie blanda preferible.',
+    tiempo:'~'+_svTotalMin+'min', kmNum:mts(v,0.62,2400)/1000+_sv.reps*_sv.dist/1000};
+
+  // 3. RODAJE AERÓBICO SOSTENIDO — zona fundamental de Canova
+  // Entre Z1 y Z2: 76-78% VAM, ritmo fijo, duración media-larga
+  // La sesión que más se ignora y que más rentabilidad tiene a largo plazo
+  var _VARIANTES_AER_SOS = [
+    {min:50, pct:0.76, label:'50min'},
+    {min:55, pct:0.77, label:'55min'},
+    {min:60, pct:0.76, label:'1h'},
+    {min:65, pct:0.77, label:'65min'},
+    {min:70, pct:0.76, label:'70min'},
+    {min:55, pct:0.78, label:'55min sostenido'},
+    {min:60, pct:0.78, label:'1h sostenido'},
+    {min:45, pct:0.78, label:'45min'}
+  ];
+  var _asv = _VARIANTES_AER_SOS[Math.abs((sg*17+19+_PLAN_SEED*41+_PLAN_SEED2*13) % _VARIANTES_AER_SOS.length)];
+  s.aerobico_sostenido = {tipo:'rodaje', zona:2, intens:4,
+    nombre:'Aeróbico sostenido · '+_asv.label,
+    desc:_asv.min+'min a ritmo fijo de '+r(v,_asv.pct)+' /km. Sin acelerar ni frenar — ritmo constante de principio a fin. Más rápido que el rodaje suave pero sin llegar al umbral. Si puedes hablar con frases cortas, vas bien.',
+    alt:'Reducir 10min si calor · Cinta programada a ese ritmo.',
+    tiempo:(_asv.min>=60?(Math.floor(_asv.min/60)+'h'+((_asv.min%60)>0?' '+(_asv.min%60)+'min':'')):(+_asv.min+'min')),
+    kmNum:mts(v,_asv.pct,_asv.min*60)/1000};
+
   // ── SERIES ESTRUCTURADAS ─────────────────────────
   // Juegos polacos — variante dinámica de distancia
   var jp_dists = [300,250,350,400,280,320,270,360];
   var jp_d = jp_dists[Math.abs((sg*17+3+_PLAN_SEED*41+_PLAN_SEED2*13) % jp_dists.length)];
   var jp_reps = jp_d <= 280 ? 9 : jp_d <= 320 ? 7 : 6;
+  var jp_tRep = tddRep(v,1.0,jp_d);
+  var jp_tPausa = fmt(mts(v,0.60,500)/v*3600/1000); // tiempo 500m a ritmo regenerativo
+  var jp_totalMin = Math.round((15*60 + jp_reps*((jp_d/1000)/(v/3.6) + (0.5/1000)/(v*0.60/3.6)))/60);
   s.juegos_polacos = {tipo:'series',nombre:'Juegos polacos · '+jp_reps+'×'+jp_d+'m a VAM',zona:3,intens:7,
-    desc:'Cal 15min. '+jp_reps+'×'+jp_d+'m a '+r(v,1.0)+' /km ('+tdd(v,1.0,jp_d)+' por rep) + 500m trote recuperación. VAM con pausa larga. Total: '+(jp_reps*jp_d/1000).toFixed(2)+'km trabajo.',
-    alt:(jp_reps-2)+'×'+jp_d+'m si inicio bloque.',tiempo:tdd(v,1.0,jp_d)+'×'+jp_reps,kmNum:+(jp_reps*jp_d/1000+jp_reps*0.5).toFixed(2)};
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+jp_reps+'×'+jp_d+'m a '+r(v,1.0)+' /km ('+jp_tRep+' por rep) + 500m trote a '+r(v,0.60)+' /km de recuperación. Total: '+(jp_reps*jp_d/1000).toFixed(2)+'km trabajo.',
+    alt:(jp_reps-2)+'×'+jp_d+'m si inicio bloque.',tiempo:jp_reps+'×('+jp_tRep+') (~'+jp_totalMin+'min)',kmNum:+(jp_reps*jp_d/1000+jp_reps*0.5).toFixed(2)};
 
   // Series variadas — pirámide dinámica
   var pir_vars = [
@@ -2000,16 +2096,19 @@ function buildSeries(v, prueba, semGlobal, _ajZ3) {
   ];
   var pv = pir_vars[Math.abs((sg*17+5+_PLAN_SEED*41+_PLAN_SEED2*13) % pir_vars.length)];
   var pvTotal = pv.seq.reduce(function(a,b){return a+b;},0);
+  var pvTiempoTotal = pv.seq.reduce(function(acc,d){ return acc + (d/1000)/(v*pv.pct/3.6)*2; }, 0); // trabajo×2 (trabajo+pausa igual)
+  var pvTiempoMin = Math.round(pvTiempoTotal/60 + 20); // +20min cal
   s.series_variadas = {tipo:'series',nombre:'Pirámide · '+pv.seq.join('-')+'m',zona:3,intens:8,
-    desc:'Cal 15min. '+pv.seq.map(function(d){return d+'m ('+tdd(v,pv.pct,d)+')';}).join(' → ')+' a '+Math.round(pv.pct*100)+'% VAM. Pausa = tiempo de trabajo. Total: '+(pvTotal/1000).toFixed(2)+'km.',
-    alt:'Omitir las distancias extremas si fatiga.',tiempo:'~40min',kmNum:pvTotal/1000};
+    desc:'Cal 15min a '+r(v,0.62)+' /km. '+pv.seq.map(function(d){return d+'m ('+tdd(v,pv.pct,d)+')';}).join(' → ')+' a '+r(v,pv.pct)+' /km. Pausa = tiempo de trabajo. Total: '+(pvTotal/1000).toFixed(2)+'km.',
+    alt:'Omitir las distancias extremas si fatiga.',tiempo:'~'+pvTiempoMin+'min',kmNum:pvTotal/1000};
 
   // Progresivo en series — variante dinámica
   var prog_dists = [600,500,700,800,550,650];
   var prog_d = prog_dists[Math.abs((sg*17+7+_PLAN_SEED*41+_PLAN_SEED2*13) % prog_dists.length)];
+  var prog_tRep = tddRep(v,0.97,prog_d);
   s.progresivo_series = {tipo:'series',nombre:'Series progresivas 5×'+prog_d+'m',zona:3,intens:8,
-    desc:'Cal 15min. 5×'+prog_d+'m con progresión: rep1 '+r(v,0.90)+' → rep3 '+r(v,0.97)+' → rep5 '+r(v,1.02)+' /km. Pausa 90″ trote. Simula aceleración progresiva en competición.',
-    alt:'4 reps si fatiga · Mantener pausa fija.',tiempo:tdd(v,0.97,prog_d)+'×5',kmNum:+(5*prog_d/1000).toFixed(2)};
+    desc:'Cal 15min a '+r(v,0.62)+' /km. 5×'+prog_d+'m con progresión: rep1 '+r(v,0.90)+' /km ('+tddRep(v,0.90,prog_d)+') → rep3 '+r(v,0.97)+' /km ('+prog_tRep+') → rep5 '+r(v,1.02)+' /km ('+tddRep(v,1.02,prog_d)+'). Pausa 90″ trote a '+r(v,0.60)+' /km.',
+    alt:'4 reps si fatiga · Mantener pausa fija.',tiempo:'5×('+prog_tRep+') (~'+(Math.round(5*parseFloat(prog_tRep)*60/3600/60)+20)+'min)',kmNum:+(5*prog_d/1000).toFixed(2)};
 
   // Bloques alternos — variante dinámica
   var ba_vars = [
@@ -2017,9 +2116,12 @@ function buildSeries(v, prueba, semGlobal, _ajZ3) {
     {largo:500,corto:200},{largo:600,corto:300},{largo:800,corto:200}
   ];
   var ba = ba_vars[Math.abs((sg*17+9+_PLAN_SEED*41+_PLAN_SEED2*13) % ba_vars.length)];
+  var ba_tLargo = tddRep(v,0.95,ba.largo);
+  var ba_tCorto = tddRep(v,1.05,ba.corto);
+  var ba_totalMin = Math.round(3 * ((ba.largo/1000)/(v*0.95/3.6) + (ba.corto/1000)/(v*1.05/3.6) + 6) / 60 + 20);
   s.bloques_alternos = {tipo:'series',nombre:'Bloques alternos 3×('+ba.largo+'m+'+ba.corto+'m)',zona:3,intens:9,
-    desc:'Cal 15min. 3 series: ['+ba.largo+'m a '+r(v,0.95)+' ('+tdd(v,0.95,ba.largo)+') + 2min pausa + '+ba.corto+'m a '+r(v,1.05)+' ('+tdd(v,1.05,ba.corto)+')] + 4min pausa entre series.',
-    alt:'2 series si primera vez · Reducir distancias un 20%.',tiempo:'~45min',kmNum:+(3*(ba.largo+ba.corto)/1000).toFixed(2)};
+    desc:'Cal 15min a '+r(v,0.62)+' /km. 3 series: ['+ba.largo+'m a '+r(v,0.95)+' /km ('+ba_tLargo+') + 2min pausa + '+ba.corto+'m a '+r(v,1.05)+' /km ('+ba_tCorto+')] + 4min pausa entre series.',
+    alt:'2 series si primera vez · Reducir distancias un 20%.',tiempo:'3×('+ba_tLargo+'+'+ba_tCorto+') (~'+ba_totalMin+'min)',kmNum:+(3*(ba.largo+ba.corto)/1000).toFixed(2)};
 
   // Fartlek mejicano — variante dinámica de duración bloques
   var fm_vars = [
@@ -2041,76 +2143,76 @@ function buildSeries(v, prueba, semGlobal, _ajZ3) {
   var fc = fc_vars[Math.abs((sg*17+13+_PLAN_SEED*41+_PLAN_SEED2*13) % fc_vars.length)];
   var fcraps = fc.rap<10?fc.rap+'min':fc.rap+'″';
   var fcsuav = fc.suave<10?fc.suave+'min':fc.suave+'″';
+  var fc_rap_seg = fc.rap<10?fc.rap*60:fc.rap;
+  var fc_suav_seg = fc.suave<10?fc.suave*60:fc.suave;
+  var fc_totalMin = Math.round((10*60 + fc.reps*(fc_rap_seg+fc_suav_seg) + 5*60)/60);
   s.fartlek_corto = {tipo:'series',nombre:'Fartlek corto · '+fc.reps+'×('+fcraps+'/'+fcsuav+')',zona:2,intens:5,
-    desc:'Cal 10min. '+fc.reps+'× ['+fcraps+' a '+r(v,0.92)+' + '+fcsuav+' a '+r(v,0.68)+']. 5min vuelta calma. Desarrolla la recuperación entre esfuerzos de alta intensidad.',
-    alt:'Reducir '+Math.ceil(fc.reps/2)+' bloques si fatiga.',tiempo:'~40min',kmNum:mts(v,0.76,fc.reps*(fc.rap<10?fc.rap*60:fc.rap))/1000};
+    desc:'Cal 10min a '+r(v,0.62)+' /km. '+fc.reps+'× ['+fcraps+' a '+r(v,0.92)+' /km + '+fcsuav+' a '+r(v,0.68)+' /km]. 5min vuelta calma a '+r(v,0.60)+' /km.',
+    alt:'Reducir '+Math.ceil(fc.reps/2)+' bloques si fatiga.',tiempo:'~'+fc_totalMin+'min',kmNum:mts(v,0.76,fc.reps*(fc.rap<10?fc.rap*60:fc.rap))/1000};
 
   // ── ESPECÍFICAS POR PRUEBA ────────────────────────
   if(prueba <= 1000){
     s.sprint_200={tipo:'series',nombre:'Sprint · 8×200m al 112% VAM',zona:3,intens:10,
-      desc:'Cal 20min. 8×200m al 112-115% VAM (~'+tdd(v,1.12,200)+'). Pausa: 4min andando. Potencia glucolítica máxima (Daniels, 2014). Total: 1600m.',
-      alt:'6 reps si primeras semanas · Tartán o césped.',tiempo:tdd(v,1.12,200)+'×8',kmNum:1.6};
+      desc:'Cal 20min a '+r(v,0.62)+' /km. 8×200m a '+r(v,1.12)+' /km (~'+tddRep(v,1.12,200)+'). Pausa: 4min andando. Total: 1600m.',
+      alt:'6 reps si primeras semanas · Tartán o césped.',tiempo:'8×('+tddRep(v,1.12,200)+')',kmNum:1.6};
     s.resistencia_vel={tipo:'series',nombre:'Resistencia velocidad · 4×(3×150m)',zona:3,intens:9,
-      desc:'Cal 15min. 4 series × 3×150m a ~108% VAM. Pausa reps: 3min. Pausa series: 8min. Tolerancia al lactato (López Chicharro, 2006).',
-      alt:'3 series si inicio bloque.',tiempo:'~55min',kmNum:1.8};
+      desc:'Cal 15min a '+r(v,0.62)+' /km. 4 series × 3×150m a '+r(v,1.08)+' /km ('+tdd(v,1.08,150)+' por rep). Pausa entre reps: 3min. Pausa entre series: 8min.',
+      alt:'3 series si inicio bloque.',tiempo:'12×('+tddRep(v,1.08,150)+') (~55min)',kmNum:1.8};
     s.series_300={tipo:'series',nombre:'Series cortas · 10×300m a VAM',zona:3,intens:8,
-      desc:'Cal 15min. 10×300m a '+r(v,1.0)+' /km ('+tdd(v,1.0,300)+' por rep). Pausa: 2min 30seg. Total: 3000m.',
-      alt:'7 reps si fatiga.',tiempo:tdd(v,1.0,300)+'×10',kmNum:3.0};
+      desc:'Cal 15min a '+r(v,0.62)+' /km. 10×300m a '+r(v,1.0)+' /km ('+tdd(v,1.0,300)+' por rep). Pausa: 2min 30seg a '+r(v,0.55)+' /km. Total series: 3km.',
+      alt:'7 reps si fatiga.',tiempo:'10×('+tddRep(v,1.0,300)+')',kmNum:3.0};
   }
 
   if(prueba >= 1500 && prueba <= 3000){
     s.gacon_escalera={tipo:'series',nombre:'Gacon escalera · bloques progresivos',zona:3,intens:8,
-      desc:'Cal 15min. 2× [3min 90% + 2min 95% + 1min 100% + 2min 95% + 3min 90% VAM]. Pausa 4min. Sostener VO₂max (Billat & Koralsztein, 1996).',
-      alt:'1 bloque si primera vez · -5% si calor.',tiempo:'~45min',kmNum:mts(v,0.95,660)*2/1000};
-    // series_2000 — variante dinámica de distancia
+      desc:'Cal 15min a '+r(v,0.62)+' /km. 2× [3min a '+r(v,0.90)+' /km + 2min a '+r(v,0.95)+' /km + 1min a '+r(v,1.0)+' /km + 2min a '+r(v,0.95)+' /km + 3min a '+r(v,0.90)+' /km]. Pausa 4min trote a '+r(v,0.62)+' /km entre bloques.',
+      alt:'1 bloque si primera vez · -5% si calor.',tiempo:'2×11min+4min (~'+Math.round(2*11+4+20)+'min)',kmNum:mts(v,0.95,660)*2/1000};
     var s2_dists=[2000,1800,2200,1600,2400];
     var s2_d=s2_dists[Math.abs((sg*17+1)%s2_dists.length)];
     var s2_reps=s2_d<=1800?4:s2_d<=2000?3:s2_d<=2200?3:2;
     s.series_2000={tipo:'series',nombre:'Series largas · '+s2_reps+'×'+s2_d+'m al 92% VAM',zona:3,intens:8,
-      desc:'Cal 15min. '+s2_reps+'×'+s2_d+'m a '+r(v,0.92)+' /km ('+tdd(v,0.92,s2_d)+' por rep). Pausa 3min trote. Umbral y resistencia específica para 3000m.',
-      alt:(s2_reps-1)+'×'+s2_d+'m si fatiga.',tiempo:tdd(v,0.92,s2_d)+'×'+s2_reps,kmNum:+(s2_reps*s2_d/1000).toFixed(1)};
+      desc:'Cal 15min a '+r(v,0.62)+' /km. '+s2_reps+'×'+s2_d+'m a '+r(v,0.92)+' /km ('+tdd(v,0.92,s2_d)+' por rep). Pausa 3min trote a '+r(v,0.60)+' /km.',
+      alt:(s2_reps-1)+'×'+s2_d+'m si fatiga.',tiempo:s2_reps+'×('+tddRep(v,0.92,s2_d)+')',kmNum:+(s2_reps*s2_d/1000).toFixed(1)};
     s.piramide_dist={tipo:'series',nombre:'Pirámide · 400-600-800-600-400m',zona:3,intens:8,
-      desc:'Cal 15min. 400m ('+tdd(v,1.0,400)+') + 600m ('+tdd(v,0.98,600)+') + 800m ('+tdd(v,0.95,800)+') + 600m + 400m a VAM. Pausa = tiempo de trabajo. Total: 2800m.',
+      desc:'Cal 15min a '+r(v,0.62)+' /km. 400m ('+tddRep(v,1.0,400)+') + 600m ('+tddRep(v,0.98,600)+') + 800m ('+tddRep(v,0.95,800)+') + 600m + 400m. Ritmo: '+r(v,0.98)+' /km medio. Pausa = tiempo de trabajo. Total: 2800m.',
       alt:'Reducir a 400-600-600-400m si fatiga.',tiempo:'~45min',kmNum:2.8};
   }
 
   if(prueba >= 5000 && prueba <= 10000){
     s.tempo_10={tipo:'series',nombre:'Tempo continuo · 10km umbral',zona:2,intens:7,
-      desc:'Cal 10min. 10km a '+r(v,0.87)+' /km (87% VAM · umbral). Determinante principal del 10km (Billat, 2001). Tiempo: '+tdd(v,0.87,10000)+'.',
-      alt:'7km si primera vez · 2×5km con 3min pausa.',tiempo:tdd(v,0.87,10000),kmNum:10};
+      desc:'Cal 10min a '+r(v,0.62)+' /km. 10km a '+r(v,0.87)+' /km. Duración estimada: ~'+Math.round(tD(v,0.87,10000)/60)+'min.',
+      alt:'7km si primera vez · 2×5km con 3min pausa a '+r(v,0.62)+' /km.',tiempo:'~'+Math.round(tD(v,0.87,10000)/60)+'min',kmNum:10};
     s.prog_10={tipo:'series',nombre:'Progresivo 10km',zona:2,intens:6,
-      desc:'2.5km '+r(v,0.68)+' + 2.5km '+r(v,0.75)+' + 2.5km '+r(v,0.82)+' + 2.5km '+r(v,0.88)+' /km. Total 10km. Gestión del ritmo en carrera.',
+      desc:'2.5km a '+r(v,0.68)+' /km + 2.5km a '+r(v,0.75)+' /km + 2.5km a '+r(v,0.82)+' /km + 2.5km a '+r(v,0.88)+' /km. Total 10km.',
       alt:'7km si tiempo justo · Cinta.',tiempo:fmtTiempo('~'+Math.round(tD(v,0.78,10000)/60)+'min'),kmNum:10};
     s.cruces={tipo:'series',nombre:'Cruces de umbral · 5×(2km+1km suave)',zona:2,intens:6,
-      desc:'Cal 10min. 5× [2km a '+r(v,0.87)+' + 1km a '+r(v,0.68)+']. Total: 15km. Alta rentabilidad para 10km.',
+      desc:'Cal 10min a '+r(v,0.62)+' /km. 5× [2km a '+r(v,0.87)+' /km + 1km a '+r(v,0.68)+' /km]. Total: 15km.',
       alt:'3 bloques si primera vez.',tiempo:fmtTiempo('~'+Math.round(tD(v,0.80,15000)/60)+'min'),kmNum:15};
-    // series_1600 — variante dinámica
     var s16_vars=[{reps:4,dist:1600,pct:0.90},{reps:5,dist:1400,pct:0.90},{reps:3,dist:2000,pct:0.90},{reps:4,dist:1800,pct:0.88},{reps:5,dist:1200,pct:0.92}];
     var s16=s16_vars[Math.abs((sg*17+3)%s16_vars.length)];
     s.series_1600={tipo:'series',nombre:'Series largas · '+s16.reps+'×'+s16.dist+'m al '+Math.round(s16.pct*100)+'% VAM',zona:3,intens:8,
-      desc:'Cal 15min. '+s16.reps+'×'+s16.dist+'m a '+r(v,s16.pct)+' /km ('+tdd(v,s16.pct,s16.dist)+' por rep). Pausa 2min 30seg. Total: '+(s16.reps*s16.dist/1000).toFixed(1)+'km.',
-      alt:(s16.reps-1)+'×'+s16.dist+'m si fatiga.',tiempo:tdd(v,s16.pct,s16.dist)+'×'+s16.reps,kmNum:+(s16.reps*s16.dist/1000).toFixed(1)};
+      desc:'Cal 15min a '+r(v,0.62)+' /km. '+s16.reps+'×'+s16.dist+'m a '+r(v,s16.pct)+' /km ('+tdd(v,s16.pct,s16.dist)+' por rep). Pausa 2min 30seg a '+r(v,0.60)+' /km. Total: '+(s16.reps*s16.dist/1000).toFixed(1)+'km.',
+      alt:(s16.reps-1)+'×'+s16.dist+'m si fatiga.',tiempo:s16.reps+'×('+tddRep(v,s16.pct,s16.dist)+')',kmNum:+(s16.reps*s16.dist/1000).toFixed(1)};
   }
 
   if(prueba >= 21097){
     s.tempo_10=s.tempo_10||{tipo:'series',nombre:'Tempo · 10km umbral',zona:2,intens:7,
-      desc:'Cal 10min. 10km a '+r(v,0.87)+' /km. Umbral láctico. Tiempo: '+tdd(v,0.87,10000)+'.',
-      alt:'7km si primera vez.',tiempo:tdd(v,0.87,10000),kmNum:10};
+      desc:'Cal 10min a '+r(v,0.62)+' /km. 10km a '+r(v,0.87)+' /km. Duración estimada: ~'+Math.round(tD(v,0.87,10000)/60)+'min.',
+      alt:'7km si primera vez.',tiempo:'~'+Math.round(tD(v,0.87,10000)/60)+'min',kmNum:10};
     s.tirada_larga_mp={tipo:'series',nombre:'Tirada con km a ritmo objetivo',zona:2,intens:6,
-      desc:'60min a '+r(v,0.62)+' + 30min a '+r(v,0.87)+' /km. Simula fatiga de competición (Noakes, 2003).',
+      desc:'60min a '+r(v,0.62)+' /km + 30min a '+r(v,0.87)+' /km.',
       alt:'60min llano si primeras semanas.',tiempo:'1h 30min',kmNum:mts(v,0.72,5400)/1000};
     s.tirada_28={tipo:'series',nombre:'Tirada larga 28km específica maratón',zona:1,intens:4,
-      desc:'28km a '+r(v,0.62)+'/'+r(v,0.65)+' /km. Últimos 5km a '+r(v,0.72)+'. Geles cada 45min (Lydiard, 1983).',
+      desc:'28km a '+r(v,0.62)+'/'+r(v,0.65)+' /km. Últimos 5km a '+r(v,0.72)+' /km. Gel cada 45min.',
       alt:'22km si primera tirada · 25km en preparaciones intermedias.',tiempo:fmtTiempo('~'+Math.round(tD(v,0.63,28000)/60)+'min'),kmNum:28};
     s.tempo_15={tipo:'series',nombre:'Tempo medio · 15km ritmo maratón',zona:2,intens:6,
-      desc:'Cal 10min. 15km a '+r(v,0.80)+' /km (80% VAM). Tiempo: '+tdd(v,0.80,15000)+'.',
-      alt:'10km si primera vez.',tiempo:tdd(v,0.80,15000),kmNum:15};
-    // series_2400 — variante dinámica
+      desc:'Cal 10min a '+r(v,0.62)+' /km. 15km a '+r(v,0.80)+' /km. Tiempo estimado: '+tdd(v,0.80,15000)+'.',
+      alt:'10km si primera vez.',tiempo:'~'+Math.round(tD(v,0.80,15000)/60)+'min',kmNum:15};
     var s24_vars=[{reps:3,dist:2400,pct:0.90},{reps:4,dist:2000,pct:0.90},{reps:2,dist:3000,pct:0.88},{reps:3,dist:2800,pct:0.88},{reps:4,dist:2200,pct:0.90}];
     var s24=s24_vars[Math.abs((sg*17+5)%s24_vars.length)];
     s.series_2400={tipo:'series',nombre:'Series largas · '+s24.reps+'×'+s24.dist+'m al umbral',zona:3,intens:8,
-      desc:'Cal 15min. '+s24.reps+'×'+s24.dist+'m a '+r(v,s24.pct)+' /km ('+tdd(v,s24.pct,s24.dist)+' por rep). Pausa 3min. Total: '+(s24.reps*s24.dist/1000).toFixed(1)+'km.',
-      alt:(s24.reps-1)+'×'+s24.dist+'m si fatiga.',tiempo:tdd(v,s24.pct,s24.dist)+'×'+s24.reps,kmNum:+(s24.reps*s24.dist/1000).toFixed(1)};
+      desc:'Cal 15min a '+r(v,0.62)+' /km. '+s24.reps+'×'+s24.dist+'m a '+r(v,s24.pct)+' /km ('+tdd(v,s24.pct,s24.dist)+' por rep). Pausa 3min a '+r(v,0.60)+' /km. Total: '+(s24.reps*s24.dist/1000).toFixed(1)+'km.',
+      alt:(s24.reps-1)+'×'+s24.dist+'m si fatiga.',tiempo:s24.reps+'×('+tddRep(v,s24.pct,s24.dist)+')',kmNum:+(s24.reps*s24.dist/1000).toFixed(1)};
   }
 
   return s;
@@ -2122,79 +2224,81 @@ function buildSeries(v, prueba, semGlobal, _ajZ3) {
 // BANCO · CUESTAS (4 variantes)
 // ══════════════════════════════════════════════════════
 var BANCO_CUESTAS=[
-  function(v){return{tipo:'cuestas',nombre:'Cuestas cortas · 10×80m explosivas',zona:3,intens:8,
-    desc:'Cal 15min. 10×80m en cuesta ≤3% al 95-100% esfuerzo. Bajada trotando (recuperación completa). Potencia neuromuscular y fuerza específica de carrera (Ferley et al., 2014).',
-    alt:'Cinta inclinada 3% · 8 reps si fatiga.',tiempo:'~40min',kmNum:0.8+mts(v,0.60,2400)/1000};},
-  function(v){return{tipo:'cuestas',nombre:'Cuestas medias · 8×150m',zona:3,intens:7,
-    desc:'Cal 15min. 8×150m en cuesta ≤3% a intensidad sostenida alta. Bajada trotando. Fuerza-resistencia específica y tolerancia al lactato en terreno ondulado.',
-    alt:'Cinta 8×90seg 3% · 6 reps si fatiga.',tiempo:'~45min',kmNum:1.2+mts(v,0.60,2700)/1000};},
-  function(v){return{tipo:'cuestas',nombre:'Cuestas largas · 5×300m',zona:3,intens:7,
-    desc:'Cal 15min. 5×300m en cuesta ≤3% al 85-90% RPE. Pausa: bajada + 90seg andando. Fuerza-resistencia: desarrolla la capacidad de mantener la cadencia en subida sostenida.',
-    alt:'Cinta 5×2min 3% · 4 reps si primera vez.',tiempo:'~50min',kmNum:1.5+mts(v,0.60,3000)/1000};},
-  function(v){return{tipo:'cuestas',nombre:'Series mixtas de cuestas · 3×(3×100m)',zona:3,intens:8,
-    desc:'Cal 15min. 3 series × 3 reps de 100m en cuesta ≤3% al máximo. Pausa reps: bajada trotando. Pausa series: 4min. Combina potencia con resistencia específica. González Badillo (2002).',
-    alt:'Cinta 3%: 9×45seg al máximo · 2 series si primera vez.',tiempo:'~50min',kmNum:0.9+mts(v,0.60,2700)/1000};}
+  function(v){
+    var tRep=tdd(v,0.97,80); // ~95-100% RPE ≈ 97% VAM equivalente en cuesta
+    return{tipo:'cuestas',nombre:'Cuestas cortas · 10×80m explosivas',zona:3,intens:8,
+    desc:'Cal 15min a '+r(v,0.62)+' /km. 10×80m en cuesta ≤3% al máximo esfuerzo ('+tRep+' por rep). Bajada trotando a '+r(v,0.55)+' /km (recuperación completa).',
+    alt:'Cinta inclinada 3% · 8 reps si fatiga.',tiempo:'10×('+tRep+') (~40min)',kmNum:0.8+mts(v,0.60,2400)/1000};},
+  function(v){
+    var tRep=tddRep(v,0.92,150);
+    return{tipo:'cuestas',nombre:'Cuestas medias · 8×150m',zona:3,intens:7,
+    desc:'Cal 15min a '+r(v,0.62)+' /km. 8×150m en cuesta ≤3% a ritmo sostenido alto ('+tRep+' por rep). Bajada trotando a '+r(v,0.55)+' /km.',
+    alt:'Cinta 8×90seg 3% · 6 reps si fatiga.',tiempo:'8×('+tRep+') (~45min)',kmNum:1.2+mts(v,0.60,2700)/1000};},
+  function(v){
+    var tRep=tddRep(v,0.87,300);
+    return{tipo:'cuestas',nombre:'Cuestas largas · 5×300m',zona:3,intens:7,
+    desc:'Cal 15min a '+r(v,0.62)+' /km. 5×300m en cuesta ≤3% al 85-90% RPE ('+tRep+' por rep). Pausa: bajada trotando a '+r(v,0.55)+' /km + 90seg andando.',
+    alt:'Cinta 5×2min 3% · 4 reps si primera vez.',tiempo:'5×('+tRep+') (~50min)',kmNum:1.5+mts(v,0.60,3000)/1000};},
+  function(v){
+    var tRep=tddRep(v,0.97,100);
+    return{tipo:'cuestas',nombre:'Series mixtas de cuestas · 3×(3×100m)',zona:3,intens:8,
+    desc:'Cal 15min a '+r(v,0.62)+' /km. 3 series × 3 reps de 100m en cuesta ≤3% al máximo ('+tRep+' por rep). Pausa entre reps: bajada trotando a '+r(v,0.55)+' /km. Pausa entre series: 4min.',
+    alt:'Cinta 3%: 9×45seg al máximo · 2 series si primera vez.',tiempo:'9×('+tRep+') (~50min)',kmNum:0.9+mts(v,0.60,2700)/1000};}
 ];
 
 
 var BANCO_DESC=[
   {tipo:'descanso',nombre:'Descanso activo — movilidad y recuperación',zona:0,intens:0,
-   desc:'Sin correr. Opciones: movilidad articular 20min (cadera, tobillos, columna), rodillo de espuma en cuádriceps/gemelos/IT-band, yoga suave, caminata 20-30min. La recuperación activa acelera la eliminación de lactato (Weerapong et al., 2005).',
+   desc:'Sin correr. Opciones: movilidad articular 20min (cadera, tobillos, columna), rodillo de espuma en cuádriceps/gemelos/IT-band, yoga suave, caminata 20-30min.',
    alt:'Cualquier actividad de muy baja intensidad 20-30min.',tiempo:'-',kmNum:0},
   {tipo:'descanso',nombre:'Descanso completo',zona:0,intens:0,
-   desc:'Sin actividad. 8-9h de sueño. Las adaptaciones (síntesis proteica, biogénesis mitocondrial) ocurren durante el sueño profundo (Van Cauter et al., 2000). Hidratación y carbohidratos de calidad.',
+   desc:'Sin actividad. 8-9h de sueño. Hidratación y carbohidratos de calidad.',
    alt:'Caminata suave 15min máximo si energía.',tiempo:'-',kmNum:0}
 ];
 
 // ══════════════════════════════════════════════════════
 // BANCO · FUERZA (6 variantes por grupo de distancia)
-// Integradas como sesiones propias del plan, no solo como
-// nota de descanso. González Badillo (2002), Reguero (2020)
 // ══════════════════════════════════════════════════════
 function buildFuerza(prueba){
-  // Fuerza general / compensatoria — todas las distancias
   var fGeneral=[
     {tipo:'fuerza',nombre:'Circuito fuerza general · 3 series',zona:1,intens:3,
-     desc:'Circuito 3 series × 10 reps: sentadilla media, lunge, hip thrust, peso muerto unilateral, press banca, core (Russian Twist + plancha 30″). Descanso 60″ entre ejercicios. Sin fatiga acumulada excesiva — prioridad técnica. Reguero (2020).',
+     desc:'Circuito 3 series × 10 reps: sentadilla media, lunge, hip thrust, peso muerto unilateral, press banca, core (Russian Twist + plancha 30″). Descanso 60″ entre ejercicios. Prioridad: técnica limpia.',
      alt:'Piscina 30min si no hay material · Pilates core.',tiempo:'45min',kmNum:0},
     {tipo:'fuerza',nombre:'Fuerza resistencia + multisaltos verticales',zona:2,intens:4,
-     desc:'Calent 10min. A) 3×12 sentadilla + 3×10 lunge con mancuernas. B) Multisaltos verticales: 4×10 saltos de tobillo, 3×8 saltos laterales, 3×6 zancadas explosivas. Descanso 90″. Desarrolla la cadena extensora específica de carrera (González Badillo, 2002).',
+     desc:'Cal 10min. A) 3×12 sentadilla + 3×10 lunge con mancuernas. B) Multisaltos: 4×10 saltos de tobillo, 3×8 saltos laterales, 3×6 zancadas explosivas. Descanso 90″ entre series.',
      alt:'Escaleras o cuestas cortas para los saltos.',tiempo:'50min',kmNum:0},
     {tipo:'fuerza',nombre:'Fuerza core y estabilidad · 30min',zona:1,intens:2,
-     desc:'Plancha frontal 3×40″, plancha lateral 3×30″ c/lado, glúteo medio anterior/posterior/lateral 3×15, pelvic bridge 3×20, single leg sin peso 3×8 c/pierna, superman-hollow 3×10. Base de estabilidad para la carrera (Reguero, 2020).',
+     desc:'Plancha frontal 3×40″, plancha lateral 3×30″ c/lado, glúteo medio anterior/posterior/lateral 3×15, pelvic bridge 3×20, single leg sin peso 3×8 c/pierna, superman-hollow 3×10.',
      alt:'Yoga funcional 30min · Reformer Pilates.',tiempo:'30min',kmNum:0}
   ];
 
-  // Fuerza específica distancias cortas (800-1500m): potencia y velocidad
   var fCorta=[
     {tipo:'fuerza',nombre:'Potencia explosiva · sprints + pliometría',zona:3,intens:7,
-     desc:'Calent 15min. A) Skipping alto 4×20m + Skipping frecuencia 4×20m. B) 6×50m aceleración progresiva al 90-95%. C) Pliometría: ranas 3×8, pata coja 3×6 c/pierna. Potencia neuromuscular máxima para medio fondo (Daniels, 2014).',
+     desc:'Cal 15min. A) Skipping alto 4×20m + Skipping frecuencia 4×20m. B) 6×50m aceleración progresiva al 90-95% esfuerzo. C) Pliometría: ranas 3×8, pata coja 3×6 c/pierna.',
      alt:'Cinta 8×30″ al 95% + pliometría en suelo.',tiempo:'40min',kmNum:0.8},
     {tipo:'fuerza',nombre:'Fuerza máxima tren inferior · 4×5 reps',zona:2,intens:5,
-     desc:'Calent 10min. Sentadilla 4×5 al 80-85% RM, lunge-extensión 3×8 c/pierna 5-10kg, subida banco 3×5 c/pierna, hip thrust 3×5 dos piernas. Velocidad de ejecución máxima en la fase concéntrica. Reguero (2020).',
+     desc:'Cal 10min. Sentadilla 4×5 al 80-85% RM, lunge-extensión 3×8 c/pierna 5-10kg, subida banco 3×5 c/pierna, hip thrust 3×5. Fase concéntrica rápida.',
      alt:'Peso corporal con lastres si no hay barra.',tiempo:'45min',kmNum:0},
-    {tipo:'fuerza',nombre:'Circuito lactato · fuerza + carrera',zona:3,intens:7,
-     desc:'Calent 10min. 3 circuitos: [Sentadilla 15 reps + lunge 10 c/pierna + 200m a 95% VAM]. Pausa 3min entre circuitos. Combina glucólisis anaeróbica con resistencia muscular (López Chicharro, 2006).',
+    {tipo:'fuerza',nombre:'Circuito mixto · fuerza + carrera',zona:3,intens:7,
+     desc:'Cal 10min. 3 circuitos: [Sentadilla 15 reps + lunge 10 c/pierna + 200m a 95% VAM]. Pausa 3min entre circuitos.',
      alt:'2 circuitos si primera vez · Reducir distancia carrera.',tiempo:'40min',kmNum:0.6}
   ];
 
-  // Fuerza específica fondo (5km-10km): fuerza-resistencia y economía
   var fMedio=[
     {tipo:'fuerza',nombre:'Fuerza resistencia + multisaltos horizontales',zona:2,intens:4,
-     desc:'Calent 10min. A) 3×15 sentadilla media + 3×12 lunge + 3×12 hip thrust. B) Multisaltos horizontales: salto triple 3×5, saltos con cuerda 3×30″, carrera en zigzag 3×20m. Mejora la economía de carrera y la eficiencia elástica (González Badillo, 2002).',
+     desc:'Cal 10min. A) 3×15 sentadilla media + 3×12 lunge + 3×12 hip thrust. B) Multisaltos horizontales: salto triple 3×5, saltos con cuerda 3×30″, carrera en zigzag 3×20m.',
      alt:'Cuestas cortas como sustituto de multisaltos.',tiempo:'50min',kmNum:0},
     {tipo:'fuerza',nombre:'Excéntrico + propiocepción',zona:1,intens:3,
-     desc:'Calent 10min. Sentadilla excéntrica 3×8 (5″ bajando), peso muerto unipodal 3×6 c/pierna, single-leg squat 3×5 c/pierna sin peso, bajadas excéntricas de cuesta 3×50m controlados. Prevención de lesiones y refuerzo de tendones (Boullosa, 2012).',
+     desc:'Cal 10min. Sentadilla excéntrica 3×8 (5″ bajando), peso muerto unipodal 3×6 c/pierna, single-leg squat 3×5 sin peso, bajadas excéntricas de cuesta 3×50m controlados.',
      alt:'Piscina kicking si molestias en rodilla.',tiempo:'40min',kmNum:0}
   ];
 
-  // Fuerza específica larga distancia (media-maratón): resistencia muscular y prevención
   var fLarga=[
     {tipo:'fuerza',nombre:'Circuito natural fuerza-resistencia · 45min',zona:1,intens:3,
-     desc:'Circuito en terreno natural (Orfelio León, 2004): abdominales, flexiones de brazos, sentadillas concéntricas/excéntricas, saltos en zanjas, bajadas inclinadas excéntricas, carrera en zigzag. 3 rondas, descanso 60″. Adaptación muscular específica al esfuerzo prolongado.',
+     desc:'Circuito en terreno natural: abdominales, flexiones, sentadillas concéntricas/excéntricas, saltos en zanjas, bajadas inclinadas excéntricas, carrera en zigzag. 3 rondas, descanso 60″.',
      alt:'Circuito en gimnasio si no hay terreno natural.',tiempo:'45min',kmNum:0},
     {tipo:'fuerza',nombre:'Fuerza resistencia tren inferior · 3×15',zona:2,intens:3,
-     desc:'Calent 10min. Sentadilla 3×15 al 40-50% RM, lunge caminando 3×12 c/pierna, hip thrust 3×15, adducciones en pared 3×15, glúteo medio 3×15 c/lado, core 3×(plancha 40″+lateral 30″). Resistencia muscular de larga duración (Reguero, 2020).',
+     desc:'Cal 10min. Sentadilla 3×15 al 40-50% RM, lunge caminando 3×12 c/pierna, hip thrust 3×15, adducciones 3×15, glúteo medio 3×15 c/lado, core 3×(plancha 40″+lateral 30″).',
      alt:'Yoga funcional enfocado en piernas.',tiempo:'45min',kmNum:0}
   ];
 
@@ -2232,9 +2336,13 @@ function buildPoolsSesiones(v, prueba, semGlobal, ajZ3) {
   // ── Z2: umbral, tempo, fartleks — comunes + específicos ───────────
   var z2 = [R[4](v),R[5](v),R[6](v),R[7](v),R[8](v),
             R[13](v),R[14](v),R[15](v),R[17](v)];
-  // Añadir específicos de distancia (definidos en buildSeries)
-  [se.fartlek_mej,se.fartlek_corto,se.tempo_10,se.prog_10,se.tempo_15,se.cruces]
+  // Añadir aeróbico sostenido (zona 2 funcional, fundamental de Canova) y fartleks
+  [se.fartlek_mej,se.fartlek_corto,se.tempo_10,se.prog_10,se.tempo_15,se.cruces,se.aerobico_sostenido]
     .forEach(function(s){ if(s) z2.push(s); });
+
+  // Strides al pool Z1 (son rodajes Z1 con acelerones al final)
+  // Solo para ≥5km — para 800-3000m ya hay IIMC y sprints
+  var z1_strides = (prueba >= 5000) ? [se.strides] : [];
 
   // ── Z3: series — completamente diferente por distancia ────────────
   var z3_base, z3_extra;
@@ -2245,24 +2353,24 @@ function buildPoolsSesiones(v, prueba, semGlobal, ajZ3) {
   } else if(prueba <= 3000) {
     // VO2max medio fondo: Gacon, IEM, escalera, pirámide
     z3_base = [se.gacon3030,se.gacon2020,se.iem_4min,se.iem_3min,se.iic_400,se.iic_600,se.iel_1000,se.series_variadas];
-    z3_extra = [se.gacon_escalera,se.piramide_dist,se.series_2000,se.juegos_polacos];
+    z3_extra = [se.gacon_escalera,se.piramide_dist,se.series_2000,se.juegos_polacos,se.ritmo_obj];
   } else if(prueba <= 5000) {
-    // VO2max fondo: IEM, IIC variados, IEL, Gacon + estructuradas
+    // VO2max fondo: IEM, IIC variados, IEL, Gacon + estructuradas + ritmo objetivo
     z3_base = [se.gacon3030,se.gacon2020,se.iem_4min,se.iem_3min,se.iic_400,se.iic_600,se.iic_800,se.iel_1000,se.series_variadas,se.juegos_polacos,se.progresivo_series,se.bloques_alternos];
-    z3_extra = [se.series_1600,se.piramide_dist,se.esp_1000];
+    z3_extra = [se.series_1600,se.piramide_dist,se.esp_1000,se.ritmo_obj];
   } else if(prueba <= 10000) {
-    // Umbral + VO2max: IEL dominante, IEM, específicas 10km
-    z3_base = [se.iel_1000,se.iel_1200,se.iem_4min,se.iem_3min,se.iic_600,se.iic_800,se.esp_1000,se.gacon3030,se.series_variadas];
-    z3_extra = [se.series_1600,se.gacon2020];
+    // Umbral + VO2max + ritmo objetivo: IEL dominante, IEM, específicas 10km
+    z3_base = [se.iel_1000,se.iel_1200,se.iem_4min,se.iem_3min,se.iic_600,se.iic_800,se.esp_1000,se.gacon3030,se.series_variadas,se.ritmo_obj];
+    z3_extra = [se.series_1600,se.gacon2020,se.bloques_alternos];
   } else {
-    // Larga distancia: IEL largo, específicas, tiradas con ritmo
-    z3_base = [se.iel_1000,se.iel_1200,se.iem_4min,se.gacon2020,se.esp_1000,se.series_variadas,se.gacon3030];
+    // Larga distancia: IEL largo, específicas, tiradas con ritmo + ritmo objetivo
+    z3_base = [se.iel_1000,se.iel_1200,se.iem_4min,se.gacon2020,se.esp_1000,se.series_variadas,se.gacon3030,se.ritmo_obj];
     z3_extra = [se.tirada_larga_mp,se.tirada_28,se.tempo_15,se.series_2400];
   }
   var z3 = z3_base.concat(z3_extra||[]);
 
   _POOLS_PLAN = {
-    z1:      z1.filter(Boolean),
+    z1:      z1.filter(Boolean).concat(z1_strides.filter(Boolean)),
     z2:      z2.filter(Boolean),
     z3:      z3.filter(Boolean),
     cuestas: [_genCuestasCortas(v,semGlobal||1),C[1](v),_genCuestasLargas(v,semGlobal||1),C[3](v)]
@@ -2415,69 +2523,69 @@ function elegirSesionesSemana(v, prueba, tipoMeso, semGlobal) {
 // Bajadas siempre por sensaciones (RPE)
 // ══════════════════════════════════════════════════════
 function buildSesionesTrail(v, pctPend, tipoMeso, zona){
-  // Factor Minetti para ajuste de ritmos subida
   var i=pctPend/100;
   var eS=155.4*Math.pow(i,5)-30.4*Math.pow(i,4)-43.3*Math.pow(i,3)+46.3*Math.pow(i,2)+19.5*i+3.6;
   var fS=eS/3.6;
   function rS(p){ return fmt(rKm(v,p)*fS); }
-  // np se añade al _notaTerreno, no a la desc principal — desc queda limpia
-  var np='';
-  // Función para limpiar np vacío del final de descs
-  function cleanDesc(d){ return d.replace(/\.\s*$/, '').replace(/\s{2,}/g,' ').trim(); }  // vacío: la nota Minetti va en _notaTerreno
-  var _npTerreno='⛰️ Ritmo ajustado +'+Math.round((fS-1)*100)+'% vs llano (Minetti et al., 2002). Bajada siempre por sensaciones.';
+  var _npTerreno='⛰️ Ritmo de subida ajustado +'+Math.round((fS-1)*100)+'% vs llano (fórmula Minetti). Bajada siempre por sensaciones.';
 
   // ── Z1: Tiradas y rodajes con CaCo integrado ──
   var z1=[
     {tipo:'rodaje_trail',nombre:'Tirada larga trail · 1h 30min',zona:1,intens:2,
-      desc:'90min en terreno con desnivel ('+pctPend+'% pendiente media). ↑ Subida: '+rS(0.62)+' /km (RPE 4-5/10). ↓ Bajada por sensaciones. Alterna subidas y bajadas de forma natural. Hidratación cada 20min. '+np,
-      alt:'70min si primera vez en desnivel · Terreno conocido.',tiempo:'1h 30min',kmNum:mts(v,0.62,5400)/1000},
+      desc:'90min · Desnivel medio ~'+pctPend+'%. ↑ Subida: '+rS(0.62)+' /km. ↓ Llano y bajadas: '+r(v,0.68)+' /km. Hidratación cada 20min.',
+      alt:'70min si primera vez en desnivel.',tiempo:'1h 30min',kmNum:mts(v,0.62,5400)/1000},
     {tipo:'rodaje_trail',nombre:'Tirada media trail · 1h',zona:1,intens:2,
-      desc:'60min en terreno con desnivel. ↑ Subida: '+rS(0.63)+' /km (RPE 4/10). ↓ Bajada por sensaciones (RPE 3/10). Adaptación aeróbica específica al terreno. '+np,
+      desc:'60min · Desnivel medio ~'+pctPend+'%. ↑ Subida: '+rS(0.63)+' /km. ↓ Llano y bajadas: '+r(v,0.68)+' /km.',
       alt:'45min si fatiga acumulada.',tiempo:'1h',kmNum:mts(v,0.63,3600)/1000},
     {tipo:'rodaje_trail',nombre:'CaCo trail · 1h 30min caminar-correr',zona:1,intens:2,
-      desc:'90min alternando carrera y caminata en desnivel según la pendiente: ↑ Subidas >8%: caminar con técnica (pasos medios-cortos, rodilla arriba, ayuda con brazos, tronco erguido). ↑ Subidas ≤8%: carrera suave '+rS(0.62)+'. ↓ Bajada: carrera por sensaciones. Fundamental para trail y ultra (Orfelio León, 2004; Montoya, 2012). '+np,
+      desc:'90min · Desnivel medio ~'+pctPend+'%. ↑ Subidas >8%: CAMINAR. ↑ Subidas ≤8%: '+rS(0.62)+' /km. ↓ Llano y bajadas: '+r(v,0.68)+' /km.',
       alt:'60min si primera sesión CaCo.',tiempo:'1h 30min',kmNum:mts(v,0.60,5400)/1000},
     {tipo:'rodaje_trail',nombre:'CaCo largo trail · 2h base',zona:1,intens:3,
-      desc:'2h en terreno con desnivel ('+pctPend+'% media). Alterna carrera (↑ '+rS(0.61)+') y caminata en subidas >8%. ↓ Bajada por sensaciones. Geles si >75min. Base aeróbica máxima para maratón de montaña y ultra (Montoya, 2012). '+np,
-      alt:'90min CaCo si preparación no llega a ultra.',tiempo:'~2h',kmNum:mts(v,0.60,7200)/1000},
+      desc:'2h · Desnivel medio ~'+pctPend+'%. ↑ Subidas ≤8%: '+rS(0.61)+' /km. ↑ Subidas >8%: caminar. ↓ Llano y bajadas: '+r(v,0.68)+' /km. Gel si >75min.',
+      alt:'90min CaCo si preparación más corta.',tiempo:'~2h',kmNum:mts(v,0.60,7200)/1000},
     {tipo:'rodaje_trail',nombre:'Rodaje Z1 trail · 45min',zona:1,intens:2,
-      desc:'45min Z1 en desnivel. ↑ Subida: '+rS(0.63)+' /km. ↓ Bajada por sensaciones. Conversación fluida en todo momento. Base aeróbica en terreno real. '+np,
+      desc:'45min · Desnivel medio ~'+pctPend+'%. ↑ Subida: '+rS(0.63)+' /km. ↓ Llano y bajadas: '+r(v,0.68)+' /km.',
       alt:'35min si primera sesión de desnivel.',tiempo:'45min',kmNum:mts(v,0.63,2700)/1000},
     {tipo:'rodaje_trail',nombre:'CaCo regenerativo trail · 1h',zona:1,intens:1,
-      desc:'60min muy suave: caminar en subidas, trote muy suave en llano ('+rS(0.57)+'), bajada por sensaciones controladas. Recuperación activa específica de trail. Elimina fatiga muscular excéntrica sin generar carga nueva (Weerapong, 2005). '+np,
+      desc:'60min muy suave · Desnivel medio ~'+pctPend+'%. ↑ Subidas >8%: caminar. ↓ Llano y bajadas: '+r(v,0.62)+' /km. Sin forzar.',
       alt:'Caminata 45min en terreno si mucha fatiga.',tiempo:'1h',kmNum:mts(v,0.57,3600)/1000}
   ];
 
   // ── Z2: Fartleks y cambios de ritmo en desnivel ──
   var z2=[
     {tipo:'rodaje_trail',nombre:'Fartlek trail · cambios de ritmo 55min',zona:2,intens:5,
-      desc:'10min Z1 llano + 35min: alternar subidas al 80% VAM-equiv. (↑ '+rS(0.80)+' /km, RPE 6-7/10) y bajadas por sensaciones cada 5-8min según el terreno + 10min vuelta calma. '+np,
+      desc:'55min · Desnivel medio ~'+pctPend+'%. Cal 10min a '+r(v,0.62)+' /km en llano. 35min alternando: subidas a '+rS(0.80)+' /km + bajadas por sensaciones cada 5-8min. Vuelta calma 10min a '+r(v,0.60)+' /km.',
       alt:'40min · 4 cambios si primera vez.',tiempo:'55min',kmNum:mts(v,0.72,3300)/1000},
     {tipo:'rodaje_trail',nombre:'Tempo trail · 20min umbral en subida',zona:2,intens:6,
-      desc:'Cal 10min. 20min subida continua al umbral: ↑ '+rS(0.87)+' /km (RPE 7/10). Bajada 10min por sensaciones. Máximo estímulo de umbral en pendiente. Billat (2001). '+np,
+      desc:'~45min · Desnivel medio ~'+pctPend+'%. Cal 10min a '+r(v,0.62)+' /km en llano. 20min subida continua a '+rS(0.87)+' /km. 10min bajada + 5min vuelta calma a '+r(v,0.60)+' /km.',
       alt:'15min si primera vez · 2×10min si cuesta corta.',tiempo:'~45min',kmNum:mts(v,0.80,1800)/1000},
     {tipo:'rodaje_trail',nombre:'Progresivo trail · 50min con aceleración',zona:2,intens:5,
-      desc:'15min Z1 (↑ '+rS(0.63)+') + 20min Z2 (↑ '+rS(0.75)+') + 10min umbral (↑ '+rS(0.85)+') en terreno con desnivel. ↓ Bajadas siempre por sensaciones. '+np,
+      desc:'50min · Desnivel medio ~'+pctPend+'%. 15min ↑ a '+rS(0.63)+' /km + 20min ↑ a '+rS(0.75)+' /km + 10min ↑ a '+rS(0.85)+' /km. ↓ Bajadas siempre por sensaciones.',
       alt:'35min con 2 bloques si fatiga.',tiempo:'50min',kmNum:mts(v,0.74,3000)/1000},
     {tipo:'rodaje_trail',nombre:'Fartlek largo trail · ondas 1h 10min',zona:2,intens:5,
-      desc:'70min: alternar libremente tramos de subida al Z2 (↑ '+rS(0.78)+' /km, RPE 6/10) con bajadas por sensaciones. Sin estructura rígida — gestiona el esfuerzo por terreno. '+np,
+      desc:'1h 10min · Desnivel medio ~'+pctPend+'%. Alternar subidas a '+rS(0.78)+' /km con bajadas por sensaciones. Sin estructura rígida, gestiona por terreno.',
       alt:'50min · Reducir si calor.',tiempo:'1h 10min',kmNum:mts(v,0.73,4200)/1000}
   ];
 
   // ── Z3: Series e intermitentes en cuesta ──
+  // Para trail: mostrar ritmo de subida (más intuitivo que tiempo total por rep)
+  var rRep200  = rS(0.92);  // ritmo subida 200m
+  var rRep300_85 = rS(0.85); // ritmo subida reps 1-2
+  var rRep300_92 = rS(0.92); // ritmo subida reps 3-4
+  var rRep300_med = rS(0.89); // ritmo subida medio
   var z3=[
     {tipo:'cuestas_trail',nombre:'Series en cuesta · 8×200m',zona:3,intens:7,
-      desc:'Cal 15min. 8×200m en subida ('+pctPend+'%) al 85-90% RPE. ↑ ~'+rS(0.92)+' /km ref. ↓ Bajada trotando por sensaciones. Fuerza-resistencia específica. Ferley et al. (2014). '+np,
-      alt:'6 reps si fatiga · Misma cuesta siempre.',tiempo:'~45min',kmNum:1.6+mts(v,0.60,2400)/1000},
+      desc:'Cal 15min a '+r(v,0.62)+' /km. 8×200m en subida (~'+pctPend+'%) a '+rRep200+' /km. ↓ Bajada trotando por sensaciones entre reps.',
+      alt:'6 reps si fatiga · Misma cuesta siempre.',tiempo:'8×200m↑ (~45min)',kmNum:1.6+mts(v,0.60,2400)/1000},
     {tipo:'cuestas_trail',nombre:'Gacon trail 30″/30″ en cuesta',zona:3,intens:8,
-      desc:'Cal 15min. 3×5 reps: 30″ subida al máximo (↑ ~'+rS(1.05)+' /km ref.) + 30″ bajada por sensaciones (RPE 3/10). Pausa 3min. Gacon (1994) adaptado a terreno real. '+np,
-      alt:'2 series si primera vez · 90% si pendiente alta.',tiempo:'~38min',kmNum:2.5},
+      desc:'Cal 15min a '+r(v,0.62)+' /km. 3 series × 5 reps en cuesta (~'+pctPend+'%): 30″ subida a '+rS(1.05)+' /km + 30″ bajada por sensaciones. Pausa 3min andando entre series.',
+      alt:'2 series si primera vez · 90% si pendiente alta.',tiempo:'30″/30″×15 (~38min)',kmNum:2.5},
     {tipo:'cuestas_trail',nombre:'Series mixtas trail · 5×300m progresivos',zona:3,intens:8,
-      desc:'Cal 15min. 5×300m en subida con progresión: reps 1-2 al 85% → reps 3-4 al 92% → rep 5 al máximo. ↑ Ref. '+rS(0.90)+' /km. ↓ Bajada por sensaciones. '+np,
-      alt:'4 reps si fatiga.',tiempo:'~45min',kmNum:1.5+mts(v,0.60,2700)/1000},
+      desc:'Cal 15min a '+r(v,0.62)+' /km. 5×300m en subida (~'+pctPend+'%): reps 1-2 a '+rRep300_85+' /km → reps 3-4 a '+rRep300_92+' /km → rep 5 al máximo. ↓ Bajada por sensaciones.',
+      alt:'4 reps si fatiga.',tiempo:'5×300m↑ (~45min)',kmNum:1.5+mts(v,0.60,2700)/1000},
     {tipo:'cuestas_trail',nombre:'Bloques alternos trail · cuesta + llano',zona:3,intens:7,
-      desc:'Cal 10min. 4× [3min subida al umbral (↑ '+rS(0.87)+' /km, RPE 7/10) + 2min llano o bajada por sensaciones + 1min subida al máximo]. 5min vuelta calma. '+np,
-      alt:'3 bloques si primera vez.',tiempo:'~45min',kmNum:mts(v,0.82,1440)/1000}
+      desc:'Cal 10min a '+r(v,0.62)+' /km. 4× [3min subida (~'+pctPend+'%) a '+rS(0.87)+' /km + 2min llano a '+r(v,0.62)+' /km + 1min subida al máximo]. 5min vuelta calma a '+r(v,0.58)+' /km.',
+      alt:'3 bloques si primera vez.',tiempo:'3+2+1min×4 (~45min)',kmNum:mts(v,0.82,1440)/1000}
   ];
 
   // BASE: Z1 dominante (75%), algo Z2 (25%), sin Z3. CaCo integrado.
@@ -2500,22 +2608,17 @@ function buildSesionesTrail(v, pctPend, tipoMeso, zona){
 
 
 function sesionesDescarga(v, prueba){
-  // Descarga diferenciada por distancia
-  // Distancias cortas (≤1500m): incluir 1 estímulo neuromuscular suave (acelerones)
-  // Distancias medias (3km-10km): descarga clásica con algo de fartlek suave
-  // Distancias largas (media-maratón): solo regenerativo y rodaje aeróbico suave
   if(prueba && prueba<=1500){
     var acelerones={tipo:'rodaje',nombre:'Acelerones de activación · 6×80m',zona:2,intens:3,
-      desc:'Calent 15min suave. 6×80m progresivos: primeros 3 al 85%, últimos 3 al 90-92% VAM. Bajada andando entre cada uno. Mantiene la activación neuromuscular durante la descarga sin generar fatiga (Mujika & Padilla, 2003).',
+      desc:'Cal 15min a '+r(v,0.60)+' /km. 6×80m progresivos: primeros 3 a '+r(v,0.85)+' /km, últimos 3 a '+r(v,0.92)+' /km. Bajada andando entre cada uno.',
       alt:'4 acelerones si mucha fatiga acumulada.',tiempo:'30min',kmNum:mts(v,0.60,900)/1000};
     return[BANCO_DESC[0],BANCO_ROD[0](v),acelerones,BANCO_DESC[1],BANCO_ROD[0](v),BANCO_DESC[1]];
   } else if(prueba && prueba<=10000){
     var fartlekSuave={tipo:'rodaje',nombre:'Fartlek suave de descarga · 35min',zona:1,intens:3,
-      desc:'35min: 20min a '+r(v,0.62)+' + 3×[1min a '+r(v,0.80)+' + 2min a '+r(v,0.62)+']. Mantiene la sensación de cambio de ritmo sin acumular fatiga. Ideal durante semanas de descarga (Seiler, 2010).',
+      desc:'35min: 20min a '+r(v,0.62)+' /km + 3×[1min a '+r(v,0.80)+' /km + 2min a '+r(v,0.62)+' /km].',
       alt:'30min rodaje llano si fatiga.',tiempo:'35min',kmNum:mts(v,0.65,2100)/1000};
     return[BANCO_DESC[0],BANCO_ROD[0](v),fartlekSuave,BANCO_DESC[1],BANCO_ROD[0](v),BANCO_DESC[1]];
   }
-  // Media y maratón: solo regenerativo
   return[BANCO_DESC[0],BANCO_ROD[0](v),BANCO_ROD[2](v),BANCO_DESC[1],BANCO_ROD[0](v),BANCO_DESC[1]];
 }
 function sesionesDescargaTapering(v,prueba){
@@ -2666,6 +2769,16 @@ function selModalidad(el){
   if(bT) bT.style.display=(val==='trail')?'block':'none';
   if(bP) bP.style.display=(val==='pendiente')?'block':'none';
   if(val==='pendiente') actualizarInfoPendiente();
+  // Mostrar selector de desnivel de prueba solo en trail/pendiente
+  var bDP=document.getElementById('bloque-desnivel-prueba');
+  if(bDP) bDP.style.display=(val==='trail'||val==='pendiente')?'block':'none';
+  // Si vuelve a road: resetear a "Llano" y recalcular VAM sin corrección
+  if(val==='road'){
+    document.querySelectorAll('[data-g=desnivelPrueba]').forEach(function(b){
+      b.classList.toggle('on',b.getAttribute('data-v')==='0');
+    });
+    recalcVAM();
+  }
 }
 function selPendientePura(el){
   document.querySelectorAll('[data-g=pendientePura]').forEach(function(b){b.classList.remove('on');});
@@ -2767,15 +2880,23 @@ function readStep2(){
   S.tObjS=secsFromInputs('t-obj-h','t-obj-m','t-obj-s');
   var metodo=getVal('vammetodo')||'marca';
   if(metodo==='marca'){
-    S.vamAuto=calcVAM(S.prueba,S.tActS);
+    var vamBruta=calcVAM(S.prueba,S.tActS);
+    var pend=parseFloat(getVal('desnivelPrueba'))||0;
+    S.vamAuto=(pend>0&&vamBruta>0)?corregirVAMDesdeTerreno(vamBruta,pend):vamBruta;
+    S.desnivelPrueba=pend;
     S.vamManual=0;
     if(S.vamAuto>0) S.VAM=S.vamAuto;
+    // Guardar VAM trail original (sin corrección) para sesiones en desnivel
+    S.vamTrail = (pend>0&&vamBruta>0) ? +vamBruta.toFixed(2) : S.VAM;
   } else if(metodo==='manual'){
     var vm=parseFloat(document.getElementById('vam-man-slider').value)||14;
     S.vamManual=vm; S.VAM=vm;
+    S.desnivelPrueba=0;
+    S.vamTrail = vm; // manual: asumimos VAM en plano, trail = misma
   }
-  // metodo==='test': S.VAM ya guardada por aplicarVamTest()
+  if(metodo==='test') { S.desnivelPrueba=0; S.vamTrail=S.VAM; }
   if(!S.VAM||S.VAM<8) S.VAM=14;
+  if(!S.vamTrail) S.vamTrail=S.VAM;
   S.vamObj=calcVAM(S.prueba,S.tObjS)||+(S.VAM*1.05).toFixed(2);
 }
 function readStep4(){
@@ -2849,6 +2970,7 @@ function pick(el){
   el.classList.add('on');
   if(g==='sexo')document.getElementById('ciclo-block').style.display=el.getAttribute('data-v')==='F'?'block':'none';
   if(g==='prueba'){recalcVAM();updateMejora();}
+  if(g==='desnivelPrueba'){recalcVAM();}
   if(g==='salud')document.getElementById('lesion-block').style.display=el.getAttribute('data-v')==='les'?'block':'none';
 }
 function toggleEquip(el){el.classList.toggle('on');}
@@ -2942,12 +3064,53 @@ function actualizarResumenLesiones(){
   html+='</div>';
   res.innerHTML=html;
 }
+// ── CORRECCIÓN VAM DESDE DESNIVEL DE PRUEBA (Minetti et al., 2002) ──
+// Si la marca se obtuvo en terreno con desnivel, la VAM medida es más baja
+// de lo que sería en plano. Esta función la eleva al equivalente en llano
+// para que los ritmos de entrenamiento sean correctos.
+function corregirVAMDesdeTerreno(vamMedida, pendMedia){
+  if(!pendMedia||pendMedia<=0) return vamMedida;
+  var i=pendMedia/100;
+  var eS=155.4*Math.pow(i,5)-30.4*Math.pow(i,4)-43.3*Math.pow(i,3)+46.3*Math.pow(i,2)+19.5*i+3.6;
+  var factor=eS/3.6; // coste energético relativo vs plano
+  // La VAM en plano equivalente = VAM_trail × factor_coste
+  return +(vamMedida*factor).toFixed(2);
+}
+
 function recalcVAM(){
   var d=parseInt(getVal('prueba'))||1500;
   var s=secsFromInputs('t-act-h','t-act-m','t-act-s');
-  var vam=calcVAM(d,s);
-  document.getElementById('vam-auto-val').textContent=vam>0?vam.toFixed(2)+' km/h':'—';
-  S.vamAuto=vam;S.VAM=vam;
+  var vamBruta=calcVAM(d,s);
+  var pend=parseFloat(getVal('desnivelPrueba'))||0;
+  var vamCorr=(pend>0&&vamBruta>0)?corregirVAMDesdeTerreno(vamBruta,pend):vamBruta;
+
+  var elVal=document.getElementById('vam-auto-val');
+  if(elVal){
+    if(pend>0&&vamBruta>0){
+      elVal.innerHTML=vamCorr.toFixed(2)+' km/h'
+        +'<div style="font-size:.6rem;color:var(--orange);margin-top:.15rem;font-family:\'DM Mono\',monospace;">'
+        +'Bruta: '+vamBruta.toFixed(2)+' → plano equiv.: +'+((vamCorr-vamBruta).toFixed(2))+' km/h</div>';
+    } else {
+      elVal.textContent=vamBruta>0?vamBruta.toFixed(2)+' km/h':'—';
+    }
+  }
+
+  // Info explicativa bajo el selector de desnivel
+  var info=document.getElementById('desnivel-prueba-info');
+  if(info){
+    if(pend>0&&vamBruta>0){
+      info.innerHTML='<div style="background:rgba(255,140,66,.07);border:1px solid rgba(255,140,66,.22);border-radius:8px;padding:.65rem .85rem;font-size:.74rem;color:var(--orange);line-height:1.8;">'
+        +'Corrección Minetti et al. (2002) aplicada:<br>'
+        +'VAM en prueba (~'+pend+'% desnivel medio): <strong>'+vamBruta.toFixed(2)+' km/h</strong><br>'
+        +'VAM equivalente en plano: <strong>'+vamCorr.toFixed(2)+' km/h</strong><br>'
+        +'<span style="font-size:.68rem;opacity:.75;">Los ritmos de entrenamiento se calculan desde la VAM en plano para que sean correctos independientemente del terreno donde entrenes.</span>'
+        +'</div>';
+    } else {
+      info.innerHTML='';
+    }
+  }
+
+  S.vamAuto=vamCorr; S.VAM=vamCorr;
 }
 function updateMejora(){
   var d=parseInt(getVal('prueba'))||1500;
@@ -2957,9 +3120,16 @@ function updateMejora(){
   var diff=sA-sO;
   document.getElementById('mejora-val').textContent=(diff<0?'⚠️ +':'-')+Math.abs(diff)+'s ('+(Math.abs(diff/sA*100)).toFixed(1)+'%'+(diff<0?' más lento)':' más rápido)');
 }
+// ══════════════════════════════════════════════════════
+// WHEEL PICKER — Selectores rueda para tiempos
+// ══════════════════════════════════════════════════════
+
+// Un único listener global para mouse — evita múltiples listeners compitiendo
 ['t-act-h','t-act-m','t-act-s','t-obj-h','t-obj-m','t-obj-s'].forEach(function(id){
   var el=document.getElementById(id);if(el)el.addEventListener('input',function(){recalcVAM();updateMejora();});
 });
+
+
 document.getElementById('vam-man-slider').addEventListener('input',function(){document.getElementById('vam-man-val').textContent=parseFloat(this.value).toFixed(1);});
 document.getElementById('estres-slider').addEventListener('input',function(){
   var v=parseInt(this.value);document.getElementById('estres-val').textContent=v;
@@ -3110,66 +3280,225 @@ function nombreAtleta(ses) {
 
 // Descripción corta para el atleta — máximo 2 líneas
 function descAtleta(ses) {
-  var n = ses.nombre || '';
-  var desc = ses.desc || '';
+  var n   = ses.nombre || '';
+  var desc = ses.desc  || '';
+  var t   = ses.tiempo || ''; // ej: "5×(1'25") (~40min)" o "8×200m↑"
 
-  // Extraer lo esencial: calentamiento + qué hacer + ritmo
-  var cal = desc.match(/Cal (\d+)min/);
-  var calStr = cal ? 'Calienta '+cal[1]+'min suave. ' : '';
+  // ── Helpers ──────────────────────────────────────────
+  // Extraer calentamiento de la desc
+  var calM = desc.match(/Cal (\d+)min a (\d+:\d+)/);
+  var cal  = calM ? 'Calienta '+calM[1]+'min a '+calM[2]+' /km. ' : '';
 
-  // IEL
-  if(n.indexOf('IEL')===0) {
-    var m = n.match(/(\d+)×(\d+)m/);
-    var ritmo = desc.match(/\d+m a (\d+:\d+)/);
-    var pausa = desc.match(/Pausa: ([^.]+)/);
-    if(m&&ritmo) return calStr+m[1]+' veces '+m[2]+'m a '+ritmo[1]+' /km. Entre serie y serie: '+(pausa?pausa[1]:'descanso')+'.'
-      +' Es el entrenamiento de umbral — ritmo sostenido pero controlado.';
+  // Extraer TODOS los ritmos de la desc (únicos, en orden de aparición)
+  var ritmos = [];
+  var rm; var re = /(\d{1,2}:\d{2})\s*\/km/g;
+  while((rm = re.exec(desc)) !== null) {
+    if(ritmos.indexOf(rm[1])<0) ritmos.push(rm[1]);
   }
-  // IEM
+  var r1 = ritmos[0]||''; // ritmo principal (calentamiento)
+  var r2 = ritmos[1]||''; // ritmo series / trabajo
+  var r3 = ritmos[2]||''; // ritmo pausa / vuelta calma
+
+  // Extraer tiempo por rep desde ses.tiempo: "N×(TREP)" → TREP
+  var tRepM = t.match(/\d+×\(([^)]+)\)/);
+  var tRep  = tRepM ? tRepM[1] : '';
+
+  // Extraer nº series y distancia desde ses.nombre: "N×Xm"
+  var serM  = n.match(/(\d+)×(\d+)m/);
+  var nSer  = serM ? serM[1] : '';
+  var dist  = serM ? serM[2]+'m' : '';
+
+  // Extraer pausa de la desc
+  var pausaM = desc.match(/Pausa[:\s]+([^.]+)/i);
+  var pausa  = pausaM ? pausaM[1].trim() : '';
+
+  // Terreno trail
+  var trail = (ses._esDesnivel || ses.tipo==='rodaje_trail' || ses.tipo==='cuestas_trail');
+  var pend  = ses._pendTerreno ? '~'+ses._pendTerreno+'% desnivel. ' : (trail?'Terreno con desnivel. ':'');
+
+  // ── Formato final para series fraccionadas ────────────
+  // Siempre: CALENTAMIENTO + REPS×DIST a RITMO (TIEMPO/rep). PAUSA. FIN.
+  function serieStr(nR, dR, ritmoR, tR, pausaR, extra) {
+    var s = cal;
+    s += nR+' series de '+dR;
+    if(ritmoR) s += ' a '+ritmoR+' /km';
+    if(tR)     s += ' ('+tR+' por rep)';
+    s += '.';
+    if(pausaR) s += ' Pausa: '+pausaR+'.';
+    if(extra)  s += ' '+extra;
+    s += ' Trota 10min al terminar.';
+    return s;
+  }
+
+  // ── SERIES POR DISTANCIA ──────────────────────────────
+  if(n.indexOf('IEL')===0 || n.indexOf('IIC')===0 ||
+     n.indexOf('Específicas')===0 || n.indexOf('Ritmo competición')===0 ||
+     n.indexOf('Juegos polacos')===0) {
+    if(nSer && dist && r2) return serieStr(nSer, dist, r2, tRep, pausa||'');
+    if(nSer && dist && r1) return serieStr(nSer, dist, r1, tRep, pausa||'');
+  }
+
+  // ── IEM (series por tiempo) ───────────────────────────
   if(n.indexOf('IEM')===0) {
-    var m = n.match(/(\d+)×(\d+min)/);
-    var ritmo = desc.match(/a (\d+:\d+) \/km/);
-    var pausa = desc.match(/Pausa: ([^.]+)/);
-    if(m&&ritmo) return calStr+m[1]+' bloques de '+m[2]+' corriendo a '+ritmo[1]+' /km. '+(pausa?'Descansa '+pausa[1]+'. ':'')
-      +'Es exigente — al terminar deberías estar muy cansado pero sin agotarte por completo.';
+    var bloqM = n.match(/(\d+)×(\d+min(?:\d+″)?)/);
+    var ritmoIEM = r2||r1;
+    if(bloqM && ritmoIEM) {
+      var s = cal+bloqM[1]+' bloques de '+bloqM[2]+' a '+ritmoIEM+' /km ('+bloqM[2]+' por bloque).';
+      if(pausa) s += ' Pausa: '+pausa+'.';
+      s += ' Trota 10min al terminar.';
+      return s;
+    }
   }
-  // IIC
-  if(n.indexOf('IIC')===0) {
-    var m = n.match(/(\d+)×(\d+)m/);
-    var ritmo = desc.match(/\d+×\d+m a (\d+:\d+)/);
-    var pausa = desc.match(/Pausa: ([^.]+)/);
-    if(m&&ritmo) return calStr+m[1]+' series de '+m[2]+'m a '+ritmo[1]+' /km a tope. '+(pausa?'Descansa '+pausa[1]+' entre cada una. ':'')
-      +'Ve al máximo en cada serie — la pausa es para recuperarte de verdad.';
+
+  // ── GACON / INTERMITENTE ─────────────────────────────
+  if(n.indexOf('Intermitente')===0) {
+    var serG  = n.match(/(\d+)×(\d+)\s*reps/);
+    var labelG = n.match(/(\d+″\/\d+″)/);
+    var ritG  = r2||r1;
+    if(serG && labelG) {
+      return cal+serG[1]+' series de '+serG[2]+' repeticiones '+labelG[1]
+        +(ritG?' a '+ritG+' /km':'')+'. Pausa 3min andando entre series. Trota 10min al terminar.';
+    }
   }
-  // Gacon/Intermitente
-  if(n.indexOf('Intermitente')===0||n.indexOf('Gacon')>=0) {
-    var seg = n.match(/(\d+)″\/(\d+)″/);
-    var s = n.match(/(\d+)×(\d+) reps/);
-    var ritmo = desc.match(/a (\d+:\d+) \/km/);
-    if(seg&&s) return calStr+s[1]+' series de '+s[2]+' repeticiones: '+seg[1][0]+'″ rápido a '+
-      (ritmo?ritmo[1]+' /km':'')+', '+seg[1].split('/')[1]+' trotando. Pausa 3min entre series.'+
-      ' Cortos pero intensos — mejoran tu capacidad máxima de oxígeno.';
-  }
-  // Cuestas
+
+  // ── CUESTAS (llano) ───────────────────────────────────
   if(n.indexOf('Cuestas cortas')===0) {
-    var m = n.match(/(\d+)×(\d+)m/);
-    if(m) return calStr+m[1]+' subidas de '+m[2]+'m en cuesta explosivas. Sube fuerte, baja trotando. '+
-      'Fortalece piernas y mejora la zancada.';
+    var ritRef = desc.match(/Ritmo subida ref:\s*(\d+:\d+)/);
+    if(nSer && dist) return cal+nSer+' subidas de '+dist+' al máximo'
+      +(ritRef?' (ref: '+ritRef[1]+' /km)':'')+' — '+tRep+' por rep.'
+      +' Baja trotando (recuperación completa). Trota 10min al terminar.';
+  }
+  if(n.indexOf('Cuestas medias')===0) {
+    var ritRef2 = r2||r1;
+    if(nSer && dist) return cal+nSer+' subidas de '+dist
+      +(ritRef2?' a '+ritRef2+' /km':'')+' — '+tRep+' por rep.'
+      +' Baja trotando. Trota 10min al terminar.';
   }
   if(n.indexOf('Cuestas largas')===0) {
-    var m = n.match(/(\d+)×(\d+)m/);
-    if(m) return calStr+m[1]+' subidas de '+m[2]+'m en cuesta a ritmo esforzado pero no máximo. '+
-      'Baja caminando o trotando suave. Fuerza-resistencia.';
+    var ritRef3 = desc.match(/Ritmo ref:\s*(\d+:\d+)/);
+    if(nSer && dist) return cal+nSer+' subidas de '+dist+' a ritmo esforzado'
+      +(ritRef3?' ('+ritRef3[1]+' /km)':'')+' — '+tRep+' por rep.'
+      +' Pausa: baja trotando + 90″ andando. Trota 10min al terminar.';
   }
-  // Rodajes — extraer ritmo y tiempo
-  var ritmoZ = desc.match(/a (\d+:\d+) \/km/);
-  var tiempo = ses.tiempo || '';
-  if(ritmoZ && tiempo) {
-    var tiempoLeg = tiempo.replace('~','').replace('min',' min');
-    return calStr+'Corre '+tiempoLeg+(ritmoZ?' a '+ritmoZ[1]+' /km':'')+'. Ritmo cómodo — deberías poder hablar sin problema.';
+  if(n.indexOf('Series mixtas de cuestas')===0) {
+    return cal+'3 series de 3 subidas de 100m al máximo — '+tRep+' por rep.'
+      +' Baja trotando entre reps. 4min andando entre series. Trota 10min al terminar.';
   }
-  // Fallback
-  return calStr+(desc.split('.')[0]+'.').replace('Cal '+((cal||['',''])[1])+'min a.*?\. ','');
+
+  // ── CUESTAS TRAIL ────────────────────────────────────
+  if(ses.tipo==='cuestas_trail') {
+    var ritT = r2||r1;
+    var gM = n.match(/(\d+)×(\d+)m/);
+    if(gM) return cal+pend+gM[1]+' subidas de '+gM[2]+'m'
+      +(ritT?' a '+ritT+' /km':'')+'. Baja por sensaciones. Trota 10min al terminar.';
+    return cal+pend+(desc.split('.')[0]+'.');
+  }
+
+  // ── RODAJE TRAIL ─────────────────────────────────────
+  if(ses.tipo==='rodaje_trail') {
+    var tM   = desc.match(/(\d+(?:h\s*\d+)?min|\d+h)/);
+    var rSubM = desc.match(/Subid[^:]+:\s*(?:carrera\s+(?:suave\s+)?a\s+)?(\d{1,2}:\d{2})\s*\/km/i);
+    var rLlnM = desc.match(/(?:[Ll]lano|bajada)[^:]*:\s*(?:carrera\s+a\s+)?(\d{1,2}:\d{2})\s*\/km/i);
+    var esCaCo = n.indexOf('CaCo')>=0;
+    var s = pend+(tM?tM[0]+' ':'');
+    if(esCaCo) {
+      s += 'Camina las subidas >8%. ';
+      if(rSubM) s += 'Subidas suaves (≤8%): corre a '+rSubM[1]+' /km. ';
+      if(rLlnM) s += 'Llano y bajadas: corre a '+rLlnM[1]+' /km.';
+      else s += 'Llano y bajadas: corre por sensaciones.';
+    } else {
+      if(rSubM) s += 'Subidas a '+rSubM[1]+' /km. ';
+      if(rLlnM) s += 'Llano y bajadas a '+rLlnM[1]+' /km.';
+      else s += 'Por sensaciones.';
+    }
+    s += ' Hidratación cada 20min.';
+    return s;
+  }
+
+  // ── BLOQUES ALTERNOS ─────────────────────────────────
+  if(n.indexOf('Bloques alternos')===0) {
+    var bM = n.match(/(\d+)×\((\d+)m\+(\d+)m\)/);
+    if(bM) return cal+'3 series: '+bM[2]+'m a '+r2+' /km + 2min pausa + '+bM[3]+'m a '+r3+' /km.'
+      +' 4min andando entre series. Trota 10min al terminar.';
+  }
+
+  // ── PIRÁMIDE ─────────────────────────────────────────
+  if(n.indexOf('Pirámide')===0) {
+    var seqM = n.match(/·\s*(.+)/);
+    return cal+'Series en pirámide'+(seqM?' '+seqM[1]:'')+' a '+r2+' /km.'
+      +' Pausa = tiempo de trabajo. Trota 10min al terminar.';
+  }
+
+  // ── SERIES PROGRESIVAS ───────────────────────────────
+  if(n.indexOf('Series progresivas')===0) {
+    var spM = n.match(/(\d+)×(\d+)m/);
+    return cal+(spM?spM[1]+' series de '+spM[2]+'m ':'')+' — cada una más rápida.'
+      +' De '+r1+' /km en la primera hasta '+r2+' /km en la última. Pausa 90″ trotando.';
+  }
+
+  // ── GACON ESCALERA ───────────────────────────────────
+  if(n.indexOf('Gacon escalera')===0) {
+    return cal+'2 bloques: 3min a '+r1+' → 2min a '+r2+' → 1min a '+r3+' → 2min a '+r2+' → 3min a '+r1+'.'
+      +' Pausa 4min trotando entre bloques. Trota 10min al terminar.';
+  }
+
+  // ── STRIDES ──────────────────────────────────────────
+  if(n.indexOf('Rodaje con strides')===0) {
+    var stM = n.match(/(\d+)×(\d+)m/);
+    return '40min a '+r1+' /km. Al terminar: '+(stM?stM[1]+' acelerones de '+stM[2]+'m':'acelerones')
+      +' hasta '+r2+' /km. 60″ andando entre cada uno.';
+  }
+
+  // ── AERÓBICO SOSTENIDO ───────────────────────────────
+  if(n.indexOf('Aeróbico sostenido')===0) {
+    var asM = n.match(/·\s*(.+)/);
+    return (asM?asM[1]+' ':'')+'a ritmo constante de '+r1+' /km.'
+      +' Más rápido que el trote suave, sin llegar al umbral. Frases cortas = ritmo correcto.';
+  }
+
+  // ── FARTLEK MEJICANO ─────────────────────────────────
+  if(n.indexOf('Fartlek mejicano')===0) {
+    return cal+'2 bloques con cambios de ritmo: largo a '+r1
+      +' → medio a '+r2+' → corto a '+r3+' /km y sprint. 5min vuelta calma.';
+  }
+
+  // ── FARTLEK CORTO ────────────────────────────────────
+  if(n.indexOf('Fartlek corto')===0) {
+    var fcM = n.match(/(\d+)×\(([^)]+)\)/);
+    return cal+(fcM?fcM[1]+' cambios ('+fcM[2]+')':'Cambios de ritmo')
+      +': rápido a '+r2+' /km + suave a '+r3+' /km. 5min vuelta calma.';
+  }
+
+  // ── SPRINT / IIMC / RESISTENCIA VELOCIDAD ────────────
+  if(n.indexOf('Sprint')===0) {
+    return cal+'8×200m a '+r2+' /km — '+tRep+' por rep. 4min andando entre cada uno.';
+  }
+  if(n.indexOf('IIMC')===0) {
+    return cal+'3 series × 8 reps de 8″ al máximo absoluto. 2min entre reps, 6min entre series.';
+  }
+  if(n.indexOf('Resistencia velocidad')===0) {
+    return cal+'4 series × 3×150m a '+r2+' /km — '+tRep+' por rep. 3min entre reps, 8min entre series.';
+  }
+
+  // ── RODAJES CONTINUOS ────────────────────────────────
+  var tiempoR = t.replace('~','');
+  var ultM    = desc.match(/ltimos\s+(\d+min)\s+a\s+(\d+:\d+)/);
+  if(n.indexOf('Tirada')>=0) {
+    return tiempoR+' a '+r1+' /km.'+(ultM?' Últimos '+ultM[1]+' a '+ultM[2]+' /km.':'')+' Ritmo cómodo.';
+  }
+  if(n.indexOf('Regenerativo')>=0 || n.indexOf('regenerativo')>=0) {
+    return tiempoR+' de trote muy suave a '+r1+' /km. Recuperación activa.';
+  }
+  if(n.indexOf('Continuo al umbral')>=0 || n.indexOf('Tempo')>=0) {
+    return cal+tiempoR+' a ritmo firme de '+r1+' /km.'+(ultM?' Últimos '+ultM[1]+' a '+ultM[2]+' /km.':'');
+  }
+  if(n.indexOf('Progresivo')>=0) {
+    return cal+'Rodaje progresivo de '+r1+' /km al inicio hasta '+r2+' /km al final.';
+  }
+
+  // Fallback: primera frase de desc sin jerga
+  if(r1) return tiempoR+' a '+r1+' /km.';
+  return desc.split('.')[0]+'.';
 }
 
 
@@ -3230,12 +3559,33 @@ var _ADAPTACIONES = {
 
 function _getAdaptacion(sesNombre) {
   var n = sesNombre || '';
-  for(var k in _ADAPTACIONES) {
-    if(n.indexOf(k) >= 0) return _ADAPTACIONES[k];
-  }
-  if(n.indexOf('IEL')>=0) return _ADAPTACIONES['IEL'];
-  if(n.indexOf('IEM')>=0) return _ADAPTACIONES['IEM'];
-  if(n.indexOf('IIC')>=0) return _ADAPTACIONES['IIC'];
+  // Mapeos directos
+  if(n.indexOf('IEL')>=0)           return _ADAPTACIONES['IEL'];
+  if(n.indexOf('IEM')>=0)           return _ADAPTACIONES['IEM'];
+  if(n.indexOf('IIC')>=0)           return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Intermitente')>=0)  return _ADAPTACIONES['Intermitente'];
+  if(n.indexOf('Gacon')>=0)         return _ADAPTACIONES['Intermitente'];
+  if(n.indexOf('Cuestas')>=0)       return _ADAPTACIONES['Cuestas'];
+  if(n.indexOf('cuesta')>=0)        return _ADAPTACIONES['Cuestas'];
+  if(n.indexOf('Tempo')>=0)         return _ADAPTACIONES['Tempo'];
+  if(n.indexOf('Cruces')>=0)        return _ADAPTACIONES['Tempo'];
+  if(n.indexOf('Continuo al umbral')>=0) return _ADAPTACIONES['Tempo'];
+  if(n.indexOf('Fartlek')>=0)       return _ADAPTACIONES['Fartlek'];
+  if(n.indexOf('Bloques alternos')>=0)   return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Pirámide')>=0)      return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Juegos polacos')>=0)     return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Series variadas')>=0)    return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Series progresivas')>=0) return _ADAPTACIONES['IEL'];
+  if(n.indexOf('Ritmo competición')>=0)  return _ADAPTACIONES['IEL'];
+  if(n.indexOf('Específicas')>=0)        return _ADAPTACIONES['IEL'];
+  if(n.indexOf('Sprint')>=0)        return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Resistencia velocidad')>=0) return _ADAPTACIONES['IIC'];
+  if(n.indexOf('IIMC')>=0)          return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Tirada')>=0)        return _ADAPTACIONES['Tirada'];
+  if(n.indexOf('Progresivo')>=0)    return _ADAPTACIONES['Progresivo'];
+  if(n.indexOf('Rodaje')>=0)        return _ADAPTACIONES['Rodaje'];
+  if(n.indexOf('Aeróbico sostenido')>=0) return _ADAPTACIONES['Rodaje'];
+  if(n.indexOf('Regenerativo')>=0)  return _ADAPTACIONES['Rodaje'];
   return null;
 }
 
@@ -3552,7 +3902,7 @@ function generarPlan(){
           var minutos = Math.round(maxKmInicio * 60 / (vamSem * 0.65));
           ses2prog.tiempo = minutos + 'min';
           ses2prog.nombre = ses2prog.nombre.replace(/\d+h \d+min|\d+min/, minutos+'min');
-          ses2prog._notaProgresion = '📈 Semana inicial: tirada acortada a '+minutos+'min para respetar la progresión de carga. Irá aumentando semana a semana (Buist et al., 2007).';
+          ses2prog._notaProgresion = '📈 Semana inicial: tirada acortada a '+minutos+'min. Irá aumentando semana a semana.';
         }
         return ses2prog;
       }
@@ -3764,35 +4114,43 @@ function generarPlan(){
       var dc=((Math.round((fs-ini)/(1000*60*60*24))%S.cicloDur)+S.cicloDur)%S.cicloDur;
       if(dc<7)isD=true;
     }
+
+    // ── TAPERING FORZADO en la última semana del plan ──
+    // Independientemente del bloque, la semana previa a competición
+    // siempre es tapering: volumen mínimo + 1 activación
+    var totalSemanas = mesociclos.reduce(function(a,m){return a+m.sems;},0);
+    var esSemanaFinal = (semGlobal === totalSemanas);
+    if(esSemanaFinal) {
+      isD = true; // forzar como descarga
+    }
+
     var pos=((semEnMeso-1)%(tamBloque+1));
     var fasesLabel=tamBloque===2
       ?['Acumulación','Realización','Recuperación','Acumulación']
       :['Acumulación','Transformación','Realización','Recuperación'];
-    var faseLabel=fasesLabel[Math.min(pos,fasesLabel.length-1)];
+    var faseLabel=esSemanaFinal?'Tapering':fasesLabel[Math.min(pos,fasesLabel.length-1)];
 
-    // Factor de carga intra-mesociclo con factorRealizacion personalizado por edad
     var cargaBaseBloque;
     if(isD){ cargaBaseBloque=0.55; }
     else if(tamBloque===2){
-      cargaBaseBloque=pos===0?0.78:factorRealizacion; // Acum 78%, Real → factorRealizacion
+      cargaBaseBloque=pos===0?0.78:factorRealizacion;
     } else {
-      // 3 semanas: Acum 75%, Transf 83%, Real → factorRealizacion
       cargaBaseBloque=pos===0?0.75:pos===1?0.83:factorRealizacion;
     }
     var cargaFactor=Math.min(1.0,cargaBaseBloque*factorCarga);
-    // diasSem = días de entrenamiento real (no de descanso)
-    // En descarga: máximo dias-1, mínimo 2
     var diasSem=isD?Math.max(2,dias-1):dias;
     var sesiones;
     if(isD){
-      // En peak: usar tapering si es la última semana del mesociclo
-      var esTaperingFinal=(mesoObj&&mesoObj.tipo==='peak'&&semEnMeso>=mesoObj.sems);
+      // Tapering final siempre usa sesionesDescargaTapering
+      var esTaperingFinal = esSemanaFinal || (mesoObj&&mesoObj.tipo==='peak'&&semEnMeso>=mesoObj.sems);
       var poolDesc=esTaperingFinal?sesionesDescargaTapering(vamSem,prueba):sesionesDescarga(vamSem,prueba);
       sesiones=poolDesc.filter(function(s){return s.tipo!=='descanso';}).slice(0,diasSem);
     } else {
       var sesEntren;
       if(S.modalidad==='pendiente'){
-        var poolPend=buildSesionesTrail(vamSem,S.pendientePura||4,tipoMeso,null);
+        var _vamTrailRatioP = (S.vamTrail&&S.VAM&&S.VAM>0) ? S.vamTrail/S.VAM : 1;
+        var vamTrailSemP = +(vamSem * _vamTrailRatioP).toFixed(2);
+        var poolPend=buildSesionesTrail(vamTrailSemP,S.pendientePura||4,tipoMeso,null);
         var globalOffset=Math.floor((semGlobal-1)/(tamBloque+1));
         var poffset=(pos+globalOffset*3)%poolPend.length;
         sesEntren=poolPend.slice(poffset).concat(poolPend.slice(0,poffset));
@@ -3807,7 +4165,11 @@ function generarPlan(){
       var trailPool=null;
       var trailPoolIdx=0;
       if(S.modalidad==='trail'&&S.terreno>0){
-        trailPool=buildSesionesTrail(vamSem,S.terreno,tipoMeso,null);
+        // Para sesiones trail usar VAM trail (sin corrección plano)
+        // La proporción se mantiene semana a semana respecto a la VAM plano
+        var _vamTrailRatio = (S.vamTrail&&S.VAM&&S.VAM>0) ? S.vamTrail/S.VAM : 1;
+        var vamTrailSem = +(vamSem * _vamTrailRatio).toFixed(2);
+        trailPool=buildSesionesTrail(vamTrailSem,S.terreno,tipoMeso,null);
         // Rotar el pool según semana global para variedad
         var trailOffset=(semGlobal-1)%trailPool.length;
         trailPool=trailPool.slice(trailOffset).concat(trailPool.slice(0,trailOffset));
@@ -4174,11 +4536,12 @@ function generarPlan(){
           // Toggle terreno (solo si modalidad es mixto o trail)
           var terrenoKey='t'+sg+'_d'+d;
           var esDesnivel=ses._esDesnivel||false;
+          var _pendPct = ses._pendTerreno || S.terreno || S.pendientePura || 0;
           if(S.modalidad==='mixto'||S.modalidad==='trail'){
             var toggleColor=esDesnivel?'var(--orange)':'var(--muted2)';
             var toggleBg=esDesnivel?'rgba(255,140,66,.1)':'var(--surface2)';
             var toggleBorder=esDesnivel?'rgba(255,140,66,.3)':'var(--border2)';
-            var toggleLabel=esDesnivel?'⛰ Desnivel':'🏃 Llano';
+            var toggleLabel=esDesnivel?('⛰ Desnivel ~'+_pendPct+'%'):'🏃 Llano';
             html+='<div class="ses-nombre-wrap">';
             html+='<span class="ses-nombre">'+tipoIcono(ses.tipo)+' '+ses.nombre+'</span>';
             var _zpCT=ses.zona===1?'z1':ses.zona===2?'z2':'z3';
@@ -4196,15 +4559,25 @@ function generarPlan(){
             var _zpClass=ses.zona===1?'z1':ses.zona===2?'z2':'z3';
             var _zpTxt=ses.zona===1?'Z1 Aeróbico':ses.zona===2?'Z2 Umbral':'Z3 Intensidad';
             html+='<span class="zona-pill '+_zpClass+'">'+_zpTxt+'</span>';
+            if(S.modalidad==='pendiente'&&_pendPct>0){
+              html+='<span style="font-size:.6rem;padding:.22rem .6rem;border-radius:20px;border:1.5px solid rgba(255,140,66,.3);color:var(--orange);background:rgba(255,140,66,.1);font-weight:600;">⛰ Desnivel ~'+_pendPct+'%</span>';
+            }
             html+='</div>';
           }
-          // Extraer ritmos clave para mostrar como pills antes de la desc
+          // Descripción directa desde ses.desc — limpieza mínima
           var _descTxt = fmtDesc(ses.desc)||'';
-          var _ritmoPills = [];
-          // Extraer todos los ritmos XX:XX /km de la descripción
+          // Limpiar solo términos técnicos residuales
+          var _showDesc = _descTxt
+            .replace(/\(esfuerzo[^)]*\)/g,'')
+            .replace(/\(RPE[^)]*\)/g,'')
+            .replace(/\(conversación[^)]*\)/g,'')
+            .replace(/\(umbral[^)]*\)/g,'')
+            .replace(/Tiempo estimado[^:]*:\s*/g,'Duración estimada: ')
+            .replace(/\s+\./g,'.')
+            .trim();
+          // Extraer ritmos para pills (solo llano, no trail)
           var _rMatches = _descTxt.match(/(\d{1,2}:\d{2})\s*\/km/g)||[];
           if(_rMatches.length > 0 && ses.tipo !== 'rodaje_trail' && ses.tipo !== 'cuestas_trail') {
-            // Ritmos únicos
             var _rUniq = _rMatches.filter(function(r,i,a){return a.indexOf(r)===i;}).slice(0,3);
             if(_rUniq.length > 0) {
               html+='<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.45rem;">';
@@ -4214,17 +4587,7 @@ function generarPlan(){
               html+='</div>';
             }
           }
-          // Descripción con "leer más" si es larga (>180 chars)
-          if(_descTxt.length > 180) {
-            var _descShort = _descTxt.slice(0, 180).replace(/\s\S*$/, '')+'…';
-            html+='<div id="ses-desc-'+terrenoKey+'" style="font-size:.74rem;color:var(--text2);line-height:1.6;white-space:pre-line;">';
-            html+='<span id="desc-short-'+terrenoKey+'">'+_descShort+'</span>';
-            html+='<span id="desc-full-'+terrenoKey+'" style="display:none;">'+_descTxt+'</span>';
-            html+='<span id="desc-toggle-'+terrenoKey+'" onclick="(function(k){var s=document.getElementById(\'desc-short-\'+k),f=document.getElementById(\'desc-full-\'+k),t=document.getElementById(\'desc-toggle-\'+k);if(f.style.display===\'none\'){s.style.display=\'none\';f.style.display=\'inline\';t.textContent=\'menos ▴\';}else{s.style.display=\'inline\';f.style.display=\'none\';t.textContent=\'más ▾\';}})(\''+terrenoKey+'\')" style="color:var(--blue);cursor:pointer;font-size:.7rem;margin-left:.3rem;user-select:none;"> más ▾</span>';
-            html+='</div>';
-          } else {
-            html+='<div id="ses-desc-'+terrenoKey+'" style="font-size:.74rem;color:var(--text2);line-height:1.6;white-space:pre-line;">'+_descTxt+'</div>';
-          }
+          html+='<div style="font-size:.74rem;color:var(--text2);line-height:1.6;">'+_showDesc+'</div>';
           if(ses.alt)html+='<div style="font-size:.68rem;color:var(--blue);margin-top:.3rem;line-height:1.4;">🔄 '+ses.alt+'</div>';
           // Pestaña de adaptaciones fisiológicas
           var _adapt = _getAdaptacion(ses.nombre);
@@ -4290,9 +4653,6 @@ function generarPlan(){
           if(_ritmoSubida){
             html+='<div style="font-size:.65rem;color:var(--orange);margin-top:.2rem;text-align:right;font-weight:600;">↑ '+_ritmoSubida+' /km</div>';
             html+='<div style="font-size:.58rem;color:var(--muted);margin-top:.1rem;text-align:right;">↓ por sensaciones</div>';
-          } else {
-            var pv=ses.zona===1?'55-72%':ses.zona===2?'75-87%':'88-105%';
-            html+='<div style="font-size:.6rem;color:var(--muted);margin-top:.1rem;text-align:right;">'+pv+' VAM</div>';
           }
         }
         html+='</div>';
@@ -5074,6 +5434,10 @@ function restaurarFormulario(){
   if(bT) bT.style.display=(S.modalidad==='trail')?'block':'none';
   if(bP) bP.style.display=(S.modalidad==='pendiente')?'block':'none';
   if(S.modalidad==='pendiente') actualizarInfoPendiente();
+  // Restaurar selector desnivel de prueba
+  var bDP=document.getElementById('bloque-desnivel-prueba');
+  if(bDP) bDP.style.display=(S.modalidad==='trail'||S.modalidad==='pendiente')?'block':'none';
+  setRadio('desnivelPrueba',String(S.desnivelPrueba||0));
   // Restaurar días trail
   if(S.diasTrail&&S.diasTrail.length){
     document.querySelectorAll('[data-g=diasTrail]').forEach(function(b){
@@ -5085,6 +5449,19 @@ function restaurarFormulario(){
     var btn=document.querySelector('[data-g=diasem][data-v="'+d+'"]');
     if(btn)btn.classList.toggle('on',(S.diasSemana||[]).indexOf(d)>=0);
   });
+  // Restaurar tiempos en los inputs
+  if(S.tActS && S.tActS > 0){
+    var ah=Math.floor(S.tActS/3600), am=Math.floor((S.tActS%3600)/60), as2=S.tActS%60;
+    var ha=document.getElementById('t-act-h'); if(ha) ha.value=ah;
+    var ma=document.getElementById('t-act-m'); if(ma) ma.value=am;
+    var sa=document.getElementById('t-act-s'); if(sa) sa.value=as2;
+  }
+  if(S.tObjS && S.tObjS > 0){
+    var oh=Math.floor(S.tObjS/3600), om=Math.floor((S.tObjS%3600)/60), os2=S.tObjS%60;
+    var ho=document.getElementById('t-obj-h'); if(ho) ho.value=oh;
+    var mo=document.getElementById('t-obj-m'); if(mo) mo.value=om;
+    var so=document.getElementById('t-obj-s'); if(so) so.value=os2;
+  }
 }
 
 function copiarEnlace(){
@@ -6010,5 +6387,338 @@ document.getElementById('f-fecha').valueAsDate=hoy;
 document.getElementById('f-fecha').dispatchEvent(new Event('change'));
 </script>
 
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHATBOX ENTRENADOR IA — Asistente VAM Running         -->
+<!-- ══════════════════════════════════════════════════════ -->
+<style>
+#chat-fab{position:fixed;bottom:1.5rem;right:1.5rem;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#071208;border:none;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 20px rgba(0,230,118,.35);z-index:300;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+#chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,230,118,.5);}
+#chat-fab .chat-fab-badge{position:absolute;top:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:.6rem;font-weight:800;display:none;align-items:center;justify-content:center;}
+#chat-fab .chat-fab-label{position:absolute;right:64px;background:var(--surface);border:1px solid rgba(0,230,118,.25);color:var(--text);font-size:.72rem;font-weight:600;padding:.3rem .75rem;border-radius:20px;white-space:nowrap;box-shadow:var(--shadow-md);opacity:0;pointer-events:none;transition:opacity .3s;font-family:'DM Mono',monospace;}
+#chat-fab:hover .chat-fab-label{opacity:1;}
+#chat-panel{position:fixed;bottom:5rem;right:1.5rem;width:340px;max-width:calc(100vw - 2rem);height:500px;max-height:calc(100vh - 8rem);background:var(--surface);border:1px solid var(--border2);border-radius:16px;box-shadow:var(--shadow-lg);z-index:300;display:none;flex-direction:column;overflow:hidden;}
+#chat-panel.open{display:flex;}
+.chat-head{background:linear-gradient(135deg,#111118,#0d1800);padding:.875rem 1rem;display:flex;align-items:center;gap:.6rem;border-bottom:1px solid rgba(0,230,118,.1);flex-shrink:0;}
+.chat-head-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent2);border:1.5px solid rgba(0,230,118,.4);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.chat-head-info{flex:1;}
+.chat-head-name{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:var(--text);}
+.chat-head-status{font-size:.62rem;color:var(--accent);font-family:'DM Mono',monospace;letter-spacing:.04em;}
+.chat-head-close{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:1.1rem;padding:.25rem;transition:color .15s;}
+.chat-head-close:hover{color:var(--text);}
+.chat-msgs{flex:1;overflow-y:auto;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;}
+.chat-msgs::-webkit-scrollbar{width:4px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.chat-msg{max-width:88%;padding:.6rem .85rem;border-radius:12px;font-size:.78rem;line-height:1.6;}
+.chat-msg.bot{background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:4px 12px 12px 12px;align-self:flex-start;}
+.chat-msg.user{background:var(--accent2);color:var(--accent);border:1px solid rgba(0,230,118,.25);border-radius:12px 4px 12px 12px;align-self:flex-end;font-weight:500;}
+.chat-msg.thinking{background:var(--surface2);border:1px solid var(--border);border-radius:4px 12px 12px 12px;align-self:flex-start;color:var(--muted2);}
+.chat-typing{display:flex;gap:4px;align-items:center;padding:.4rem 0;}
+.chat-typing span{width:6px;height:6px;border-radius:50%;background:var(--muted2);animation:chatBlink 1.2s infinite;}
+.chat-typing span:nth-child(2){animation-delay:.2s;}
+.chat-typing span:nth-child(3){animation-delay:.4s;}
+@keyframes chatBlink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.chat-suggestions{padding:.5rem .75rem;display:flex;gap:.4rem;flex-wrap:wrap;border-top:1px solid var(--border);flex-shrink:0;}
+.chat-sug{font-size:.65rem;padding:.25rem .6rem;border-radius:20px;border:1px solid var(--border2);color:var(--muted);cursor:pointer;background:var(--surface2);transition:all .15s;white-space:nowrap;}
+.chat-sug:hover{border-color:var(--accent);color:var(--accent);background:var(--accent2);}
+.chat-input-area{display:flex;gap:.5rem;padding:.6rem .75rem;border-top:1px solid var(--border);flex-shrink:0;align-items:flex-end;}
+#chat-input{flex:1;background:var(--surface2);border:1.5px solid var(--border2);color:var(--text);font-family:'Inter',sans-serif;font-size:.8rem;padding:.55rem .75rem;border-radius:10px;outline:none;resize:none;min-height:36px;max-height:90px;line-height:1.5;}
+#chat-input:focus{border-color:var(--accent);}
+#chat-send{background:var(--accent);color:#071208;border:none;border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;flex-shrink:0;transition:all .15s;}
+#chat-send:hover{background:#33eb91;}
+#chat-send:disabled{background:var(--border2);cursor:not-allowed;}
+@media(max-width:400px){#chat-panel{width:calc(100vw - 1rem);right:.5rem;bottom:5rem;}}
+</style>
+
+<!-- FAB Button -->
+<button id="chat-fab" onclick="toggleChat()" title="Asistente de entrenamiento">
+  🤖
+  <span class="chat-fab-badge" id="chat-badge"></span>
+  <span class="chat-fab-label">Entrenador IA</span>
+</button>
+
+<!-- Chat Panel -->
+<div id="chat-panel">
+  <div class="chat-head">
+    <div class="chat-head-avatar">🏃</div>
+    <div class="chat-head-info">
+      <div class="chat-head-name">Asistente VAM</div>
+      <div class="chat-head-status">● Entrenador IA · Online</div>
+    </div>
+    <button class="chat-head-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-suggestions" id="chat-sugs">
+    <div class="chat-sug" onclick="chatSug(this)">¿Qué es la VAM?</div>
+    <div class="chat-sug" onclick="chatSug(this)">¿Qué como antes de entrenar?</div>
+    <div class="chat-sug" onclick="chatSug(this)">¿Cómo hidratarme en carrera?</div>
+    <div class="chat-sug" onclick="chatSug(this)">¿Qué es Z1, Z2 y Z3?</div>
+    <div class="chat-sug" onclick="chatSug(this)">¿Cómo mejorar la VAM?</div>
+    <div class="chat-sug" onclick="chatSug(this)">¿Cuándo tomar geles?</div>
+  </div>
+  <div class="chat-input-area">
+    <textarea id="chat-input" placeholder="Pregunta sobre tu entrenamiento..." rows="1" onkeydown="chatKeyDown(event)" oninput="autoResizeChat(this)"></textarea>
+    <button id="chat-send" onclick="enviarChat()" title="Enviar">➤</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CHATBOX ENTRENADOR IA — VAM Trainer Pro
+// ══════════════════════════════════════════════════════
+var CHAT_OPEN = false;
+var CHAT_THINKING = false;
+var CHAT_HISTORY = [];
+var CHAT_PREGUNTAS = 0;
+
+// ── URL del proxy backend ─────────────────────────────
+// Si usas Cloudflare Worker: cambia por tu URL del worker
+//   Ej: 'https://vam-chat.TU_USUARIO.workers.dev'
+// Si no tienes worker, deja api.anthropic.com (solo funciona
+// desde claude.ai artifacts, no desde GitHub Pages)
+var CHAT_API_URL = 'https://api.anthropic.com/v1/messages';
+
+// Sugerencias dinámicas según contexto del plan
+function getChatSugerencias(){
+  var base = [
+    '¿Qué es la VAM?',
+    '¿Qué es Z1, Z2 y Z3?',
+    '¿Cómo mejorar la VAM?',
+    '¿Qué como antes de entrenar?',
+    '¿Cómo hidratarme en carrera?',
+    '¿Cuándo tomar geles?',
+    '¿Qué desayunar antes de competir?',
+    '¿Cómo recuperarme entre sesiones?',
+    '¿Qué es el umbral anaeróbico?',
+    '¿Cómo evitar el muro en maratón?',
+    '¿Qué comer después de entrenar?',
+    '¿Cuánto debo dormir para rendir?'
+  ];
+  // Sugerencias específicas según prueba
+  if(S.prueba && S.prueba <= 1500) base.unshift('¿Cómo trabajar la velocidad máxima?');
+  if(S.prueba && S.prueba >= 21097) base.unshift('¿Estrategia de nutrición en maratón?');
+  if(S.modalidad === 'trail' || S.modalidad === 'pendiente') base.unshift('¿Técnica de subida en trail?');
+  if(S.edad && S.edad >= 50) base.unshift('¿Cómo adaptar el entrenamiento con la edad?');
+  // Devolver 6 sugerencias mezcladas
+  return base.slice(0, 6);
+}
+
+function renderChatSugs(){
+  var sugs = document.getElementById('chat-sugs');
+  if(!sugs) return;
+  var lista = getChatSugerencias();
+  sugs.innerHTML = lista.map(function(s){
+    return '<div class="chat-sug" onclick="chatSug(this)">'+s+'</div>';
+  }).join('');
+  sugs.style.display = 'flex';
+}
+
+function toggleChat(){
+  CHAT_OPEN = !CHAT_OPEN;
+  var panel = document.getElementById('chat-panel');
+  panel.classList.toggle('open', CHAT_OPEN);
+  var badge = document.getElementById('chat-badge');
+  if(badge) badge.style.display = 'none';
+  if(CHAT_OPEN && CHAT_HISTORY.length === 0){
+    renderChatSugs();
+    var nombre = S.nombre ? S.nombre.split(' ')[0] : '';
+    var pruebaEs = {800:'800m',1000:'1km',1500:'1500m',3000:'3km',5000:'5km',10000:'10km',21097:'media maratón',42195:'maratón'}[S.prueba] || '';
+    var vaml = S.VAM ? S.VAM.toFixed(1)+' km/h' : '';
+    var linea1 = nombre ? '¡Hola, '+nombre+'! 👋' : '¡Hola! 👋';
+    var linea2 = (vaml && pruebaEs) ? 'Conozco tu plan: VAM '+vaml+', objetivo '+pruebaEs+'.' : 'Cuéntame en qué puedo ayudarte.';
+    var bienvenida = linea1+'\n'+linea2+'\n\nPuedo ayudarte con entrenamiento, fisiología, nutrición e hidratación. ¿Qué necesitas?';
+    addChatMsg('bot', bienvenida);
+  }
+  if(CHAT_OPEN){
+    setTimeout(function(){ document.getElementById('chat-input').focus(); }, 200);
+  }
+}
+
+// Convierte markdown básico a HTML
+function markdownToHtml(txt){
+  return txt
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^### (.+)$/gm, '<div style="font-family:\'Syne\',sans-serif;font-size:.82rem;font-weight:700;color:var(--accent);margin:.5rem 0 .2rem;">$1</div>')
+    .replace(/^## (.+)$/gm, '<div style="font-family:\'Syne\',sans-serif;font-size:.85rem;font-weight:700;color:var(--text);margin:.5rem 0 .2rem;">$1</div>')
+    .replace(/^- (.+)$/gm, '<div style="display:flex;gap:.4rem;margin:.1rem 0;"><span style="color:var(--accent);flex-shrink:0;">•</span><span>$1</span></div>')
+    .replace(/^\d+\. (.+)$/gm, '<div style="margin:.1rem 0;">$1</div>')
+    .replace(/\n\n/g, '<br>')
+    .replace(/\n/g, '<br>');
+}
+
+function addChatMsg(tipo, texto){
+  var msgs = document.getElementById('chat-msgs');
+  if(!msgs) return;
+  var div = document.createElement('div');
+  div.className = 'chat-msg ' + tipo;
+  div.innerHTML = markdownToHtml(texto);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function addChatThinking(){
+  var msgs = document.getElementById('chat-msgs');
+  var div = document.createElement('div');
+  div.className = 'chat-msg thinking';
+  div.id = 'chat-thinking-bubble';
+  div.innerHTML = '<div class="chat-typing"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeChatThinking(){
+  var el = document.getElementById('chat-thinking-bubble');
+  if(el) el.remove();
+}
+
+function chatSug(el){
+  var txt = el.textContent;
+  var input = document.getElementById('chat-input');
+  input.value = txt;
+  enviarChat();
+}
+
+function chatKeyDown(e){
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    enviarChat();
+  }
+}
+
+function autoResizeChat(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+}
+
+function enviarChat(){
+  if(CHAT_THINKING) return;
+  var input = document.getElementById('chat-input');
+  var txt = (input.value||'').trim();
+  if(!txt) return;
+
+  addChatMsg('user', txt);
+  input.value = '';
+  input.style.height = 'auto';
+
+  var sugs = document.getElementById('chat-sugs');
+  if(sugs) sugs.style.display = 'none';
+
+  CHAT_THINKING = true;
+  CHAT_PREGUNTAS++;
+  document.getElementById('chat-send').disabled = true;
+  addChatThinking();
+
+  // Contexto del atleta
+  var ctx = [];
+  if(S.nombre)   ctx.push('Nombre: '+S.nombre);
+  if(S.edad)     ctx.push('Edad: '+S.edad+' años');
+  if(S.sexo)     ctx.push('Sexo: '+(S.sexo==='F'?'Mujer':'Hombre'));
+  if(S.VAM)      ctx.push('VAM: '+S.VAM.toFixed(2)+' km/h (a VAM: '+fmt(rKm(S.VAM,1.0))+' /km)');
+  if(S.vamObj)   ctx.push('VAM objetivo: '+S.vamObj.toFixed(2)+' km/h');
+  if(S.VAM)      ctx.push('Zonas: Z1='+fmt(rKm(S.VAM,0.62))+'-'+fmt(rKm(S.VAM,0.72))+' | Z2='+fmt(rKm(S.VAM,0.75))+'-'+fmt(rKm(S.VAM,0.87))+' | Z3=≤'+fmt(rKm(S.VAM,0.88))+' /km');
+  if(S.prueba)   ctx.push('Prueba: '+({800:'800m',1000:'1km',1500:'1500m',3000:'3km',5000:'5km',10000:'10km',21097:'Media Maratón',42195:'Maratón'}[S.prueba]||S.prueba));
+  if(S.semanas)  ctx.push('Plan: '+S.semanas+' sem');
+  if(S.modalidad) ctx.push('Terreno: '+({road:'llano',trail:'trail',pendiente:'pendiente'}[S.modalidad]||S.modalidad));
+  if(S.nivel)    ctx.push('Nivel: '+({ini:'iniciación',med:'intermedio',ava:'avanzado'}[S.nivel]||S.nivel));
+  if(S.kmHab)    ctx.push('Km/sem: '+S.kmHab);
+  if(S.lesionesHist && S.lesionesHist.length) ctx.push('Lesiones: '+S.lesionesHist.join(', '));
+
+  // Base de conocimiento
+  var kb = 'METODOLOGÍA: VAM=velocidad km/h al VO2max. Z1=55-72%VAM conversación fluida. Z2=75-87%VAM umbral. Z3=88-105%+ imposible hablar. IEL=series 87%VAM umbral láctico. IEM=series 95-100%VAM VO2max. IIC=series 100%VAM. Gacon=30/30 a 105%VAM. 80/20=80%Z1+20%Z3. Mesociclo 3+1=3sem carga+1descarga.\n'
+    + 'NUTRICIÓN: Pre2-3h=arroz+proteína. Pre30min=plátano/dátiles. Durante>75min=gel cada 45min 30-60gCHO/h. Post30min=20-30gproteína+CHO. Hierro y vitamD frecuentemente bajos en runners.\n'
+    + 'HIDRATACIÓN: Pre=500ml en 2h previas. Durante=150-200ml cada 15-20min. Sales>90min o calor. Post=1.5L/kg perdido. Orina amarillo pálido=bien hidratado.\n'
+    + 'LESIONES: IT-band=dolor lateral rodilla,fortalecer glúteo. Fascitis=dolor talón,estirar fascia. Aquiles=excéntricos heel-drops. Fractura estrés=parar inmediato+médico. Regla10%=nunca+10%volumen/semana. Sobreentrenamiento=FCreposo alta,mal humor,rendimiento bajo.\n'
+    + 'FISIOLOGÍA: VO2max=consumo máx O2 ml/kg/min. Umbral anaeróbico=87%VAM. Glucógeno=agota en 90-120min ritmo maratón. Adaptaciones Z1=semanas/meses. Cadencia ideal=170-180p/min.\n'
+    + 'TRAIL: Subida=pasos cortos,tronco adelante,brazos arriba. Bajada=rodillas flex,midfoot,mirada adelante. CaCo=caminar>8-10% pendiente. Bastones reducen 25% carga tren inferior.';
+
+  var systemPrompt = 'Eres el asistente de VAM Trainer Pro, entrenador experto en atletismo y nutrición deportiva.\n\n'
+    + 'BASE DE CONOCIMIENTO:\n' + kb + '\n\n'
+    + 'CONTEXTO DEL ATLETA: ' + ctx.join(' | ') + '\n\n'
+    + 'REGLAS ESTRICTAS:\n'
+    + '1. Español, tono directo como entrenador de confianza.\n'
+    + '2. Lenguaje simple: sin jerga técnica sin explicar. El atleta puede tener pocos conocimientos.\n'
+    + '3. Respuestas CONCRETAS con números. Si el atleta tiene VAM, calcula sus ritmos exactos.\n'
+    + '4. Máximo 180 palabras. Usa • para listas de más de 2 puntos.\n'
+    + '5. Si no entiendes la pregunta, responde: "¿Te refieres a [interpretación]? Si es así: [respuesta]."\n'
+    + '6. Lesión grave (fractura, rotura): añade siempre "Consulta a un fisioterapeuta o médico deportivo."';
+
+  var mensajes = CHAT_HISTORY.slice(-8).concat([{role:'user',content:txt}]);
+
+  fetch(CHAT_API_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 500,
+      system: systemPrompt,
+      messages: mensajes
+    })
+  })
+  .then(function(res){ return res.json(); })
+  .then(function(data){
+    removeChatThinking();
+    CHAT_THINKING = false;
+    document.getElementById('chat-send').disabled = false;
+    var resp = '';
+    if(data && data.content && data.content[0] && data.content[0].text){
+      resp = data.content[0].text;
+    } else if(data && data.error && data.error.message){
+      resp = '⚠️ Error: ' + data.error.message;
+    } else {
+      resp = 'No he podido procesar tu pregunta. Inténtalo de nuevo.';
+    }
+    addChatMsg('bot', resp);
+    CHAT_HISTORY.push({role:'user',content:txt});
+    CHAT_HISTORY.push({role:'assistant',content:resp});
+    if(CHAT_HISTORY.length > 16) CHAT_HISTORY = CHAT_HISTORY.slice(-16);
+    setTimeout(function(){
+      if(CHAT_PREGUNTAS % 3 === 0){ renderChatSugs(); }
+    }, 500);
+  })
+  .catch(function(){
+    removeChatThinking();
+    CHAT_THINKING = false;
+    document.getElementById('chat-send').disabled = false;
+    var fb = respuestaFallbackLocal(txt);
+    if(fb){
+      addChatMsg('bot', fb + '\n\n_⚠️ Modo sin conexión — respuesta local_');
+    } else {
+      addChatMsg('bot', '⚠️ Sin conexión. Comprueba tu red e inténtalo de nuevo.');
+    }
+  });
+}
+
+// Respuestas locales para modo sin conexión
+function respuestaFallbackLocal(p){
+  p = (p||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(/\bvam\b|velocidad aerobica|vo2/.test(p)){
+    var v = S.VAM ? 'Tu VAM: **'+S.VAM.toFixed(1)+' km/h**\n• Z1: '+fmt(rKm(S.VAM,0.62))+' – '+fmt(rKm(S.VAM,0.72))+' /km\n• Z2: '+fmt(rKm(S.VAM,0.75))+' – '+fmt(rKm(S.VAM,0.87))+' /km\n• Z3: ≤'+fmt(rKm(S.VAM,0.88))+' /km' : 'La VAM es la velocidad en km/h donde alcanzas tu máximo consumo de oxígeno. Es la base de todos los ritmos del plan.';
+    return v;
+  }
+  if(/zona|z1|z2|z3|intensidad/.test(p)){
+    return '**Zonas de entrenamiento:**\n• **Z1** — ritmo suave, puedes hablar con facilidad. Base aeróbica.\n• **Z2** — umbral, conversación difícil. Mejora el umbral láctico.\n• **Z3** — alta intensidad, imposible hablar. VO2max y series.';
+  }
+  if(/hidrat|agua|beb|sed/.test(p)){
+    return '💧 **Hidratación:**\n• Antes: 500ml en las 2h previas\n• Durante >60min: 150-200ml cada 15-20min\n• Con sales si >90min o hace calor\n• Post: 1.5L por cada kg perdido\n\nOrina amarillo pálido = bien hidratado.';
+  }
+  if(/com[ei]|aliment|nutri|gel|carbohidrat|proteina|desayun/.test(p)){
+    return '🥗 **Nutrición para runners:**\n• 2-3h antes: arroz/pasta + proteína ligera\n• 30min antes (sesión intensa): plátano o dátiles\n• Durante >75min: gel cada 45min\n• Post (primeros 30min): 20-30g proteína + carbohidratos';
+  }
+  if(/lesion|dolor|rodilla|aquil|plantar|tibia|espalda|cadera|gemelo/.test(p)){
+    return '⚠️ **Ante cualquier dolor:**\n• Persiste >2 días → reduce volumen 50%\n• Cambia tu zancada durante el entreno → PARA ese día\n• Dolor localizado en hueso al presionar → ve al médico (fractura estrés)\n\nPara lesiones serias: fisioterapeuta deportivo.';
+  }
+  if(/descan|sueno|recuper|cansa|fatiga|dormir/.test(p)){
+    return '💤 **Recuperación:**\n• 7-9h de sueño. Las adaptaciones ocurren al dormir.\n• FCreposo alta por la mañana = señal de fatiga acumulada\n• Descanso activo: caminar 20min, movilidad, foam roller\n• Sobreentrenamiento: rendimiento que baja semanas seguidas.';
+  }
+  if(/calent|warm|antes de correr/.test(p)){
+    return '**Calentamiento:**\n• 15min mínimo de trote muy suave\n• Progresivo: empieza al 55% VAM y sube gradualmente\n• Para series: termina con 4-6 acelerones de 60-80m\n• En frío o >40 años: amplía a 20min.';
+  }
+  if(/iel|iem|iic|series|intervalos|fraccionado/.test(p)){
+    return '**Series de entrenamiento:**\n• **IEL** (umbral, 87%VAM): series largas 800-2000m\n• **IEM** (VO2max, 97-100%VAM): series 2-5min\n• **IIC** (VAM, 100%): series cortas 200-800m\n• **Gacon** (105%VAM): 30″ rápido / 30″ trote\n\nSiempre con calentamiento de 15min previo.';
+  }
+  return null;
+}
+</script>
 
 </body></html>
