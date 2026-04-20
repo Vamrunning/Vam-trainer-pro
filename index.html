@@ -6029,6 +6029,266 @@ function aplicarVAMPropuesta(vamNueva) {
   mostrarToast('VAM sugerida aplicada: ' + vamNueva + ' km/h');
 }
 
+
+// ══════════════════════════════════════════════════════
+// PANEL ACTUALIZAR — abrir / cerrar / diagnóstico
+// ══════════════════════════════════════════════════════
+
+// Límites VAM óptimos por distancia (basados en análisis fisiológico)
+var VAM_LIMITES = {
+  800:   { min: 14, max: 24 },
+  1000:  { min: 14, max: 24 },
+  1500:  { min: 13, max: 24 },
+  3000:  { min: 12, max: 23 },
+  5000:  { min: 12, max: 23 },
+  10000: { min: 11, max: 22 },
+  21097: { min: 11, max: 21 },
+  42195: { min: 10, max: 20 }
+};
+
+function _vamLimites() {
+  var p = S.prueba || 10000;
+  var distancias = [800,1000,1500,3000,5000,10000,21097,42195];
+  var closest = distancias.reduce(function(a,b){ return Math.abs(b-p)<Math.abs(a-p)?b:a; });
+  return VAM_LIMITES[closest] || { min:10, max:25 };
+}
+
+function abrirPanelUpdate() {
+  var panel = document.getElementById('panel-update');
+  if(!panel) return;
+
+  // Rellenar selector de semanas desde la actual en adelante
+  var sel = document.getElementById('upd-sem-sel');
+  if(sel && PLAN_DATA.length > 0) {
+    sel.innerHTML = '';
+    var hoy = new Date(); hoy.setHours(0,0,0,0);
+    PLAN_DATA.forEach(function(sem, idx) {
+      var inicioSem = sem.fechaInicio ? new Date(sem.fechaInicio) : null;
+      if(inicioSem) inicioSem.setHours(0,0,0,0);
+      if(inicioSem && inicioSem < hoy && idx < PLAN_DATA.length-1) return;
+      var btn = document.createElement('button');
+      btn.className = 'rb-sem' + (idx===0?'':' ');
+      btn.setAttribute('data-semidx', idx);
+      btn.style.cssText = 'font-size:.72rem;padding:.3rem .7rem;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);cursor:pointer;';
+      btn.textContent = 'Sem ' + sem.semNum;
+      btn.onclick = function(){
+        sel.querySelectorAll('.rb-sem').forEach(function(b){ b.classList.remove('on'); b.style.background='var(--surface2)'; b.style.color='var(--muted)'; });
+        btn.classList.add('on'); btn.style.background='var(--accent)'; btn.style.color='#0a0a10';
+      };
+      if(!sel.querySelector('.rb-sem.on')) { btn.classList.add('on'); btn.style.background='var(--accent)'; btn.style.color='#0a0a10'; }
+      sel.appendChild(btn);
+    });
+  }
+
+  // Mostrar diagnóstico adaptativo
+  mostrarDiagnosticoUpdate();
+
+  panel.classList.add('open');
+}
+
+function cerrarPanelUpdate() {
+  var panel = document.getElementById('panel-update');
+  if(panel) panel.classList.remove('open');
+}
+
+// Calcula diagnóstico completo basado en feedback
+function _calcularDiagnostico() {
+  var fd = FEEDBACK_DATA;
+  var keys = Object.keys(fd);
+  if(keys.length < 3) return null;
+
+  var contadores = { ok:0, reg:0, mal:0, skip:0 };
+  var semDatos = {};
+  keys.forEach(function(k){
+    var v = fd[k];
+    contadores[v] = (contadores[v]||0)+1;
+    var m = k.match(/^s(\d+)_/);
+    if(m){
+      var sg = parseInt(m[1]);
+      if(!semDatos[sg]) semDatos[sg]={ok:0,reg:0,mal:0,skip:0,total:0};
+      semDatos[sg][v]++;
+      semDatos[sg].total++;
+    }
+  });
+
+  var total = keys.length;
+  var pctMal  = contadores.mal  / total;
+  var pctSkip = contadores.skip / total;
+  var pctOk   = contadores.ok   / total;
+  var pctReg  = contadores.reg  / total;
+  var pctNeg  = pctMal + pctSkip;
+
+  // Semanas con >50% skip
+  var semsSaltadas = Object.keys(semDatos).filter(function(sg){
+    var s=semDatos[sg]; return s.total>=2 && s.skip/s.total>0.5;
+  }).map(Number);
+
+  // Calcular ajuste de VAM con límites fisiológicos
+  var limites  = _vamLimites();
+  var vamActual = S.VAM || 14;
+  var ajuste = 0;
+  var diagnostico = '';
+  var severidad = 'ok';
+
+  if(pctMal >= 0.40) {
+    ajuste = -0.4; diagnostico = 'Sobrecarga severa'; severidad = 'critico';
+  } else if(pctMal >= 0.25) {
+    ajuste = -0.2; diagnostico = 'Carga elevada'; severidad = 'aviso';
+  } else if(pctMal >= 0.15) {
+    ajuste = -0.1; diagnostico = 'Algo de sobreesfuerzo'; severidad = 'aviso';
+  }
+
+  if(semsSaltadas.length >= 2) {
+    ajuste -= 0.2;
+    diagnostico = diagnostico ? diagnostico + ' + baja continuidad' : 'Baja continuidad';
+    if(severidad==='ok') severidad='aviso';
+  } else if(pctSkip >= 0.20) {
+    ajuste -= 0.1;
+    if(severidad==='ok'){ diagnostico='Algunas sesiones saltadas'; severidad='aviso'; }
+  }
+
+  // Solo subir si hay datos suficientes y no hay problemas
+  if(total >= 8 && pctOk >= 0.75 && pctMal <= 0.03 && pctSkip <= 0.05) {
+    ajuste = +0.3; diagnostico = 'Excelente adaptación'; severidad = 'ok';
+  } else if(total >= 6 && pctOk >= 0.65 && pctMal <= 0.08 && pctSkip <= 0.10 && ajuste === 0) {
+    ajuste = +0.1; diagnostico = 'Buena progresión'; severidad = 'ok';
+  }
+
+  // Aplicar límites fisiológicos — nunca salir del rango óptimo por distancia
+  var vamPropuesta = Math.max(limites.min, Math.min(limites.max, +(vamActual + ajuste).toFixed(2)));
+  // Si la VAM actual ya está fuera del rango, llevarla al límite
+  if(vamActual < limites.min) vamPropuesta = limites.min;
+  if(vamActual > limites.max) vamPropuesta = limites.max;
+  // Si el ajuste no cambia nada, no proponer
+  if(Math.abs(vamPropuesta - vamActual) < 0.05) ajuste = 0;
+
+  return {
+    total: total,
+    contadores: contadores,
+    pctOk: pctOk, pctMal: pctMal, pctSkip: pctSkip,
+    semsSaltadas: semsSaltadas,
+    ajuste: ajuste,
+    vamActual: vamActual,
+    vamPropuesta: vamPropuesta,
+    vamMin: limites.min,
+    vamMax: limites.max,
+    diagnostico: diagnostico,
+    severidad: severidad
+  };
+}
+
+function mostrarDiagnosticoUpdate() {
+  var box = document.getElementById('upd-diagnostico');
+  if(!box) return;
+
+  var d = _calcularDiagnostico();
+  if(!d || d.total < 3) { box.style.display='none'; return; }
+
+  var colorMap = { ok:'var(--green)', aviso:'var(--orange)', critico:'var(--red)' };
+  var iconMap  = { ok:'✓', aviso:'⚠', critico:'✗' };
+  var color    = colorMap[d.severidad];
+  var icon     = iconMap[d.severidad];
+
+  var signo = d.ajuste > 0 ? '+' : '';
+  var textoAjuste = d.ajuste > 0
+    ? 'Tu respuesta al entrenamiento permite aumentar la VAM de trabajo'
+    : d.ajuste < 0
+    ? 'La carga acumulada recomienda reducir la VAM de trabajo'
+    : 'La VAM actual es adecuada para tu respuesta al entrenamiento';
+
+  // Build DOM
+  box.innerHTML = '';
+  box.style.cssText = 'border:1px solid '+color+';border-radius:10px;padding:.9rem 1rem;margin-bottom:1rem;';
+
+  // Título
+  var tit = document.createElement('div');
+  tit.style.cssText = 'font-family:Syne,sans-serif;font-weight:800;font-size:.82rem;color:'+color+';margin-bottom:.5rem;';
+  tit.textContent = icon + ' ' + d.diagnostico;
+  box.appendChild(tit);
+
+  // Badges de contadores
+  var badges = document.createElement('div');
+  badges.style.cssText = 'display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem;';
+  var badgeDefs = [
+    { key:'ok',   label:'✓ Bien',    bg:'rgba(0,160,90,.12)', col:'var(--green)' },
+    { key:'reg',  label:'~ Regular', bg:'rgba(255,140,60,.12)', col:'var(--orange)' },
+    { key:'mal',  label:'✗ Difícil', bg:'rgba(220,60,60,.12)', col:'var(--red)' },
+    { key:'skip', label:'→ Saltadas',bg:'rgba(120,120,120,.12)', col:'var(--muted)' }
+  ];
+  badgeDefs.forEach(function(b){
+    if(!d.contadores[b.key]) return;
+    var span = document.createElement('span');
+    span.style.cssText = 'font-size:.72rem;background:'+b.bg+';color:'+b.col+';padding:2px 7px;border-radius:4px;';
+    span.textContent = b.label+': '+d.contadores[b.key];
+    badges.appendChild(span);
+  });
+  box.appendChild(badges);
+
+  // Semanas saltadas
+  if(d.semsSaltadas.length > 0) {
+    var saltadas = document.createElement('div');
+    saltadas.style.cssText = 'font-size:.72rem;color:var(--muted);margin-bottom:.5rem;';
+    saltadas.textContent = 'Semanas con baja asistencia: ' + d.semsSaltadas.map(function(s){return 'Sem '+s;}).join(', ');
+    box.appendChild(saltadas);
+  }
+
+  // Propuesta VAM con límites
+  var propRow = document.createElement('div');
+  propRow.style.cssText = 'margin-top:.5rem;';
+
+  var textoDesc = document.createElement('div');
+  textoDesc.style.cssText = 'font-size:.75rem;color:var(--muted);margin-bottom:.4rem;';
+  textoDesc.textContent = textoAjuste + ':';
+  propRow.appendChild(textoDesc);
+
+  if(d.ajuste !== 0) {
+    var vamRow = document.createElement('div');
+    vamRow.style.cssText = 'display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;';
+
+    var vamActSpan = document.createElement('span');
+    vamActSpan.style.cssText = 'font-family:DM Mono,monospace;font-size:1rem;color:var(--muted2);text-decoration:line-through;';
+    vamActSpan.textContent = d.vamActual.toFixed(2)+' km/h';
+
+    var arrow = document.createElement('span');
+    arrow.style.cssText = 'color:var(--muted);';
+    arrow.textContent = '→';
+
+    var vamNew = document.createElement('span');
+    vamNew.style.cssText = 'font-family:DM Mono,monospace;font-size:1.1rem;font-weight:700;color:'+color+';';
+    vamNew.textContent = d.vamPropuesta.toFixed(2)+' km/h';
+
+    var delta = document.createElement('span');
+    delta.style.cssText = 'font-size:.7rem;color:var(--muted);';
+    delta.textContent = '('+signo+d.ajuste.toFixed(1)+' km/h)';
+
+    var limInfo = document.createElement('span');
+    limInfo.style.cssText = 'font-size:.68rem;color:var(--muted2);';
+    limInfo.textContent = '· Rango óptimo: '+d.vamMin+'–'+d.vamMax+' km/h';
+
+    vamRow.appendChild(vamActSpan);
+    vamRow.appendChild(arrow);
+    vamRow.appendChild(vamNew);
+    vamRow.appendChild(delta);
+    vamRow.appendChild(limInfo);
+    propRow.appendChild(vamRow);
+
+    var btnAplicar = document.createElement('button');
+    btnAplicar.style.cssText = 'margin-top:.6rem;font-size:.72rem;padding:.35rem .8rem;border-radius:6px;'+
+      'background:transparent;border:1px solid '+color+';color:'+color+';cursor:pointer;';
+    btnAplicar.textContent = 'Aplicar VAM sugerida ('+d.vamPropuesta.toFixed(2)+' km/h)';
+    btnAplicar.onclick = function(){ aplicarVAMPropuesta(d.vamPropuesta); };
+    propRow.appendChild(btnAplicar);
+  } else {
+    var vamOk = document.createElement('div');
+    vamOk.style.cssText = 'font-family:DM Mono,monospace;font-size:.95rem;font-weight:600;color:'+color+';';
+    vamOk.textContent = d.vamActual.toFixed(2)+' km/h  ·  Rango: '+d.vamMin+'–'+d.vamMax+' km/h';
+    propRow.appendChild(vamOk);
+  }
+
+  box.appendChild(propRow);
+  box.style.display = 'block';
+}
+
 function ejecutarActualizacion(){
   // Recoger semana seleccionada
   var semBtn=document.querySelector('.rb-sem.on');
