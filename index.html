@@ -5817,6 +5817,26 @@ function generarPlan(){
   // Confirmación al usuario
   setTimeout(function(){
     mostrarToast('✅ Plan generado · '+PLAN_DATA.length+' semanas · '+S.dias+' días/sem · VAM '+vamInicial.toFixed(1)+'→'+vamFinal.toFixed(1)+' km/h');
+    // Guardar plan en localStorage para persistencia entre sesiones
+    try {
+      var snapshot = {
+        version: 1,
+        fecha: new Date().toISOString(),
+        clave: SESION_ACTIVA ? SESION_ACTIVA.clave : '',
+        perfil: JSON.parse(JSON.stringify(S)),
+        plan: PLAN_DATA.map(function(sem){
+          return {
+            semNum: sem.semNum, mesoIdx: sem.mesoIdx, mesoTipo: sem.mesoTipo,
+            faseLabel: sem.faseLabel, descarga: sem.descarga,
+            vamSem: sem.vamSem, volSem: sem.volSem,
+            kmZ1t: sem.kmZ1t, kmZ2t: sem.kmZ2t, kmZ3t: sem.kmZ3t,
+            minZ1: sem.minZ1, minZ2: sem.minZ2, minZ3: sem.minZ3,
+            diasEntrenam: sem.diasEntrenam, dist: sem.dist
+          };
+        })
+      };
+      localStorage.setItem('vam_plan_activo', JSON.stringify(snapshot));
+    } catch(e){}
   },400);
 }
 
@@ -6801,6 +6821,21 @@ var SHEET_URL='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=o
 var OWNER_KEY='VAM-PABLO-OWNER-2026';
 
 var SESION_ACTIVA={tipo:'none',meses:0,clave:''};
+// Cargar plan guardado si existe
+(function(){
+  try {
+    var saved = localStorage.getItem('vam_plan_activo');
+    if(saved){
+      var snap = JSON.parse(saved);
+      if(snap && snap.perfil && snap.plan && snap.plan.length > 0){
+        // Restaurar perfil S
+        Object.assign(S, snap.perfil);
+        // Restaurar PLAN_DATA en cuanto esté disponible
+        window._PLAN_SNAPSHOT = snap;
+      }
+    }
+  } catch(e){}
+})();
 var ES_OWNER=false;
 var ES_DEMO=false;
 var REGISTRO_ATLETAS=[];
@@ -7687,10 +7722,16 @@ document.getElementById('f-fecha').dispatchEvent(new Event('change'));
 <!-- CHATBOX ENTRENADOR IA — Asistente VAM Running         -->
 <!-- ══════════════════════════════════════════════════════ -->
 <style>
-#chat-fab{position:fixed;bottom:1.5rem;right:1.5rem;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#071208;border:none;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 20px rgba(0,230,118,.35);z-index:300;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-#chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,230,118,.5);}
-#chat-fab .chat-fab-badge{position:absolute;top:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:.6rem;font-weight:800;display:none;align-items:center;justify-content:center;}
-#chat-fab .chat-fab-label{position:absolute;right:64px;background:var(--surface);border:1px solid rgba(0,230,118,.25);color:var(--text);font-size:.72rem;font-weight:600;padding:.3rem .75rem;border-radius:20px;white-space:nowrap;box-shadow:var(--shadow-md);opacity:0;pointer-events:none;transition:opacity .3s;font-family:'DM Mono',monospace;}
+#chat-fab{position:fixed;bottom:1.5rem;right:1.2rem;width:auto;height:auto;border-radius:50px;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;border:2px solid rgba(0,230,118,.4);font-size:1rem;cursor:pointer;box-shadow:0 6px 28px rgba(0,0,0,.45),0 0 0 0 rgba(0,230,118,.4);z-index:300;display:flex;align-items:center;gap:.55rem;padding:.55rem .9rem .55rem .55rem;transition:all .25s;animation:chatPulse 3s ease-in-out infinite;}
+#chat-fab:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,0,0,.5),0 0 0 4px rgba(0,230,118,.2);border-color:rgba(0,230,118,.7);}
+@keyframes chatPulse{0%,100%{box-shadow:0 6px 28px rgba(0,0,0,.45),0 0 0 0 rgba(0,230,118,.4);}50%{box-shadow:0 6px 28px rgba(0,0,0,.45),0 0 0 6px rgba(0,230,118,.0);}}
+#chat-fab .chat-fab-avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid rgba(0,230,118,.5);}
+#chat-fab .chat-fab-avatar svg{width:100%;height:100%;}
+#chat-fab .chat-fab-texts{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;}
+#chat-fab .chat-fab-name{font-size:.68rem;font-weight:700;color:var(--accent);letter-spacing:.04em;font-family:'DM Mono',monospace;}
+#chat-fab .chat-fab-msg{font-size:.7rem;color:rgba(255,255,255,.8);font-weight:500;}
+#chat-fab .chat-fab-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:.6rem;font-weight:800;display:none;align-items:center;justify-content:center;}
+#chat-fab .chat-fab-label{display:none;}
 #chat-fab:hover .chat-fab-label{opacity:1;}
 #chat-panel{position:fixed;bottom:5rem;right:1.5rem;width:340px;max-width:calc(100vw - 2rem);height:500px;max-height:calc(100vh - 8rem);background:var(--surface);border:1px solid var(--border2);border-radius:16px;box-shadow:var(--shadow-lg);z-index:300;display:none;flex-direction:column;overflow:hidden;}
 #chat-panel.open{display:flex;}
@@ -7743,7 +7784,50 @@ document.getElementById('f-fecha').dispatchEvent(new Event('change'));
 
 <!-- FAB Button -->
 <button id="chat-fab" onclick="toggleChat()" title="Asistente de entrenamiento">
-  🤖
+  <span class="chat-fab-avatar">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="50" fill="#1e2a3a"/>
+      <!-- Cuerpo / hombros -->
+      <ellipse cx="50" cy="85" rx="28" ry="18" fill="#2d4a6b"/>
+      <ellipse cx="50" cy="80" rx="22" ry="14" fill="#3a5a80"/>
+      <!-- Cuello -->
+      <rect x="43" y="60" width="14" height="12" rx="4" fill="#f5c5a0"/>
+      <!-- Cara -->
+      <ellipse cx="50" cy="47" rx="20" ry="22" fill="#f5c5a0"/>
+      <!-- Cabello -->
+      <ellipse cx="50" cy="28" rx="21" ry="14" fill="#3d2314"/>
+      <ellipse cx="31" cy="42" rx="7" ry="16" fill="#3d2314"/>
+      <ellipse cx="69" cy="42" rx="7" ry="16" fill="#3d2314"/>
+      <ellipse cx="50" cy="25" rx="19" ry="10" fill="#4a2c1a"/>
+      <!-- Ojos -->
+      <ellipse cx="42" cy="47" rx="4" ry="4.5" fill="#fff"/>
+      <ellipse cx="58" cy="47" rx="4" ry="4.5" fill="#fff"/>
+      <circle cx="43" cy="48" r="2.5" fill="#2d5a8e"/>
+      <circle cx="59" cy="48" r="2.5" fill="#2d5a8e"/>
+      <circle cx="44" cy="47" r="1" fill="#111"/>
+      <circle cx="60" cy="47" r="1" fill="#111"/>
+      <!-- Cejas -->
+      <path d="M38 42 Q42 40 46 42" stroke="#3d2314" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M54 42 Q58 40 62 42" stroke="#3d2314" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- Nariz -->
+      <ellipse cx="50" cy="53" rx="2.5" ry="1.5" fill="#e8a882"/>
+      <!-- Sonrisa -->
+      <path d="M43 58 Q50 64 57 58" stroke="#c97040" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- Mejillas -->
+      <ellipse cx="37" cy="55" rx="5" ry="3" fill="rgba(220,100,80,.2)"/>
+      <ellipse cx="63" cy="55" rx="5" ry="3" fill="rgba(220,100,80,.2)"/>
+      <!-- Auricular / headset sutil -->
+      <circle cx="29" cy="47" r="4" fill="#2a3f5a" opacity=".8"/>
+      <circle cx="71" cy="47" r="4" fill="#2a3f5a" opacity=".8"/>
+      <!-- Punto verde activo -->
+      <circle cx="72" cy="30" r="5" fill="#00e676"/>
+      <circle cx="72" cy="30" r="3" fill="#00ff88"/>
+    </svg>
+  </span>
+  <span class="chat-fab-texts">
+    <span class="chat-fab-name">ENTRENADORA VAM</span>
+    <span class="chat-fab-msg">¿En qué puedo ayudarte?</span>
+  </span>
   <span class="chat-fab-badge" id="chat-badge"></span>
   <span class="chat-fab-label">Entrenador IA</span>
 </button>
@@ -7781,13 +7865,22 @@ var CHAT_OPEN = false;
 var CHAT_THINKING = false;
 var CHAT_HISTORY = [];
 var CHAT_PREGUNTAS = 0;
+var MAX_PREGUNTAS_LANDING = 6;
+var MAX_PREGUNTAS_APP = 20;
+
+function chatEsAppMode(){
+  return typeof SESION_ACTIVA !== 'undefined' && SESION_ACTIVA && SESION_ACTIVA.tipo !== 'none';
+}
+function chatLimiteActual(){
+  return chatEsAppMode() ? MAX_PREGUNTAS_APP : MAX_PREGUNTAS_LANDING;
+}
 
 // ── URL del proxy backend ─────────────────────────────
 // Si usas Cloudflare Worker: cambia por tu URL del worker
 //   Ej: 'https://vam-chat.TU_USUARIO.workers.dev'
 // Si no tienes worker, deja api.anthropic.com (solo funciona
 // desde claude.ai artifacts, no desde GitHub Pages)
-var CHAT_API_URL = 'https://api.anthropic.com/v1/messages';
+var CHAT_API_URL = 'https://vam-chat.vamrunningcoach.workers.dev';
 
 // Sugerencias dinámicas según contexto del plan
 function getChatSugerencias(){
@@ -7909,6 +8002,19 @@ function enviarChat(){
   var txt = (input.value||'').trim();
   if(!txt) return;
 
+  // Control de límite de preguntas
+  var limite = chatLimiteActual();
+  var esApp = chatEsAppMode();
+  if(CHAT_PREGUNTAS >= limite){
+    input.value = '';
+    if(!esApp){
+      addChatMsg('assistant', '🔒 Has llegado al límite de ' + MAX_PREGUNTAS_LANDING + ' preguntas gratuitas.\n\n¿Quieres entrenar con un plan personalizado basado en tu VAM real? **Accede con tu clave** o consigue una en [vamrunning.github.io/Vam-trainer-pro](https://vamrunning.github.io/Vam-trainer-pro) 🚀');
+    } else {
+      addChatMsg('assistant', '⏸️ Has alcanzado el límite de ' + MAX_PREGUNTAS_APP + ' consultas por sesión. Genera un nuevo plan para reiniciar el asistente.');
+    }
+    return;
+  }
+
   addChatMsg('user', txt);
   input.value = '';
   input.style.height = 'auto';
@@ -7944,16 +8050,49 @@ function enviarChat(){
     + 'FISIOLOGÍA: VO2max=consumo máx O2 ml/kg/min. Umbral anaeróbico=87%VAM. Glucógeno=agota en 90-120min ritmo maratón. Adaptaciones Z1=semanas/meses. Cadencia ideal=170-180p/min.\n'
     + 'TRAIL: Subida=pasos cortos,tronco adelante,brazos arriba. Bajada=rodillas flex,midfoot,mirada adelante. CaCo=caminar>8-10% pendiente. Bastones reducen 25% carga tren inferior.';
 
-  var systemPrompt = 'Eres el asistente de VAM Trainer Pro, entrenador experto en atletismo y nutrición deportiva.\n\n'
-    + 'BASE DE CONOCIMIENTO:\n' + kb + '\n\n'
-    + 'CONTEXTO DEL ATLETA: ' + ctx.join(' | ') + '\n\n'
-    + 'REGLAS ESTRICTAS:\n'
-    + '1. Español, tono directo como entrenador de confianza.\n'
-    + '2. Lenguaje simple: sin jerga técnica sin explicar. El atleta puede tener pocos conocimientos.\n'
-    + '3. Respuestas CONCRETAS con números. Si el atleta tiene VAM, calcula sus ritmos exactos.\n'
-    + '4. Máximo 180 palabras. Usa • para listas de más de 2 puntos.\n'
-    + '5. Si no entiendes la pregunta, responde: "¿Te refieres a [interpretación]? Si es así: [respuesta]."\n'
-    + '6. Lesión grave (fractura, rotura): añade siempre "Consulta a un fisioterapeuta o médico deportivo."';
+  // Resumen del plan activo (solo si existe)
+  var planResumen = '';
+  if(typeof PLAN_DATA !== 'undefined' && PLAN_DATA && PLAN_DATA.length > 0){
+    try {
+      var semActualNum = 1;
+      if(S.fechaInicio){
+        var fi = new Date(S.fechaInicio+'T00:00:00');
+        var diff = Math.floor((new Date() - fi) / (7*24*3600*1000));
+        semActualNum = Math.min(Math.max(diff+1, 1), PLAN_DATA.length);
+      }
+      var sem = PLAN_DATA[semActualNum-1];
+      if(sem){
+        planResumen = 'PLAN ACTIVO: '+PLAN_DATA.length+' semanas total. '
+          + 'Semana actual: '+semActualNum+'/'+PLAN_DATA.length+'. '
+          + 'Fase: '+(sem.faseLabel||'desarrollo')+'. '
+          + 'Volumen semana: '+Math.round(sem.volSem||0)+'km. '
+          + 'Z1: '+Math.round(sem.kmZ1t||0)+'km | Z2: '+Math.round(sem.kmZ2t||0)+'km | Z3: '+Math.round(sem.kmZ3t||0)+'km. '
+          + (sem.descarga ? 'SEMANA DE DESCARGA.' : '');
+      }
+    } catch(e){}
+  }
+
+  var systemPrompt;
+  if(!esApp){
+    systemPrompt = 'Eres el asistente de VAM Trainer Pro, entrenador experto en atletismo y nutrición deportiva. Hablas con un visitante sin cuenta.\n\n'
+      + 'BASE DE CONOCIMIENTO:\n' + kb + '\n\n'
+      + 'REGLAS:\n'
+      + '1. Español, tono directo y motivador. Máximo 150 palabras.\n'
+      + '2. Cada 2-3 respuestas menciona de forma natural que VAM Trainer Pro genera planes personalizados con sus ritmos exactos.\n'
+      + '3. No seas insistente, solo una mención al final cuando sea natural.\n'
+      + '4. Lesión grave: añade siempre "Consulta a un fisioterapeuta o médico deportivo."';
+  } else {
+    systemPrompt = 'Eres el asistente personal de ' + (S.nombre||'este atleta') + ' en VAM Trainer Pro.\n\n'
+      + 'BASE DE CONOCIMIENTO:\n' + kb + '\n\n'
+      + 'DATOS DEL ATLETA: ' + (ctx.length ? ctx.join(' | ') : 'Sin datos de perfil aún.') + '\n\n'
+      + (planResumen ? planResumen + '\n\n' : '')
+      + 'REGLAS:\n'
+      + '1. Llama al atleta por su nombre (' + (S.nombre||'atleta') + ') cuando sea natural.\n'
+      + '2. Español, tono directo como entrenador de confianza. Máximo 200 palabras.\n'
+      + '3. Respuestas CONCRETAS con números. Si tiene VAM, calcula ritmos exactos.\n'
+      + '4. Usa • para listas de más de 2 puntos.\n'
+      + '5. Lesión grave: añade siempre "Consulta a un fisioterapeuta o médico deportivo."';
+  }
 
   var mensajes = CHAT_HISTORY.slice(-8).concat([{role:'user',content:txt}]);
 
