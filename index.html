@@ -8017,6 +8017,9 @@ function enviarChat(){
       var fechaInicioReal = null;
       if(S.fechaInicio){
         fechaInicioReal = new Date(S.fechaInicio+'T00:00:00');
+        // Ajustar al lunes igual que hace el render del plan
+        var _dow = fechaInicioReal.getDay();
+        if(_dow !== 1) fechaInicioReal.setDate(fechaInicioReal.getDate() + (_dow === 0 ? -6 : (1 - _dow)));
         var diff = Math.floor((new Date() - fechaInicioReal) / (7*24*3600*1000));
         semActualNum = Math.min(Math.max(diff+1, 1), PLAN_DATA.length);
       }
@@ -8037,7 +8040,8 @@ function enviarChat(){
           if(ses && ses.nombre && ses.tipo !== 'descanso'){
             var fechaDia = '';
             if(fechaInicioReal){
-              var offsetDia = (d === 0 ? 6 : d - 1); // lunes=0 offset
+              var DIAS_OFF = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
+              var offsetDia = DIAS_OFF[d] || 0;
               var fd = new Date(fechaInicioReal.getTime() + (sem.semNum-1)*7*24*3600*1000 + offsetDia*24*3600*1000);
               fechaDia = fd.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'});
             }
