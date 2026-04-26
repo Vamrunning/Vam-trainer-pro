@@ -3582,7 +3582,28 @@ function validarPaso1() {
     setTimeout(function(){ el.style.borderColor=''; el.style.boxShadow=''; }, 3000);
     return;
   }
-  // Sexo siempre tiene valor por defecto (Hombre) — no es obligatorio validar
+  // Si es mujer con ciclo activo, pedir fecha del último período
+  var esMujer = document.querySelector('.rbtn.on[data-g="sexo"]');
+  var sexoVal = esMujer ? esMujer.getAttribute('data-v') : 'M';
+  if(sexoVal === 'F'){
+    var cicloEstado = document.querySelector('.rbtn.on[data-g="cicloestado"]');
+    var esActivo = !cicloEstado || cicloEstado.getAttribute('data-v') === 'activo';
+    if(esActivo){
+      var fCiclo = document.getElementById('f-ciclo').value;
+      if(!fCiclo){
+        // Hacer scroll al campo y resaltarlo
+        document.getElementById('ciclo-block').style.display = 'block';
+        var el = document.getElementById('f-ciclo');
+        el.style.borderColor = 'var(--red)';
+        el.style.boxShadow = '0 0 0 2px rgba(255,92,92,.3)';
+        el.scrollIntoView({behavior:'smooth', block:'center'});
+        el.focus();
+        mostrarToast('❌ Introduce la fecha de tu último período para adaptar el plan.');
+        setTimeout(function(){ el.style.borderColor=''; el.style.boxShadow=''; }, 3000);
+        return;
+      }
+    }
+  }
   goStep(2);
 }
 
@@ -6375,17 +6396,19 @@ function abrirPanelRecalculoVAM(direccion){
 // ══════════════════════════════════════════════════════
 function abrirPanelRitmos(){
   var prueba=S.prueba||10000;
-  var vamActual=S.VAM||14;
   // Solo disponible para 10k, media y maratón
   var distancias=[10000,21097,42195];
   if(distancias.indexOf(prueba)<0){
     mostrarToast('Los ritmos de carrera están disponibles para 10km, Media Maratón y Maratón.');
     return;
   }
+  // Usar VAM objetivo (final del plan) para los ritmos de carrera
+  // Si se ha hecho re-test o recalculo, S.vamObj se actualiza automáticamente
+  var vamObjetivo = S.vamObj || S.VAM || 14;
   var pctVAM={10000:0.93,21097:0.87,42195:0.80};
   var pct=pctVAM[prueba]||0.93;
-  var ritmoObj=3600/(vamActual*pct);
-  var pruebaSel=prueba; // Solo la prueba del atleta
+  var ritmoObj=3600/(vamObjetivo*pct);
+  var pruebaSel=prueba;
 
   var panel=document.getElementById('panel-ritmos');
   if(!panel){
@@ -6405,10 +6428,10 @@ function _renderPanelRitmos(prueba, ritmoBase){
   function fmtR(seg){ var m=Math.floor(seg/60),s=Math.round(seg%60); return m+"'"+(s<10?'0':'')+s+'"'; }
   function fmtT(seg){ var h=Math.floor(seg/3600),m=Math.floor((seg%3600)/60),s=Math.round(seg%60); return (h>0?h+'h':'')+m+"'"+(s<10?'0':'')+s+'"'; }
 
-  var vamActual=S.VAM||14;
+  var vamObjetivo=S.vamObj||S.VAM||14;
   var pctVAM={10000:0.93,21097:0.87,42195:0.80};
   var pct=pctVAM[prueba]||0.93;
-  ritmoBase=3600/(vamActual*pct);
+  ritmoBase=3600/(vamObjetivo*pct);
 
   // Pasos km a km con lógica negativo split
   var pasos=[];
