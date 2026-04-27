@@ -622,6 +622,27 @@ body.modo-tecnico .atleta-only{display:none!important;}
 /* Sesión card mejorada */
 .day-row{border-radius:8px;transition:background .12s;border-left:3px solid transparent;}
 .day-row:hover:not(.rest){background:var(--surface2);}
+/* Botones sesión — layout columna izquierda + adaptación derecha */
+.ses-btn-col{display:flex;flex-direction:column;gap:4px;margin-top:8px;width:52%;}
+.ses-btn-fila{display:flex;gap:4px;}
+
+
+
+
+/* Adaptación fisiológica — derecha abajo alineada con Garmin */
+.ses-adapt-derecha{position:absolute;bottom:0;right:0;}
+.ses-adapt-derecha .ses-adapt-toggle{font-size:.6rem;padding:6px 8px;border-radius:6px;border:0.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#888;display:block;white-space:nowrap;cursor:pointer;}
+/* Botones sesión */
+.ses-btn-wrap{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;}
+.ses-btn-antes{padding:8px 4px;border-radius:10px;border:1.5px solid rgba(212,245,60,.35);background:rgba(212,245,60,.07);color:#d4f53c;font-size:.75rem;font-weight:700;cursor:pointer;text-align:center;font-family:'DM Mono',monospace;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+.ses-btn-despues{padding:8px 4px;border-radius:10px;border:1.5px solid rgba(74,255,158,.3);background:rgba(74,255,158,.06);color:#4aff9e;font-size:.75rem;font-weight:700;cursor:pointer;text-align:center;font-family:'DM Mono',monospace;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+.ses-btn-garmin{width:100%;padding:8px 4px;border-radius:10px;border:1.5px solid rgba(92,168,255,.25);background:rgba(92,168,255,.06);color:#7eb8ff;font-size:.75rem;font-weight:600;cursor:pointer;text-align:center;font-family:'DM Mono',monospace;margin-top:7px;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+.ses-btn-subtxt{display:none;}
+/* Re-test estados */
+@keyframes retestPulse{0%,100%{box-shadow:0 0 0 0 rgba(100,180,255,.5);border-color:rgba(100,180,255,.35);}50%{box-shadow:0 0 0 7px rgba(100,180,255,.0);border-color:rgba(100,180,255,.9);}}
+.btn-retest-bloq{opacity:.45;cursor:default!important;}
+.btn-retest-activo{animation:retestPulse 2s ease-in-out infinite;border-color:rgba(100,180,255,.5)!important;background:rgba(100,180,255,.1)!important;color:#7eb8ff!important;}
+.btn-retest-usado{border-color:rgba(74,255,158,.3)!important;background:rgba(74,255,158,.07)!important;color:#4aff9e!important;cursor:default!important;}
 .day-row.zona-1{background:rgba(0,200,100,.055);border-left-color:rgba(0,200,100,.5);}
 .day-row.zona-2{background:rgba(77,159,255,.07);border-left-color:rgba(77,159,255,.55);}
 .day-row.zona-3{background:rgba(255,82,82,.07);border-left-color:rgba(255,82,82,.6);}
@@ -4513,7 +4534,25 @@ function _getAdaptacion(sesNombre) {
   if(n.indexOf('Rodaje')>=0)        return _ADAPTACIONES['Rodaje'];
   if(n.indexOf('Aeróbico sostenido')>=0) return _ADAPTACIONES['Rodaje'];
   if(n.indexOf('Regenerativo')>=0)  return _ADAPTACIONES['Rodaje'];
-  return null;
+  // Sesiones adicionales
+  if(n.indexOf('Acelerones')>=0)    return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Activación')>=0)    return _ADAPTACIONES['Rodaje'];
+  if(n.indexOf('CaCo')>=0)          return _ADAPTACIONES['Tirada'];
+  if(n.indexOf('Cambios de ritmo')>=0) return _ADAPTACIONES['Fartlek'];
+  if(n.indexOf('Series largas')>=0) return _ADAPTACIONES['IEM'];
+  if(n.indexOf('Series cortas')>=0) return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Bloques')>=0)       return _ADAPTACIONES['IIC'];
+  if(n.indexOf('Ondes')>=0)         return _ADAPTACIONES['Fartlek'];
+  if(n.indexOf('Ondas')>=0)         return _ADAPTACIONES['Fartlek'];
+  if(n.indexOf('trail')>=0||n.indexOf('Trail')>=0) return _ADAPTACIONES['Tirada'];
+  if(n.indexOf('Tempo fraccionado')>=0) return _ADAPTACIONES['Tempo'];
+  if(n.indexOf('largo')>=0||n.indexOf('Largo')>=0) return _ADAPTACIONES['Tirada'];
+  // Fallback genérico — nunca devolver null
+  return {
+    titulo: 'Adaptación aeróbica general',
+    texto: 'Esta sesión trabaja el sistema aeróbico mejorando la eficiencia metabólica y la capacidad de mantener el esfuerzo. Mantén el ritmo planificado y escucha las sensaciones corporales. La consistencia semana a semana es más valiosa que el rendimiento puntual.',
+    ref: 'Seiler (2010) · Bompa & Haff (2009)'
+  };
 }
 
 function toggleAdaptacion(id) {
@@ -5403,15 +5442,7 @@ function generarPlan(){
   html+='Factor de carga individual: <strong>'+(factorCarga*100).toFixed(0)+'%</strong> · Vol habitual: <strong>'+S.kmHab+'km</strong> → Pico planificado: <strong>'+volBasePico+'km/sem</strong>'+(sexo==='F'?' · <strong>Ciclo menstrual sincronizado</strong>':'')+'</div>';
   html+='<div class="plan-stats"><div class="pstat"><div class="pstat-val">'+sem+'</div><div class="pstat-label">Semanas</div></div><div class="pstat"><div class="pstat-val">'+mesociclos.length+'</div><div class="pstat-label">Mesociclos</div></div><div class="pstat"><div class="pstat-val">'+dias+'</div><div class="pstat-label">Días/sem</div></div><div class="pstat"><div class="pstat-val">'+volBasePico+'</div><div class="pstat-label">km pico/sem</div></div><div class="pstat"><div class="pstat-val" style="font-size:.85rem;"><span style="color:var(--green)">'+distZ.z1+'%</span>·<span style="color:var(--blue)">'+distZ.z2+'%</span>·<span style="color:var(--red)">'+distZ.z3+'%</span></div><div class="pstat-label">Z1/Z2/Z3</div></div></div></div>';
 
-  // BANNER SESIÓN DE HOY — prominente y con explicación clara
-  html+='<div onclick="abrirPanelHoy()" style="cursor:pointer;background:rgba(212,245,60,0.07);border:1.5px solid rgba(212,245,60,0.35);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem;transition:background .15s;">';
-  html+='<div style="font-size:1.6rem;flex-shrink:0;">⚡</div>';
-  html+='<div style="flex:1;">';
-  html+='<div style="font-size:.95rem;font-weight:800;color:var(--accent);margin-bottom:.2rem;">¿Cómo estás hoy? → Adapta tu sesión</div>';
-  html+='<div style="font-size:.75rem;color:var(--muted);line-height:1.5;">Antes de cada entrenamiento dinos tu nivel de energía. Si vienes cansado por exámenes, trabajo o mal sueño, el plan se adapta automáticamente: reduce intensidad, acorta series o te propone la alternativa. <strong style="color:var(--text);">Pulsa aquí antes de salir a entrenar.</strong></div>';
-  html+='</div>';
-  html+='<div style="font-family:monospace;font-size:.65rem;color:var(--accent);border:1px solid rgba(212,245,60,.3);padding:.3rem .7rem;border-radius:6px;flex-shrink:0;text-align:center;line-height:1.4;">▶ SESIÓN<br>DE HOY</div>';
-  html+='</div>';
+  // Banner eliminado — botón ⚡ integrado en cada sesión
 
   // ONBOARDING — solo si primera vez (no han visto el plan antes)
   var _yaVio = (function(){try{return localStorage.getItem('vam_onboard_visto');}catch(e){return null;}})();
@@ -5645,13 +5676,10 @@ function generarPlan(){
           if(ses.alt)html+='<div style="font-size:.68rem;color:var(--blue);margin-top:.3rem;line-height:1.4;">🔄 '+ses.alt+'</div>';
           // Pestaña de adaptaciones fisiológicas
           var _adapt = _getAdaptacion(ses.nombre);
-          if(_adapt) {
+          {
             var _adaptId = 'adapt-'+terrenoKey;
-            html+='<div class="ses-adaptaciones" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">';
+            html+='<div class="ses-adaptaciones" style="margin-bottom:.5rem;">';
             html+='<span class="ses-adapt-toggle" onclick="toggleAdaptacion(\''+_adaptId+'\')">🔬 Ver adaptación fisiológica ▾</span>';
-            if(ses && ses.tipo!=='descanso' && ses.tipo!=='fuerza' && !ses.esDescanso){
-              html+='<button onclick="exportarTCX('+sg+','+d+')" style="font-size:.6rem;padding:.2rem .45rem;border-radius:5px;border:1px solid rgba(92,168,255,.3);background:rgba(92,168,255,.06);color:var(--blue);cursor:pointer;" title="Exportar a Garmin Connect">📲 Garmin</button>';
-            }
             html+='<div class="ses-adapt-body" id="'+_adaptId+'">';
             html+='<strong style="color:var(--blue);font-size:.72rem;">'+_adapt.titulo+'</strong><br>';
             html+=_adapt.texto+'<br>';
@@ -5687,19 +5715,18 @@ function generarPlan(){
           html+='</div>';
 
           // Botón ⚡ inline por día
-          html+='<button onclick="abrirPanelHoyDia('+d+','+sg+')" '
-            +'style="font-family:\'DM Mono\',monospace;font-size:.58rem;padding:.18rem .45rem;'
-            +'border-radius:4px;border:1px solid rgba(212,245,60,.2);background:rgba(212,245,60,.05);'
-            +'color:var(--accent);cursor:pointer;margin-top:.3rem;margin-right:.4rem;" '
-            +'class="no-print" title="¿Cómo te encuentras hoy?">⚡ ¿Cómo estás?</button>';
-          html+='<div class="feedback-bar no-print" id="fb-bar-'+fbKey+'">';
-          html+='<span style="font-family:\'DM Mono\',monospace;font-size:.58rem;color:var(--muted2);">¿Cómo fue?</span>';
-          ['ok','reg','mal','skip'].forEach(function(v){
-            var lbl=v==='ok'?'✓ Bien':v==='reg'?'~ Regular':v==='mal'?'✗ Mal':'→ No hecha';
-            html+='<div class="fb-btn '+v+(fbVal===v?' '+v:'')+'" onclick="registrarFeedback(\''+fbKey+'\',\''+v+'\',this)">'+lbl+'</div>';
-          });
-          if(fbVal)html+='<span class="fb-done" id="fb-done-'+fbKey+'">✓ guardado</span>';
-          html+='</div>';
+          if(!esD){
+            html+='<div class="ses-btn-wrap no-print">';
+            html+='<button class="ses-btn-antes" onclick="abrirPanelHoyDia('+d+','+sg+')">';
+            html+='<div>⚡ ¿Cómo estás?</div><div class="ses-btn-subtxt">Antes de entrenar</div>';
+            html+='</button>';
+            html+='<button class="ses-btn-despues" onclick="abrirPanelComoFue('+d+','+sg+')">';
+            html+='<div>✓ ¿Cómo fue?</div><div class="ses-btn-subtxt">Después de entrenar</div>';
+            html+='</button>';
+            html+='</div>';
+            html+='<button class="ses-btn-garmin no-print" onclick="exportarTCX('+sg+','+d+')">📲 Exportar a Garmin</button>';
+          }
+          html+='<div class="feedback-bar no-print" id="fb-bar-'+fbKey+'" style="display:none;"></div>';
         }
         html+='</div>';
         html+='<div style="text-align:right;">';
@@ -5837,8 +5864,8 @@ function generarPlan(){
   html+='<button class="btn btn-secondary" style="color:var(--accent);border-color:rgba(212,245,60,.3);background:rgba(212,245,60,.05);" onclick="descargarPlanHTML()">⬇ Guardar plan</button>';
   html+='<button class="btn btn-secondary" style="color:var(--green);border-color:rgba(74,255,158,.3);background:rgba(74,255,158,.05);" onclick="exportarICS()">📅 Exportar al calendario</button>';
   html+='<button class="btn btn-secondary" style="color:var(--orange);border-color:rgba(255,180,50,.3);background:rgba(255,180,50,.05);" onclick="abrirPanelRitmos()">🏁 Ritmos de carrera</button>';
-  html+='<button class="btn btn-secondary" id="btn-retest-inline" style="color:var(--blue);border-color:rgba(100,180,255,.3);background:rgba(100,180,255,.05);" onclick="_checkRetestInline()">🔬 Re-test VAM</button>';
   html+='</div>';
+  html+='<button class="btn btn-secondary" id="btn-retest-inline" onclick="_checkRetestInline()" style="width:100%;margin-top:.5rem;text-align:center;">🔬 Re-test VAM</button>';
   html+='<div style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--muted2);text-align:center;margin-top:.3rem;">Guardar plan → abre en navegador sin necesidad de meter datos · Calendario → importa el .ics en Google Calendar, Apple o Outlook</div>';
 
   document.getElementById('plan-container').innerHTML=html;
@@ -6041,6 +6068,64 @@ function _ejecutarAceptar(){
 // ══════════════════════════════════════════════════════
 // ADAPTACIÓN SESIÓN — SESIÓN ALTERNATIVA AUTOMÁTICA
 // ══════════════════════════════════════════════════════
+
+function abrirPanelComoFue(diaSemana, semNum){
+  var fbKey = 's'+semNum+'_d'+diaSemana;
+  var semData = PLAN_DATA[semNum-1];
+  var ses = semData && semData.asig ? semData.asig[diaSemana] : null;
+  var nombreSes = ses ? ses.nombre : 'Sesión';
+
+  var panel = document.createElement('div');
+  panel.id = 'panel-como-fue';
+  panel.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:400;display:flex;align-items:flex-end;justify-content:center;padding:0;';
+
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:var(--surface);border-radius:18px 18px 0 0;width:100%;max-width:600px;padding:1.5rem 1.5rem 2rem;';
+
+  inner.innerHTML =
+    '<div style="width:40px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 1.25rem;"></div>'
+    +'<div style="font-family:Syne,sans-serif;font-size:1rem;font-weight:800;margin-bottom:.25rem;">¿Cómo fue el entreno?</div>'
+    +'<div style="font-size:.72rem;color:var(--muted);margin-bottom:1.25rem;">'+nombreSes+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:1rem;">'
+    +'<button id="fue-bien" style="padding:.9rem .5rem;border-radius:10px;border:2px solid rgba(74,255,158,.4);background:rgba(74,255,158,.07);color:#4aff9e;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:1.3rem;">✓</div><div style="font-size:.75rem;font-weight:700;margin-top:.25rem;">Bien</div>'
+    +'<div style="font-size:.6rem;color:rgba(74,255,158,.6);margin-top:.1rem;">Completado</div></button>'
+    +'<button id="fue-reg" style="padding:.9rem .5rem;border-radius:10px;border:2px solid rgba(212,245,60,.3);background:rgba(212,245,60,.05);color:#d4f53c;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:1.3rem;">~</div><div style="font-size:.75rem;font-weight:700;margin-top:.25rem;">Regular</div>'
+    +'<div style="font-size:.6rem;color:rgba(212,245,60,.6);margin-top:.1rem;">Costó</div></button>'
+    +'<button id="fue-mal" style="padding:.9rem .5rem;border-radius:10px;border:2px solid rgba(255,82,82,.35);background:rgba(255,82,82,.06);color:#ff6666;cursor:pointer;text-align:center;">'
+    +'<div style="font-size:1.3rem;">✗</div><div style="font-size:.75rem;font-weight:700;margin-top:.25rem;">Mal</div>'
+    +'<div style="font-size:.6rem;color:rgba(255,100,100,.6);margin-top:.1rem;">No pude</div></button>'
+    +'</div>'
+    +'<div style="text-align:center;margin-bottom:1rem;">'
+    +'<span id="fue-nohecha" style="font-size:.72rem;color:var(--muted);cursor:pointer;border-bottom:1px solid var(--border2);padding-bottom:1px;">→ No lo hice hoy</span>'
+    +'</div>'
+    +'<button id="fue-cerrar" style="width:100%;padding:.65rem;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-size:.78rem;">Cerrar</button>';
+
+  panel.appendChild(inner);
+  document.body.appendChild(panel);
+
+  function registrarYCerrar(val){
+    FEEDBACK_DATA[fbKey] = val;
+    // Actualizar botones fb-bar existentes
+    var bar = document.getElementById('fb-bar-'+fbKey);
+    if(bar){
+      bar.querySelectorAll('.fb-btn').forEach(function(b){
+        if(b.classList.contains(val)) b.classList.add(val);
+      });
+    }
+    panel.remove();
+    _chequeoAdaptativo();
+    mostrarToast(val==='ok'?'✅ Entreno registrado':val==='reg'?'~ Registrado como regular':'✗ Registrado. El sistema lo tendrá en cuenta.');
+  }
+
+  document.getElementById('fue-bien').onclick = function(){ registrarYCerrar('ok'); };
+  document.getElementById('fue-reg').onclick = function(){ registrarYCerrar('reg'); };
+  document.getElementById('fue-mal').onclick = function(){ registrarYCerrar('mal'); };
+  document.getElementById('fue-nohecha').onclick = function(){ registrarYCerrar('skip'); };
+  document.getElementById('fue-cerrar').onclick = function(){ panel.remove(); };
+  panel.onclick = function(e){ if(e.target===panel) panel.remove(); };
+}
 function adaptarSesion(nivel,el){
   document.querySelectorAll('.hoy-fatiga-btn').forEach(function(b){b.classList.remove('on');});
   el.classList.add('on');
@@ -6204,25 +6289,29 @@ function _actualizarBtnRetest(){
   var mitad=Math.ceil(semTotal/2);
   var usado=localStorage.getItem('vam_retest_usado')==='1';
 
+  // Limpiar clases previas
+  btn.classList.remove('btn-retest-bloq','btn-retest-activo','btn-retest-usado');
+
   if(usado){
-    btn.style.opacity='0.5';
+    var vamAnt = localStorage.getItem('vam_retest_vam_anterior');
+    btn.classList.add('btn-retest-usado');
     btn.style.cursor='default';
-    btn.title='VAM ya actualizada en este plan';
-    btn.innerHTML='🔬 VAM ACTUALIZADA ✓';
-    btn.onclick=function(){mostrarToast('Ya realizaste el re-test en este plan. Genera un nuevo plan para volver a testar.');};
+    btn.title='Plan recalculado con nueva VAM';
+    btn.innerHTML='🔬 Plan recalculado ✓'+(vamAnt?'<div style="font-size:.58rem;margin-top:.2rem;text-align:center;">VAM '+parseFloat(vamAnt).toFixed(1)+' → '+S.VAM.toFixed(1)+' km/h</div>':'');
+    btn.onclick=function(){mostrarToast('Plan ya recalculado con tu nueva VAM. Genera un nuevo plan para volver a testar.');};
   } else if(semActual<mitad){
-    btn.style.opacity='0.45';
+    btn.classList.add('btn-retest-bloq');
     btn.style.cursor='default';
     btn.title='Disponible en semana '+mitad;
-    btn.innerHTML='🔬 RE-TEST VAM <span style="font-size:.55rem;opacity:.7;">(sem '+mitad+')</span>';
+    btn.innerHTML='🔬 Re-test VAM<div style="font-size:.58rem;margin-top:.2rem;text-align:center;opacity:.7;">Disponible en semana '+mitad+'</div>';
     btn.onclick=function(){
       mostrarToast('El re-test se activa en la semana '+mitad+' de '+semTotal+'. Sigue entrenando 💪');
     };
   } else {
-    btn.style.opacity='1';
+    btn.classList.add('btn-retest-activo');
     btn.style.cursor='pointer';
     btn.title='Re-testar VAM y recalcular semanas restantes';
-    btn.innerHTML='🔬 RE-TEST VAM';
+    btn.innerHTML='🔬 Re-test VAM<div style="font-size:.58rem;margin-top:.2rem;text-align:center;font-weight:700;">✓ ACTIVADO — pulsa aquí</div>';
     btn.onclick=function(){abrirPanelRetest();};
   }
 }
@@ -6394,12 +6483,127 @@ function abrirPanelRecalculoVAM(direccion){
 // ══════════════════════════════════════════════════════
 // PANEL RITMOS DE CARRERA
 // ══════════════════════════════════════════════════════
+
+function _mostrarRitmosCortos(prueba, vamObjetivo){
+  function fmtR(seg){ var m=Math.floor(seg/60),s=Math.round(seg%60); return m+"'"+(s<10?'0':'')+s+'"'; }
+  function fmtT(seg){ var m=Math.floor(seg/60),s=Math.round(seg%60); return m+"min"+(s>0?' '+s+'″':''); }
+
+  var pctVAM = prueba===3000 ? 0.97 : 0.95;
+  var ritmoBase = 3600/(vamObjetivo*pctVAM);
+  var distKm = prueba/1000;
+  var tiempoTotal = ritmoBase * distKm;
+  var nombrePrueba = prueba===3000 ? '3000m' : '5000m';
+
+  // Puntos de paso
+  var pasos = [];
+  if(prueba===3000){
+    pasos = [
+      {d:'1000m', t: ritmoBase*1.02, acum: ritmoBase*1.02},
+      {d:'2000m', t: ritmoBase*1.00, acum: ritmoBase*2.01},
+      {d:'3000m (llegada)', t: ritmoBase*0.97, acum: tiempoTotal}
+    ];
+  } else {
+    pasos = [
+      {d:'1000m', t: ritmoBase*1.02, acum: ritmoBase*1.02},
+      {d:'2000m', t: ritmoBase*1.01, acum: ritmoBase*2.03},
+      {d:'3000m', t: ritmoBase*1.00, acum: ritmoBase*3.03},
+      {d:'4000m', t: ritmoBase*0.99, acum: ritmoBase*4.02},
+      {d:'5000m (llegada)', t: ritmoBase*0.96, acum: tiempoTotal}
+    ];
+  }
+
+  var panel = document.getElementById('panel-ritmos');
+  if(!panel){
+    panel = document.createElement('div');
+    panel.id = 'panel-ritmos';
+    panel.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:400;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto;';
+    panel.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;padding:1.75rem;" id="panel-ritmos-inner"></div>';
+    document.body.appendChild(panel);
+    panel.addEventListener('click',function(e){if(e.target===panel){panel.style.display='none';}});
+  }
+
+  var html = '<div style="font-family:Syne,sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.1rem;">🏁 Ritmos de carrera</div>';
+  html += '<div style="font-size:.72rem;color:var(--muted);margin-bottom:1.25rem;">'+nombrePrueba+' · VAM objetivo: '+vamObjetivo.toFixed(2)+' km/h</div>';
+
+  // Mensaje principal
+  html += '<div style="background:rgba(0,230,118,.07);border:1px solid rgba(0,230,118,.25);border-radius:12px;padding:1.1rem;margin-bottom:1rem;text-align:center;">';
+  html += '<div style="font-size:.72rem;color:var(--muted2);font-family:DM Mono,monospace;letter-spacing:.06em;margin-bottom:.4rem;">RITMO OBJETIVO /km</div>';
+  html += '<div style="font-family:Syne,sans-serif;font-size:2rem;font-weight:800;color:var(--accent);">'+fmtR(ritmoBase)+'</div>';
+  html += '<div style="font-size:.72rem;color:var(--muted);margin-top:.3rem;">Tiempo estimado: <strong style="color:var(--text);">'+fmtT(tiempoTotal)+'</strong></div>';
+  html += '</div>';
+
+  // Estrategia
+  html += '<div style="font-size:.72rem;color:var(--blue);background:rgba(92,168,255,.06);border:1px solid rgba(92,168,255,.15);border-radius:8px;padding:.6rem .75rem;margin-bottom:.75rem;line-height:1.6;">';
+  html += prueba===3000
+    ? '📐 Estrategia: Salida a ritmo objetivo · Mantén constante · Acelera los últimos 400m'
+    : '📐 Estrategia: 1km conservador · Ritmo constante km 2-4 · Vaciado total último km';
+  html += '</div>';
+
+  // Tabla de pasos
+  html += '<div style="font-family:DM Mono,monospace;font-size:.62rem;color:var(--muted2);letter-spacing:.05em;margin-bottom:.4rem;">PASOS Y TIEMPOS DE PASO</div>';
+  html += '<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">';
+  html += '<div style="display:grid;grid-template-columns:2fr 2fr 3fr;background:var(--surface2);padding:.4rem .6rem;">';
+  html += '<div style="font-size:.62rem;color:var(--muted2);">PUNTO</div>';
+  html += '<div style="font-size:.62rem;color:var(--muted2);">RITMO /km</div>';
+  html += '<div style="font-size:.62rem;color:var(--muted2);">TIEMPO PASO</div>';
+  html += '</div>';
+
+  pasos.forEach(function(p){
+    var isLlegada = p.d.includes('llegada');
+    var color = isLlegada ? 'var(--red)' : 'var(--text)';
+    var bg = isLlegada ? 'rgba(255,92,92,.04)' : 'transparent';
+    html += '<div style="display:grid;grid-template-columns:2fr 2fr 3fr;padding:.45rem .6rem;border-top:1px solid var(--border);background:'+bg+';">';
+    html += '<div style="font-size:.8rem;font-weight:600;color:'+color+';">'+p.d+'</div>';
+    html += '<div style="font-size:.8rem;font-family:DM Mono,monospace;color:'+color+';">'+fmtR(p.t)+'</div>';
+    html += '<div style="font-size:.8rem;font-family:DM Mono,monospace;color:var(--muted);">'+fmtT(p.acum)+'</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div style="font-size:.65rem;color:var(--muted2);margin-top:.6rem;line-height:1.6;">Ritmos calculados con tu VAM objetivo: '+vamObjetivo.toFixed(2)+' km/h · Se actualizan si haces re-test VAM</div>';
+  html += '<button onclick="document.getElementById(\'panel-ritmos\').style.display=\'none\'" style="width:100%;margin-top:1rem;padding:.7rem;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-size:.8rem;">Cerrar</button>';
+
+  document.getElementById('panel-ritmos-inner').innerHTML = html;
+  panel.style.display = 'flex';
+}
+
 function abrirPanelRitmos(){
   var prueba=S.prueba||10000;
-  // Solo disponible para 10k, media y maratón
+  // Para 3000m y 5000m — panel con tabla de pasos
+  if(prueba===3000 || prueba===5000){
+    _mostrarRitmosCortos(prueba, S.vamObj||S.VAM||14);
+    return;
+  }
+  // Para 800/1000/1500 — ritmo objetivo simple
+  var distanciasCortas=[800,1000,1500];
+  if(distanciasCortas.indexOf(prueba)>=0){
+    var pctVAMCorta={800:1.05,1000:1.02,1500:0.99,3000:0.97,5000:0.95};
+    var pct=pctVAMCorta[prueba]||0.95;
+    var vamObj=S.vamObj||S.VAM||14;
+    var ritmoSegs=3600/(vamObj*pct);
+    var m=Math.floor(ritmoSegs/60), s=Math.round(ritmoSegs%60);
+    var ritmoStr=m+"'"+(s<10?'0':'')+s+'"';
+    var PNOMBRE={800:'800m',1000:'1000m',1500:'1500m',3000:'3km',5000:'5km'};
+    var panel=document.createElement('div');
+    panel.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:400;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    panel.innerHTML='<div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:380px;padding:1.75rem;text-align:center;">'
+      +'<div style="font-size:.65rem;color:var(--muted2);font-family:DM Mono,monospace;letter-spacing:.1em;margin-bottom:.75rem;">RITMO OBJETIVO — '+(PNOMBRE[prueba]||prueba+'m')+'</div>'
+      +'<div style="font-family:Syne,sans-serif;font-size:3rem;font-weight:800;color:var(--accent);line-height:1;">'+ritmoStr+'</div>'
+      +'<div style="font-size:.8rem;color:var(--muted);margin-top:.4rem;margin-bottom:1.25rem;">/km el día de carrera</div>'
+      +'<div style="background:var(--surface2);border-radius:10px;padding:.75rem;margin-bottom:1.25rem;font-size:.75rem;color:var(--muted);line-height:1.7;">'
+      +'Calculado con tu VAM objetivo: <strong style="color:var(--accent);">'+vamObj.toFixed(2)+' km/h</strong><br>'
+      +'Salida al '+(Math.round(pct*100))+'% de tu VAM · Mantén ese ritmo desde el km 1'
+      +'</div>'
+      +'<button onclick="this.parentNode.parentNode.remove()" style="width:100%;padding:.65rem;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-size:.78rem;">Cerrar</button>'
+      +'</div>';
+    document.body.appendChild(panel);
+    panel.onclick=function(e){if(e.target===panel)panel.remove();};
+    return;
+  }
+  // Solo tabla km a km para 10k, media y maratón
   var distancias=[10000,21097,42195];
   if(distancias.indexOf(prueba)<0){
-    mostrarToast('Los ritmos de carrera están disponibles para 10km, Media Maratón y Maratón.');
+    mostrarToast('Los ritmos de carrera están disponibles para todas las distancias.');
     return;
   }
   // Usar VAM objetivo (final del plan) para los ritmos de carrera
@@ -8830,6 +9034,13 @@ function markdownToHtml(txt){
     .replace(/\n/g, '<br>');
 }
 
+function _chatScrollAbajo(){
+  var msgs = document.getElementById('chat-msgs');
+  if(!msgs) return;
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(function(){ msgs.scrollTop = msgs.scrollHeight; }, 100);
+}
+
 function addChatMsg(tipo, texto){
   var msgs = document.getElementById('chat-msgs');
   if(!msgs) return;
@@ -8837,7 +9048,15 @@ function addChatMsg(tipo, texto){
   div.className = 'chat-msg ' + tipo;
   div.innerHTML = markdownToHtml(texto);
   msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  // Para mensajes del asistente — scroll al INICIO del mensaje nuevo
+  if(tipo === 'assistant' || tipo === 'bot'){
+    setTimeout(function(){
+      div.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 50);
+  } else {
+    // Para mensajes del usuario — scroll al final
+    _chatScrollAbajo();
+  }
   return div;
 }
 
@@ -8848,7 +9067,7 @@ function addChatThinking(){
   div.id = 'chat-thinking-bubble';
   div.innerHTML = '<div class="chat-typing"><span></span><span></span><span></span></div>';
   msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  _chatScrollAbajo();
 }
 
 function removeChatThinking(){
